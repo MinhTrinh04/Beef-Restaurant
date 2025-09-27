@@ -1,0 +1,21 @@
+/*==========================
+    Badges
+===========================*/
+.badges{
+    @apply w-full relative z-10 bg-surface-dark min-h-[280px] sm:min-h-[320px] lg:min-h-[380px] flex items-center;
+    &__container{
+        @apply container mx-auto;
+        .badges__item{
+            @apply w-[100px] sm:w-[180px] lg:w-[240px];
+        }
+    }
+    &__list{
+        @apply flex flex-wrap items-center justify-center md:justify-between w-full py-12 sm:py-16 lg:py-20 xl:py-28 gap-6 sm:px-6 xl:px-16;
+    }
+    &__item{
+        @apply flex items-center justify-center relative;
+        img{
+            @apply w-[160px] xl:w-[220px] h-auto;
+        }
+    }
+}

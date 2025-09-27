@@ -1,0 +1,182 @@
+/* ==========================
+    lightbox2
+=========================== */
+.lb-details {
+	@apply !py-4;
+}
+.lb-number {
+	@apply font-josefin-sans !text-button !text-primary;
+	opacity: 0.9;
+	transition: opacity 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+	will-change: opacity;
+	
+	&:hover {
+		opacity: 1;
+	}
+}
+.lb-closeContainer {
+	@apply !py-6;
+}
+.lb-close {
+	@apply !w-4 !h-4 !bg-contain !bg-center;
+	transition: transform 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+	will-change: transform;
+	
+	&:hover {
+		transform: rotate(90deg);
+	}
+}
+.lightbox .lb-image {
+	@apply !border-none;
+	box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+	transition: box-shadow 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+	will-change: box-shadow;
+}
+
+/* --------------------------
+    Lightbox
+ -------------------------- */
+.lightbox {
+	@apply hidden fixed inset-0 w-full h-full bg-surface-dark bg-opacity-80 items-center justify-center cursor-[zoom-out] p-8 z-50;
+	backdrop-filter: blur(8px);
+	transition: backdrop-filter 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+	will-change: backdrop-filter;
+	
+	&-open {
+		@apply overflow-hidden;
+	}
+	
+	&-wrapper {
+		@apply relative h-auto w-fit max-w-full;
+		transform: scale(0.95);
+		opacity: 0;
+		transition: all 0.5s cubic-bezier(0.215, 0.61, 0.355, 1);
+		will-change: transform, opacity;
+	}
+	
+	&.open {
+		@apply flex;
+		.lightbox-wrapper {
+			transform: scale(1);
+			opacity: 1;
+		}
+	}
+	
+	&-close {
+		@apply absolute h-5 w-5 top-0 right-0 text-3xl leading-7 text-text-base z-50 flex items-center justify-center pb-1;
+		transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+		will-change: transform, color;
+		
+		&:hover {
+			@apply text-primary cursor-pointer;
+		}
+	}
+	
+	&-content {
+		@apply relative flex justify-center items-center py-6;
+		animation: lightboxImage 0.6s cubic-bezier(0.215, 0.61, 0.355, 1);
+		will-change: transform, opacity;
+		
+		.lightbox-img {
+			@apply hidden;
+			transition: all 0.5s cubic-bezier(0.215, 0.61, 0.355, 1);
+			will-change: transform, opacity;
+			
+			&.lightbox-img__show {
+				@apply block;
+				animation: fadeScale 0.5s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
+			}
+		}
+		
+		img {
+			@apply h-[80vh] w-auto cursor-pointer block;
+			box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+			transition: box-shadow 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+			will-change: box-shadow;
+		}
+	}
+	
+	&-controls {
+		@apply absolute top-0 left-0 w-full h-full flex items-end justify-end gap-3;
+	}
+	
+	&-arrows {
+		@apply relative z-50 w-[30px] md:w-[40px] h-[30px] md:h-[40px] !rounded-full bg-transparent text-text-base flex items-center justify-center shadow-lg border border-text-base border-solid top-6;
+		transform: translateY(-50%);
+		transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+		will-change: transform, background-color, border-color;
+		
+		&:hover {
+			@apply bg-primary cursor-pointer border-primary;
+			transform: translateY(-50%) scale(1.1);
+		}
+		
+		&:hover:before {
+			@apply !text-surface;
+		}
+		
+		&::before {
+			@apply text-sm text-text-base opacity-100 px-3;
+			font-family: "Font Awesome 5 Free";
+			font-weight: 900;
+			transition: transform 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+			will-change: transform;
+		}
+		
+		&.lightbox-next {
+			@apply left-0;
+			&::before {
+				content: "\f054";
+			}
+		}
+		
+		&.lightbox-prev {
+			@apply right-0;
+			&::before {
+				content: "\f053";
+			}
+		}
+	}
+}
+
+@keyframes lightboxImage {
+	0% {
+		opacity: 0;
+		transform: scale(0.9);
+	}
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+@keyframes fadeScale {
+	from {
+		opacity: 0;
+		transform: scale(0.95);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes fadeInUp {
+	from {
+		opacity: 0;
+		transform: translateY(30px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}

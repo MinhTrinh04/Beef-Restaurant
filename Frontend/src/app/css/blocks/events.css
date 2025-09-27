@@ -1,0 +1,48 @@
+
+/*==========================
+   Events / Block 
+===========================*/
+.events-block {
+	@apply py-16 md:py-20 xl:py-24;
+	&__container {
+		@apply container mx-auto px-6 sm:px-4;
+	}
+	&__list {
+		@apply grid grid-cols-12 gap-6;
+	}
+
+}
+
+/*==========================
+	Card Events
+===========================*/
+.card-event{
+    @apply col-span-12 md:col-span-6 lg:col-span-4 bg-surface-dark rounded-xl;
+		&-image {
+			@apply relative rounded-xl;
+            overflow: hidden;
+			img {
+				@apply block w-full h-full object-cover rounded-xl;
+			}
+		}
+		&-info {
+			@apply text-center p-8;
+			&__subtitle {
+				@apply text-coarseWool-300 !font-josefin-sans uppercase !text-[14px] font-semibold pb-6;
+			}
+			&__title {
+				@apply text-coarseWool-100 font-barlow-condensed font-normal capitalize !text-title-3 border-b-[1px] border-t-[1px]  border-solid border-calico-500 w-full pt-4 pb-5 mb-6;
+			}
+			p {
+				@apply mb-0;
+			}
+		}
+		&:hover {
+			@apply cursor-pointer border border-solid border-calico-500;
+			transform: translateY(-8px);
+			box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+			.events-block__item-image img {
+				transform: scale(1.1);
+			}
+		}
+}

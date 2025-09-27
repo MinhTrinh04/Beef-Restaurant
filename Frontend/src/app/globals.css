@@ -1,0 +1,115 @@
+/* ==========================================================================
+
+	Template Name: Beef Template
+	Note: This is style css.
+
+========================================================================== */
+
+
+/* =====================================
+    Tailwind Css - Base / Components
+===================================== */
+@tailwind base;
+@tailwind components;
+
+
+/* =====================================
+    Default Styles
+===================================== */
+@import "./css/base.css"; 
+
+
+
+/* =====================================
+    Common Styles
+===================================== */
+@import "./css/components/common/topbar.css";
+@import "./css/components/common/header.css";
+@import "./css/components/common/nav-mobile.css";
+@import "./css/components/common/footer.css";
+@import "./css/components/common/socialicon.css";
+@import "./css/components/common/button.css";
+@import "./css/components/common/swiper-controls.css";
+@import "./css/components/common/opening-hours.css";
+@import "./css/components/common/block-title.css";
+@import "./css/components/common/divider.css";
+@import "./css/components/common/dish-item.css";
+@import "./css/components/common/tabs.css";
+@import "./css/components/common/form.css";
+
+/* ----- Slider ----- */ 
+@import "./css/components/slider/dots.css";
+
+/* ----- blocks ----- */
+@import "./css/blocks/hero.css";
+@import "./css/blocks/about.css";
+@import "./css/blocks/special-offers/special-offers.css";
+@import "./css/blocks/special-offers/special-offers-two.css";
+@import "./css/blocks/badges.css";
+@import "./css/blocks/WeekSpecial.css";
+@import "./css/blocks/ServicesList.css";
+@import "./css/blocks/cta.css";
+@import "./css/blocks/team.css";
+@import "./css/blocks/menu.css";
+@import "./css/blocks/gallery/basic-gallery.css";
+@import "./css/blocks/gallery/masonry-gallery.css";
+@import "./css/blocks/gallery/lightbox.css";
+@import "./css/blocks/testimonials.css";
+@import "./css/blocks/contact.css";
+@import "./css/blocks/events.css";
+@import "./css/blocks/history.css";
+@import "./css/blocks/location.css";
+@import "./css/blocks/error404.css"; 
+@import "./css/blocks/confirmation.css"; 
+@import "./css/blocks/coming-soon.css"; 
+
+
+/* ----- Swiper CSS ----- */
+@import "swiper/css";
+@import "swiper/css/navigation";
+@import "swiper/css/pagination";
+@import "swiper/css/scrollbar";
+@import "swiper/css/effect-fade";
+
+@import "./css/blocks/landing.css";
+
+
+/* =====================================
+    Tailwind Css - Utilities
+===================================== */
+@tailwind utilities;
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 0;
+}
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+

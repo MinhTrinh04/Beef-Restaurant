@@ -1,0 +1,169 @@
+/*==========================
+    Menu dish
+===========================*/
+.dish {
+	@apply flex flex-col justify-start items-start w-full !mb-0;
+	position: relative;
+	transition: all 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
+	padding: 0.75rem;
+	border-radius: 4px;
+
+	&:hover {
+		transform: translateX(4px);
+
+		.dish__title {
+			color: theme('colors.primary');
+		}
+
+		.dish__content::after {
+			width: 100%;
+			opacity: 0.15;
+		}
+	}
+
+	&__content {
+		@apply flex flex-wrap justify-between items-center w-full border-b border-solid border-border pb-2 mb-2;
+		position: relative;
+		
+		&::after {
+			content: '';
+			@apply absolute bottom-0 left-0 h-[1px] bg-primary;
+			width: 0;
+			opacity: 0;
+			transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+		}
+	}
+
+	&__divider {
+		@apply relative block w-full;
+		border-bottom: 2px dotted theme('colors.border');
+		&::after {
+			content: '';
+			position: absolute;
+			bottom: -2px;
+			left: 0;
+			width: 0;
+			height: 2px;
+			background-color: theme('colors.primary');
+			transition: width 0.3s ease-in-out;
+		}
+	}
+
+	&__header {
+		@apply flex flex-wrap justify-between items-center w-full border-b border-solid border-border pb-2 mb-2;
+		
+		.dish-item__divider {
+			@apply absolute bottom-0 left-0 h-[1px] bg-primary;
+		}
+	}
+
+	&__title {
+		@apply !text-title-5 font-barlow-condensed font-normal mb-0 capitalize text-text-base;
+		letter-spacing: 0.3px;
+		transition: color 0.3s ease;
+		position: relative;
+		padding-right: 1rem;
+
+		/* Decorative dot for special dishes - Add class 'special' to dish for this effect */
+		&.special::after {
+			content: '•';
+			@apply absolute -right-1 top-0 text-primary;
+			font-size: 1.2em;
+			animation: pulse 2s infinite;
+		}
+
+		a {
+			@apply transition-all duration-200 ease-in-out;
+			&:hover {
+				@apply absolute -right-1 top-0 text-primary;
+			}
+		}
+	}
+
+	&__price {
+		@apply text-title-5 font-barlow-condensed font-normal text-primary mb-0;
+		letter-spacing: 0.5px;
+		transition: transform 0.3s ease;
+		position: relative;
+		padding: 0.2rem 0.5rem;
+		
+		&::before {
+			content: '';
+			@apply absolute inset-0 bg-primary;
+			opacity: 0;
+			transform: scaleX(0);
+			transition: all 0.3s ease;
+			z-index: -1;
+			border-radius: 3px;
+		}
+
+		&:hover {
+			color: theme('colors.surface-dark');
+			transform: translateY(-1px);
+
+			&::before {
+				opacity: 1;
+				transform: scaleX(1);
+			}
+		}
+	}
+
+	&__label {
+		@apply absolute inset-0 bg-primary;
+		color: theme('colors.surface-dark');
+		z-index: 1;
+		opacity: 0;
+		visibility: hidden;
+		transition: all 0.3s ease-in-out;
+	}
+
+	&__description {
+		@apply w-full text-text-muted font-sorts-mill-goudy italic text-sm mb-0;
+		line-height: 1.6;
+		opacity: 0.85;
+		transition: opacity 0.3s ease;
+		padding-right: 1rem;
+
+		&:hover {
+			opacity: 1;
+		}
+	}
+
+	/* Animation for special dishes */
+	@keyframes pulse {
+		0% {
+			opacity: 0.5;
+			transform: scale(1);
+		}
+		50% {
+			opacity: 1;
+			transform: scale(1.2);
+		}
+		100% {
+			opacity: 0.5;
+			transform: scale(1);
+		}
+	}
+
+	/* Responsive adjustments */
+	@screen md {
+		
+		&__title {
+			font-size: 1.25rem;
+		}
+
+		&__price {
+			font-size: 1.25rem;
+		}
+
+		&__description {
+			font-size: 0.95rem;
+		}
+	}
+
+	@screen lg {
+		&:hover {
+			transform: translateX(8px);
+		}
+	}
+}

@@ -1,0 +1,32 @@
+/* ===================================
+    Swiper Controls
+====================================== */
+
+/* -- arrows -- */
+.swiper-button-next,
+.swiper-button-prev {
+	@apply bg-calico-300/5 !w-8 !h-8 md:!w-12 md:!h-12 block rounded-full transition-all duration-300 ease-in-out z-50;
+	&:after {
+		@apply !text-[10px] md:!text-[18px] !font-bold !text-calico-200 transition-all duration-300 ease-in-out;
+	}
+	&:hover {
+		@apply !bg-calico-600 shadow-md;
+		&:after {
+			@apply !text-calico-900;
+		}
+	}
+}
+
+/* -- dots -- */
+.swiper-pagination {
+    @apply py-8 md:py-12;
+	&-bullet {
+		@apply !w-9 md:!w-12 !h-1 !bg-calico-300 !rounded-full !mr-2 !transition-all !duration-300 !ease-in-out;
+		&:hover {
+			@apply !bg-calico-400;
+		}
+		&.swiper-pagination-bullet-active {
+			@apply !bg-calico-700;
+		}
+	}
+}
