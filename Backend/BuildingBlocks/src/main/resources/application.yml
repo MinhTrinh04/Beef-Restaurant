@@ -1,3 +1,10 @@
 spring:
   application:
     name: "BuildingBlocks"
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    exchange: eshop_event_bus

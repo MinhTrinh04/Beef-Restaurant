@@ -11,7 +11,7 @@
 	<groupId>com.example</groupId>
 	<artifactId>ExampleService</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>EventBus</name>
+	<name>ExampleService</name>
 	<description>RabbitMQ Service</description>
 	<url/>
 	<licenses>
