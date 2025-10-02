@@ -1,4 +1,4 @@
-package com.example.buildingblocks.EventBus.Events;
+package com.eshop.buildingblocks.EventBus.Events;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

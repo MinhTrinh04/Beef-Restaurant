@@ -1,10 +1,10 @@
-package com.example.ExampleService;
+package com.eshop.MenuService;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ExampleServiceApplicationTests {
+class MenuServiceApplicationTests {
 
 	@Test
 	void contextLoads() {
