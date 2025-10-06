@@ -1,0 +1,34 @@
+@startuml
+title Luong Pub/Sub - Cap nhat Ton kho (Sau khi thanh toan)
+
+participant "Ordering Service" as Ordering
+participant "Message Broker" as Broker
+participant "Catalog Service" as Catalog
+database "Catalog DB" as DB
+
+skinparam sequenceMessageAlign center
+skinparam participant {
+    BackgroundColor LightBlue
+    BorderColor Blue
+}
+skinparam database {
+    BackgroundColor LightGreen
+    BorderColor Green
+}
+
+autonumber
+
+Ordering -> Broker: Pub(OrderStatusChangedToPaidIntegrationEvent)
+note right: Don hang da duoc thanh toan thanh cong.
+
+Broker --> Catalog: Sub(OrderStatusChangedToPaidIntegrationEvent)
+activate Catalog
+
+Catalog -> DB: Tru AvailableStock cua cac san pham da ban.
+activate DB
+DB --> Catalog: Return: Cap nhat thanh cong.
+deactivate DB
+
+deactivate Catalog
+
+@enduml

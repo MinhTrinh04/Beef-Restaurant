@@ -1,0 +1,44 @@
+@startuml
+title Luong Pub/Sub - Xac thuc Ton kho (Stock Validation)
+
+participant "Ordering Service" as Ordering
+participant "Message Broker" as Broker
+participant "Menu Service" as Catalog
+database "Catalog DB" as DB
+
+skinparam sequenceMessageAlign center
+skinparam participant {
+    BackgroundColor LightBlue
+    BorderColor Blue
+}
+skinparam database {
+    BackgroundColor LightGreen
+    BorderColor Green
+}
+
+autonumber
+
+Ordering -> Broker: Pub(OrderStatusChangedToAwaitingStockValidationIntegrationEvent)
+note right: Don hang moi, can kiem tra ton kho.
+
+Broker --> Catalog: Sub(OrderStatusChangedToAwaitingStockValidationIntegrationEvent)
+activate Catalog
+
+Catalog -> DB: Query: Lay AvailableStock cho tung san pham.
+activate DB
+DB --> Catalog: Return: So luong ton kho.
+deactivate DB
+
+alt#Gold #LightBlue San pham hop le (Du so luong)
+    Catalog -> Broker: Pub(OrderStockConfirmedIntegrationEvent)
+    note left: Tat ca san pham deu hop le.
+    Broker --> Ordering: Sub(OrderStockConfirmedIntegrationEvent)
+else #Pink #LightCoral San pham khong hop le (Khong du so luong)
+    Catalog -> Broker: Pub(OrderStockRejectedIntegrationEvent)
+    note left: Co it nhat mot san pham khong hop le.
+    Broker --> Ordering: Sub(OrderStockRejectedIntegrationEvent)
+end
+
+deactivate Catalog
+
+@enduml
