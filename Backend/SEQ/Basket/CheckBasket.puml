@@ -1,0 +1,36 @@
+@startuml
+skinparam handwritten false
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 10
+skinparam sequenceParticipant padding 15
+
+title Luồng 1: Checkout Giỏ hàng
+
+actor "Người dùng" as User
+participant "API Gateway" as Gateway
+participant "Basket Service" as BasketSvc
+participant "Dapr Pub/Sub" as PubSub
+participant "Ordering Service" as OrderingSvc
+
+User -> Gateway: 1. POST /api/v1/basket/checkout\n(gửi kèm thông tin giao hàng)
+activate Gateway
+
+Gateway -> BasketSvc: 2. Forward request (đã xác thực)
+activate BasketSvc
+
+BasketSvc -> BasketSvc: 3. Lấy giỏ hàng từ Redis
+note right: Dùng Dapr State Management
+
+BasketSvc -> PubSub: 4. Gửi sự kiện\n`UserCheckoutAcceptedIntegrationEvent`
+activate PubSub
+note right: Payload chứa tất cả\nthông tin giỏ hàng và người dùng
+
+BasketSvc --> Gateway: 5. Trả về mã 202 Accepted
+deactivate BasketSvc
+Gateway --> User: 6. Phản hồi "Yêu cầu đang xử lý"
+
+PubSub -> OrderingSvc: 7. Thông báo sự kiện tới Subscriber
+deactivate PubSub
+note right of OrderingSvc: Ordering Service bắt đầu\nquy trình tạo đơn hàng mới...
+
+@enduml

@@ -1,0 +1,88 @@
+@startuml
+' --- Style ---
+skinparam handwritten false
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 10
+skinparam sequenceParticipant padding 15
+autonumber "<b>[0]"
+
+title Luồng xử lý Đơn hàng thành công (Happy Path)
+
+' --- Participants ---
+participant "Basket Service" as Basket
+participant "Dapr Pub/Sub" as PubSub
+participant "Ordering Svc\n(Event Controller)" as OrdEventCtrl
+participant "OrderingProcessActor" as Actor
+participant "Ordering Svc\n(Update Controller)" as OrdUpdateCtrl
+database "SQL Read Model" as SqlDB
+participant "Menu Service" as Menu
+participant "Payment Service" as Payment
+
+' === Giai đoạn 1: Khởi tạo Đơn hàng ===
+box "1. Order Submission" #LightBlue
+    Basket -> PubSub: Gửi sự kiện `UserCheckoutAccepted`
+    PubSub -> OrdEventCtrl: Thông báo sự kiện
+    OrdEventCtrl -> Actor: Gọi `SubmitAsync()` để tạo Actor
+    activate Actor
+    note over Actor: - Lưu trạng thái `Submitted`\n- Đặt Reminder (GracePeriodElapsed)
+    Actor -> PubSub: Gửi sự kiện `OrderStatusChangedToSubmitted`
+end box
+
+' === Giai đoạn 1.1: Cập nhật Read Model ban đầu ===
+box "1.1. Initial Read Model Sync" #AliceBlue
+    PubSub -> OrdUpdateCtrl: Lắng nghe sự kiện `...Submitted`
+    activate OrdUpdateCtrl
+    OrdUpdateCtrl -> SqlDB: Tạo bản ghi Order mới
+    note right: Đồng thời gửi thông báo\nSignalR cho client
+    deactivate OrdUpdateCtrl
+end box
+
+' === Giai đoạn 2: Xác thực Kho ===
+box "2. Stock Validation" #LightGreen
+    ... Vài giây sau ...
+    Actor -> Actor: Reminder kích hoạt
+    Actor -> Actor: Chuyển trạng thái -> `AwaitingStockValidation`
+    Actor -> PubSub: Gửi sự kiện `...AwaitingStockValidation`
+    deactivate Actor
+    
+    PubSub -> Menu: Yêu cầu kiểm tra tồn kho
+    Menu --> PubSub: Phản hồi với `OrderStockConfirmed`
+    
+    PubSub -> OrdEventCtrl: Thông báo sự kiện `...StockConfirmed`
+    OrdEventCtrl -> Actor: Gọi `NotifyStockConfirmedAsync()`
+    activate Actor
+    Actor -> Actor: Chuyển trạng thái -> `Validated`
+    note over Actor: Đặt Reminder (StockConfirmed)
+end box
+
+' === Giai đoạn 3: Xử lý Thanh toán ===
+box "3. Payment Processing" #LightYellow
+    ... Vài giây sau ...
+    Actor -> Actor: Reminder kích hoạt
+    Actor -> PubSub: Gửi sự kiện `OrderStatusChangedToValidated`
+    deactivate Actor
+
+    PubSub -> OrdUpdateCtrl: Lắng nghe `...Validated`, cập nhật SQL & báo client
+    
+    PubSub -> Payment: Yêu cầu xử lý thanh toán
+    Payment --> PubSub: Phản hồi với `OrderPaymentSucceeded`
+    
+    PubSub -> OrdEventCtrl: Thông báo sự kiện `...PaymentSucceeded`
+    OrdEventCtrl -> Actor: Gọi `NotifyPaymentSucceededAsync()`
+    activate Actor
+    Actor -> Actor: Chuyển trạng thái -> `Paid`
+    note over Actor: Đặt Reminder (PaymentSucceeded)
+end box
+
+' === Giai đoạn 4: Hoàn tất ===
+box "4. Finalization" #LightCoral
+    ... Vài giây sau ...
+    Actor -> Actor: Reminder kích hoạt
+    Actor -> PubSub: Gửi sự kiện `OrderStatusChangedToPaid`
+    deactivate Actor
+    
+    PubSub -> OrdUpdateCtrl: Lắng nghe `...Paid`, cập nhật SQL & báo client
+    note right: Quy trình tiếp tục với các bước\nnhư Trừ kho, Giao hàng...
+end box
+
+@enduml
