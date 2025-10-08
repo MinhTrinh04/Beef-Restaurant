@@ -1,3 +1,11 @@
 spring:
   application:
     name: "MenuService"
+
+  datasource:
+    url:
+    username:
+    password:
+
+  jpa:
+    show-sql: true
