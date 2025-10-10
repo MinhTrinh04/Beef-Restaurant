@@ -9,16 +9,17 @@ import java.util.List;
 
 public interface IMenuService {
     // READ
+    List<MenuItemDto> getAllMenuItems();
     List<MenuItemDto> getMenuItemsByCategoryId(Integer Id);
     MenuItemDto getMenuItemById(Integer id);
-    List<MenuCategory> getAllCategories();
+    MenuItemDto getMenuItemBySlug(String slug);
 
     // CREATE
-    void createMenuItem(CreateOrUpdateMenuItemDto request);
+    void createMenuItem(MenuItemDto request);
 
     // UPDATE
     boolean updateMenuItem(MenuItemDto request);
 
     // DELETE
-    void deleteMenuItem(int id);
+    void deleteMenuItem(Integer id);
 }
