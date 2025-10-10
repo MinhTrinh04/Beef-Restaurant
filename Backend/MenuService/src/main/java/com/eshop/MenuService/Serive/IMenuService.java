@@ -9,15 +9,15 @@ import java.util.List;
 
 public interface IMenuService {
     // READ
-    List<MenuItemDto> getAllMenuItems();
-    MenuItemDto getMenuItemById(int id);
+    List<MenuItemDto> getMenuItemsByCategoryId(Integer Id);
+    MenuItemDto getMenuItemById(Integer id);
     List<MenuCategory> getAllCategories();
 
     // CREATE
-    MenuItemDto createMenuItem(CreateOrUpdateMenuItemDto request);
+    void createMenuItem(CreateOrUpdateMenuItemDto request);
 
     // UPDATE
-    MenuItemDto updateMenuItem(int id, CreateOrUpdateMenuItemDto request);
+    boolean updateMenuItem(MenuItemDto request);
 
     // DELETE
     void deleteMenuItem(int id);

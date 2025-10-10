@@ -11,5 +11,9 @@ import java.util.Optional;
 public interface MenuItemRepository extends JpaRepository<MenuItem, Integer> {
 
     //Select * from menu_items where menu_category_id = ?
-    Optional<MenuItem> findByMenuCategoryId(int categoryid);
+    Optional<MenuItem> findByMenuCategoryId(Integer categoryid);
+
+    Optional<MenuItem> findBySlug(String slug);
+
+    Optional<MenuItem> findById(Integer id);
 }

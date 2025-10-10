@@ -15,7 +15,7 @@ public class MenuItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
-    private int id;
+    private Integer id;
 
     @Column(name="name")
     private String name;
@@ -24,7 +24,7 @@ public class MenuItem {
     private String description;
 
     @Column(name="price")
-    private double price;
+    private Double price;
 
     @Column(name="slug")
     private String slug;
@@ -33,11 +33,11 @@ public class MenuItem {
     private String image; //Tạm thời để String maybe later sửa sau
 
     @Column(name="available_stock")
-    private int availableStock;
+    private Integer availableStock;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_category_id", nullable = false)
-    private MenuCategory menuCategory;
+    private MenuCategory menuCategoryId;
 
     public void Removestock(int quantityDesired) {
         if (this.availableStock < quantityDesired) {
