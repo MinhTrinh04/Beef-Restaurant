@@ -37,7 +37,7 @@ public class MenuItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_category_id", nullable = false)
-    private MenuCategory menuCategoryId;
+    private MenuCategory menuCategory;
 
     public void Removestock(int quantityDesired) {
         if (this.availableStock < quantityDesired) {

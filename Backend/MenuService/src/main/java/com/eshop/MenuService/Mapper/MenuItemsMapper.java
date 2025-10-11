@@ -13,7 +13,7 @@ public class MenuItemsMapper {
         menuItemDto.setSlug(menuItem.getSlug());
         menuItemDto.setImage(menuItem.getImage());
         menuItemDto.setAvailableStock(menuItem.getAvailableStock());
-        menuItemDto.setMenuCategoryId(menuItem.getMenuCategoryId());
+        menuItemDto.setMenuCategoryId(menuItem.getMenuCategory());
 
         return menuItemDto;
     }
@@ -26,7 +26,7 @@ public class MenuItemsMapper {
         menuItem.setSlug(menuItemDto.getSlug());
         menuItem.setImage(menuItemDto.getImage());
         menuItem.setAvailableStock(menuItemDto.getAvailableStock());
-        menuItem.setMenuCategoryId(menuItemDto.getMenuCategoryId());
+        menuItem.setMenuCategory(menuItemDto.getMenuCategoryId());
 
         return menuItem;
     }

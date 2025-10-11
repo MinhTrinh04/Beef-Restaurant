@@ -36,7 +36,7 @@ public class MenuServiceImpl implements IMenuService {
     @Transactional(readOnly = true)
     public List<MenuItemDto> getMenuItemsByCategoryId(Integer id) {
         Integer categoryId = menuCategoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("MenuCategory", "id", id.toString())).getId();
-        Optional<MenuItem> menuItems = menuItemRepository.findByMenuCategoryId(categoryId);
+        Optional<MenuItem> menuItems = menuItemRepository.findByMenuCategory_Id(categoryId);
         if (menuItems.isEmpty()) {
             throw new ResourceNotFoundException("MenuItemsByCategory", "id", id.toString());
         }
