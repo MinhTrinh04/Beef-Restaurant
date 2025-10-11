@@ -1,4 +1,4 @@
-package com.eshop.MenuService.Serive.Impl;
+package com.eshop.MenuService.Service.Impl;
 
 import com.eshop.MenuService.DTO.MenuItemDto;
 import com.eshop.MenuService.Exception.MenuItemAlreadyExistsException;
@@ -7,7 +7,7 @@ import com.eshop.MenuService.Infrastructure.Repository.MenuCategoryRepository;
 import com.eshop.MenuService.Infrastructure.Repository.MenuItemRepository;
 import com.eshop.MenuService.Mapper.MenuItemsMapper;
 import com.eshop.MenuService.Model.MenuItem;
-import com.eshop.MenuService.Serive.IMenuService;
+import com.eshop.MenuService.Service.IMenuService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -35,11 +35,14 @@ public class MenuServiceImpl implements IMenuService {
     @Override
     @Transactional(readOnly = true)
     public List<MenuItemDto> getMenuItemsByCategoryId(Integer id) {
-        Integer categoryId = menuCategoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("MenuCategory", "id", id.toString())).getId();
-        Optional<MenuItem> menuItems = menuItemRepository.findByMenuCategory_Id(categoryId);
-        if (menuItems.isEmpty()) {
+        if (!menuItemRepository.existsById(id)) {
+            log.error("MenuCategory not found with id: {}", id);
             throw new ResourceNotFoundException("MenuItemsByCategory", "id", id.toString());
         }
+        List<MenuItem> menuItems = menuItemRepository.findByMenuCategory(id).orElseThrow(() -> {
+            log.error("No MenuItems found for category id: {}", id);
+            throw new ResourceNotFoundException("MenuItemsByCategory", "id", id.toString());
+        });
         List<MenuItemDto> menuItemsDtos = menuItems.stream().map(menuItem -> MenuItemsMapper.mapToMenuItemDto(menuItem, new MenuItemDto())).collect(Collectors.toList());
 
         return menuItemsDtos;

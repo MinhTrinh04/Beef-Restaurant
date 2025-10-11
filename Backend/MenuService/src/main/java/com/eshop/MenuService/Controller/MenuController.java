@@ -3,7 +3,7 @@ package com.eshop.MenuService.Controller;
 import com.eshop.MenuService.Constants.MenuConstants;
 import com.eshop.MenuService.DTO.MenuItemDto;
 import com.eshop.MenuService.DTO.ResponseDto;
-import com.eshop.MenuService.Serive.IMenuService;
+import com.eshop.MenuService.Service.IMenuService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

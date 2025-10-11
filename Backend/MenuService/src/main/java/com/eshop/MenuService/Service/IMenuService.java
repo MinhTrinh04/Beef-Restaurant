@@ -1,4 +1,4 @@
-package com.eshop.MenuService.Serive;
+package com.eshop.MenuService.Service;
 
 
 import com.eshop.MenuService.DTO.MenuItemDto;

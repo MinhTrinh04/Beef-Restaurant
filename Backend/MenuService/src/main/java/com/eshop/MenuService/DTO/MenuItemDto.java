@@ -12,6 +12,6 @@ public class MenuItemDto {
     private String slug;
     private String image;
     private Integer availableStock;
-    private MenuCategory menuCategoryId; // Chỉ trả về tên category, không cần cả object
+    private Integer menuCategory; // Chỉ trả về tên category, không cần cả object
 }
 
