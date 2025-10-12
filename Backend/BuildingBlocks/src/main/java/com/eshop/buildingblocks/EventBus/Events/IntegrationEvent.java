@@ -1,13 +1,16 @@
 package com.eshop.buildingblocks.EventBus.Events;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.Instant;
 import java.util.UUID;
 
 @Getter
-@AllArgsConstructor
 public abstract class IntegrationEvent {
-    public UUID id;
-    public Instant creationDate;
+    private UUID id;
+    private Instant creationDate;
+
+    public IntegrationEvent() {
+        this.id = UUID.randomUUID();
+        this.creationDate = Instant.now();
+    }
 }
