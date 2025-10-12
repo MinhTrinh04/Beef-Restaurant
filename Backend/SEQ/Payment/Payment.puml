@@ -1,0 +1,55 @@
+@startuml
+' --- Style Enhancements ---
+skinparam handwritten false
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 20
+skinparam maxmessagesize 120
+skinparam sequenceParticipant padding 20
+skinparam sequenceBoxBackgroundColor LightYellow
+
+title Payment Process Flow 
+
+' --- Participants Definition ---
+participant "Ordering Service" as Ordering
+participant "Dapr Pub/Sub\n(Message Broker)" as PubSub
+participant "Payment Service" as Payment
+
+' === Luồng 1: Đơn hàng được xác thực ===
+box "1. Order Validation" #LightBlue
+    Ordering -> PubSub: Gửi sự kiện `OrderStatusChangedToValidated`
+    activate PubSub
+end box
+
+' === Luồng 2: Payment Service xử lý thanh toán ===
+box "2. Payment Processing" #LightGreen
+    PubSub -> Payment: Thông báo sự kiện tới Subscriber
+    activate Payment
+
+
+    ' Kết quả thanh toán có thể thành công hoặc thất bại
+    alt Payment Successful
+        Payment -> PubSub: Gửi sự kiện `OrderPaymentSucceeded`
+    else Payment Failed
+        Payment -> PubSub: Gửi sự kiện `OrderPaymentFailed`
+    end alt
+
+    deactivate Payment
+end box
+
+' === Luồng 3: Ordering Service cập nhật trạng thái cuối cùng ===
+box "3. Final Order Update" #LightCoral
+    ' Ordering Service cũng đăng ký lắng nghe sự kiện kết quả thanh toán
+    PubSub -> Ordering: Gửi kết quả (Succeeded hoặc Failed Event)
+    deactivate PubSub
+    activate Ordering
+    
+    note over Ordering
+        **Lắng nghe cả 2 sự kiện**
+        để cập nhật trạng thái cuối cùng
+        cho đơn hàng (ví dụ: Paid / PaymentFailed).
+    end note
+    
+    deactivate Ordering
+end box
+
+@enduml

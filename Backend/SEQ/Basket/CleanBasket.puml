@@ -1,0 +1,32 @@
+@startuml
+skinparam handwritten false
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 10
+skinparam sequenceParticipant padding 15
+
+title Luồng 2: Dọn dẹp giỏ hàng
+
+participant "Ordering Service" as OrderingSvc
+participant "Dapr Pub/Sub" as PubSub
+participant "Basket Service" as BasketSvc
+database "Redis\n(Dapr State Store)" as Redis
+
+note left of OrderingSvc: Đơn hàng đã được tạo\nvà lưu vào DB thành công.
+
+OrderingSvc -> PubSub: 1. Gửi sự kiện\n`OrderStatusChangedToSubmittedIntegrationEvent`
+activate PubSub
+
+PubSub -> BasketSvc: 2. Thông báo sự kiện tới Subscriber
+deactivate PubSub
+activate BasketSvc
+
+note right of BasketSvc: IntegrationEventController nhận sự kiện\nvà gọi Handler xử lý
+
+BasketSvc -> Redis: 3. Xóa giỏ hàng theo `BuyerId`
+activate Redis
+Redis --> BasketSvc: 4. Xóa thành công
+deactivate Redis
+
+deactivate BasketSvc
+
+@enduml

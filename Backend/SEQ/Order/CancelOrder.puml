@@ -1,0 +1,50 @@
+@startuml
+' --- Style ---
+skinparam handwritten false
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 10
+skinparam sequenceParticipant padding 15
+autonumber "<b>[0]"
+
+title Luồng Hủy Đơn hàng do Người dùng
+
+' --- Participants ---
+actor "Người dùng" as User
+participant "Ordering Svc\n(Orders Controller)" as OrdApiCtrl
+database "SQL Read Model" as SqlDB
+participant "OrderingProcessActor" as Actor
+participant "Dapr Pub/Sub" as PubSub
+participant "Ordering Svc\n(Update Controller)" as OrdUpdateCtrl
+
+' --- Flow ---
+User -> OrdApiCtrl: 1. PUT /api/v1/orders/{id}/cancel
+activate OrdApiCtrl
+
+OrdApiCtrl -> SqlDB: 2. Tìm Order theo ID để lấy Actor GUID
+activate SqlDB
+SqlDB --> OrdApiCtrl: 3. Trả về thông tin Order
+deactivate SqlDB
+
+OrdApiCtrl -> Actor: 4. Gọi `CancelAsync()`
+activate Actor
+
+note over Actor: Kiểm tra xem đơn hàng\ncó được phép hủy không.
+Actor -> Actor: 5. Cập nhật trạng thái -> `Cancelled`
+Actor -> PubSub: 6. Gửi sự kiện `OrderStatusChangedToCancelled`
+activate PubSub
+
+Actor --> OrdApiCtrl: 7. Trả về kết quả `true`
+deactivate Actor
+
+OrdApiCtrl --> User: 8. Phản hồi 200 OK
+deactivate OrdApiCtrl
+
+' --- Background Update ---
+PubSub -> OrdUpdateCtrl: 9. Thông báo sự kiện `...Cancelled`
+deactivate PubSub
+activate OrdUpdateCtrl
+OrdUpdateCtrl -> SqlDB: 10. Cập nhật trạng thái trong SQL
+note right: Đồng thời gửi thông báo\nSignalR cho client
+deactivate OrdUpdateCtrl
+
+@enduml
