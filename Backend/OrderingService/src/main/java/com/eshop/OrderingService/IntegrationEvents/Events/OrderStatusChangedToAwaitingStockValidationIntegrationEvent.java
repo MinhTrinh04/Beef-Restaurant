@@ -1,6 +1,6 @@
 package com.eshop.OrderingService.IntegrationEvents.Events;
 
-import com.eshop.buildingblocks.EventBus.Abstractions.IntegrationEvent;
+import com.eshop.buildingblocks.EventBus.Events.IntegrationEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import java.util.List;
