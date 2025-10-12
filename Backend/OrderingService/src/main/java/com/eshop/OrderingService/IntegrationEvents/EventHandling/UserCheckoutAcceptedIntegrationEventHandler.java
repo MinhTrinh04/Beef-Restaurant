@@ -9,6 +9,7 @@ import com.eshop.buildingblocks.EventBus.Abstractions.IIntegrationEventHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,9 +50,9 @@ public class UserCheckoutAcceptedIntegrationEventHandler
         orderDTO.setOrderItems(orderItems);
 
         // Calculate total
-        Double total = orderItems.stream()
-                .mapToDouble(item -> item.getUnitPrice() * item.getUnits())
-                .sum();
+        BigDecimal total = orderItems.stream()
+                .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getUnits())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
         orderDTO.setTotal(total);
 
         orderingService.createOrder(orderDTO);

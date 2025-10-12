@@ -3,6 +3,8 @@ package com.eshop.OrderingService.IntegrationEvents.Events;
 import com.eshop.buildingblocks.EventBus.Events.IntegrationEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -53,7 +55,7 @@ public class UserCheckoutAcceptedIntegrationEvent extends IntegrationEvent {
         private String id;
         private String productId;
         private String productName;
-        private Double unitPrice;
+        private BigDecimal unitPrice;
         private Double oldUnitPrice;
         private Integer quantity;
         private String pictureUrl;
@@ -61,7 +63,7 @@ public class UserCheckoutAcceptedIntegrationEvent extends IntegrationEvent {
         public BasketItem() {
         }
 
-        public BasketItem(String id, String productId, String productName, Double unitPrice,
+        public BasketItem(String id, String productId, String productName, BigDecimal unitPrice,
                 Double oldUnitPrice, Integer quantity, String pictureUrl) {
             this.id = id;
             this.productId = productId;

@@ -3,6 +3,8 @@ package com.eshop.OrderingService.Model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "order_items")
 @Data
@@ -12,7 +14,7 @@ public class OrderItem {
     private Long id;
     private String productId;
     private String productName;
-    private Double unitPrice;
+    private BigDecimal unitPrice;
     private Integer units;
     private String pictureUrl;
 }

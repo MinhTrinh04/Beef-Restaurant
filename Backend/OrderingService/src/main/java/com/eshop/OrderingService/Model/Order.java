@@ -2,6 +2,8 @@ package com.eshop.OrderingService.Model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,5 +25,5 @@ public class Order {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "order_id")
     private List<OrderItem> orderItems;
-    private Double total;
+    private BigDecimal total;
 }
