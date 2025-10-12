@@ -19,5 +19,5 @@ public interface IMenuService {
     boolean updateMenuItem(MenuItemDto request);
 
     // DELETE
-    void deleteMenuItem(Integer id);
+    boolean deleteMenuItem(Integer id);
 }

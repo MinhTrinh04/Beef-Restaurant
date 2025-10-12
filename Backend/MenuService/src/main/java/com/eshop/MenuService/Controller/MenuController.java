@@ -63,8 +63,12 @@ public class MenuController {
 
     @DeleteMapping("/items/{id}")
     public ResponseEntity<ResponseDto> deleteMenuItem(@PathVariable Integer id) {
-        menuService.deleteMenuItem(id);
-        return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseDto(MenuConstants.STATUS_417, MenuConstants.MESSAGE_417_DELETE)); // Trả về 204 No Content
+        boolean isDeleted = menuService.deleteMenuItem(id);
+        if (isDeleted) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(MenuConstants.STATUS_200, MenuConstants.MESSAGE_200));
+        } else {
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseDto(MenuConstants.STATUS_417, MenuConstants.MESSAGE_417_DELETE));
+        }
     }
 
 }

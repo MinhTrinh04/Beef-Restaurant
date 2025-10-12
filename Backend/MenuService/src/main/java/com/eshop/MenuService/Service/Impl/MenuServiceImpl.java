@@ -70,9 +70,10 @@ public class MenuServiceImpl implements IMenuService {
     public void createMenuItem(MenuItemDto request) {
         MenuItem menuItem = MenuItemsMapper.mapToMenuItem(request, new MenuItem());
         Optional<MenuItem> optionalMenuItem = menuItemRepository.findBySlug(request.getSlug());
-        if (optionalMenuItem.isEmpty()) {
-            throw new MenuItemAlreadyExistsException("MenuItem exists with the given slug" + request.getSlug());
+        if (optionalMenuItem.isPresent()) {
+            throw new MenuItemAlreadyExistsException("MenuItem exists with the given slug " + request.getSlug());
         }
+        log.info("Create MenuItem successfully");
         menuItemRepository.save(menuItem);
     }
 
@@ -89,8 +90,9 @@ public class MenuServiceImpl implements IMenuService {
 
     @Override
     @Transactional
-    public void deleteMenuItem(Integer id) {
+    public boolean deleteMenuItem(Integer id) {
         MenuItem menuItem = menuItemRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("MenuItem", "id", id.toString()));
         menuItemRepository.deleteById(id);
+        return true;
     }
 }
