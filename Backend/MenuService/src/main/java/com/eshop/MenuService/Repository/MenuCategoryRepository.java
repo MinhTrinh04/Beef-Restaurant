@@ -1,4 +1,4 @@
-package com.eshop.MenuService.Infrastructure.Repository;
+package com.eshop.MenuService.Repository;
 
 import com.eshop.MenuService.Model.MenuCategory;
 import org.springframework.data.jpa.repository.JpaRepository;

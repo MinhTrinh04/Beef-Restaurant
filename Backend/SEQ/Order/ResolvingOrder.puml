@@ -1,0 +1,114 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+skinparam shadowing false
+skinparam responseMessageBelowArrow false
+skinparam DefaultFontColor #222
+skinparam TitleFontSize 25
+skinparam NoteBorderColor #teal
+skinparam NoteBackgroundColor #powderblue
+skinparam NoteFontColor 444
+skinparam DatabaseBorderColor #teal
+skinparam DatabaseBackgroundColor #bisque
+skinparam sequence {
+ParticipantBorderThickness 1
+ParticipantBorderColor #teal
+ParticipantBackgroundColor #teal
+ParticipantFontColor #white
+ParticipantFontSize 14
+ParticipantFontStyle bold
+LifeLineBorderColor #teal
+LifeLineBackgroundColor #aliceblue
+ArrowColor #teal
+ActorBorderColor #teal
+GroupBorderThickness 1
+GroupBorderColor #teal
+GroupHeaderFontColor #white
+GroupBackgroundColor #teal
+GroupFontColor #teal
+ReferenceBorderThickness 1
+ReferenceBorderColor #teal
+ReferenceBackgroundColor #aliceblue
+ReferenceHeaderBackgroundColor #white
+ReferenceFontColor #teal
+}
+autonumber
+
+title Luồng xử lý Đơn hàng
+
+participant "Basket" as Basket
+participant "Rabbit" as MQ
+participant "OrderingProcessEvent" as OPE
+participant "OrderingProcessActor" as Actor
+participant "OrderingStatusEvent" as OSE
+database "Order DB" as DB
+participant "Menu" as Menu
+participant "Payment" as Payment
+
+    Basket -> MQ: PUB(UserCheckoutAcceptedIntegrationEvent)
+    MQ --> OPE: SUB(UserCheckoutAcceptedIntegrationEvent)
+    OPE -> Actor: orderingProcess.SubmitAsync
+    activate Actor
+    note over Actor: Đặt Reminder (GracePeriodElapsedReminder)
+    Actor -> MQ: PUB(OrderStatusChangedToSubmittedIntegrationEvent)
+
+    MQ --> Basket: SUB(OrderStatusChangedToSubmittedIntegrationEvent)
+    MQ --> OSE: SUB(OrderStatusChangedToSubmittedIntegrationEvent)
+    OSE -> DB: Tạo bản ghi Order mới
+
+    ... Vài giây sau ...
+    Actor -> Actor: Reminder kích hoạt
+    Actor -> MQ: PUB(OrderStatusChangedToAwaitingStockValidationIntegrationEvent)
+    deactivate Actor
+    
+    MQ --> Menu: SUB(OrderStatusChangedToAwaitingStockValidationIntegrationEvent)
+
+alt Sản phẩm tồn kho
+    Menu -> MQ: PUB(OrderStockConfirmed)
+    MQ --> OPE: SUB(OrderStockConfirmed)
+    OPE -> Actor: NotifyStockConfirmedAsync()
+    activate Actor
+    note over Actor: Đặt Reminder (StockConfirmedReminder)
+    Actor -> Actor: Reminder kích hoạt
+    Actor -> MQ: PUB(OrderStatusChangedToValidatedIntegrationEvent)
+    deactivate Actor
+    MQ --> Payment: SUB(OrderStatusChangedToValidatedIntegrationEvent)
+
+    alt Thanh toán thành công
+        Payment -> MQ: PUB(OrderPaymentSucceededIntegrationEvent)
+        MQ --> OPE: SUB(OrderPaymentSucceededIntegrationEvent)
+        OPE -> Actor: NotifyPaymentSucceededAsync()
+        activate Actor
+            note over Actor: Đặt Reminder (PaymentSucceeded)
+            Actor -> Actor: Reminder kích hoạt
+            Actor -> MQ: PUB(OrderStatusChangedToPaidIntegrationEvent)
+        deactivate Actor
+        MQ --> Menu: SUB(OrderStatusChangedToPaidIntegrationEvent)
+        Menu -> Menu: RemoveStock()
+
+
+    else #Pink Thanh toán ko thành công
+    Payment -> MQ: PUB(OrderPaymentFailedIntegrationEvent)
+    MQ--> OPE: SUB(OrderPaymentFailedIntegrationEvent)
+    OPE -> Actor: NotifyPaymentFailedAsync()
+    activate Actor
+    note over Actor: Đặt Reminder (PaymentFailed)
+    Actor -> Actor: Reminder kích hoạt
+    Actor -> MQ: PUB(OrderStatusChangedToCancelledIntegrationEvent)
+    deactivate Actor
+    MQ--> OSE: SUB(OrderStatusChangedToCancelledIntegrationEvent)
+
+    end
+
+else #Pink Sản phẩm ko tồn kho
+    Menu -> MQ: PUB(OrderStockRejected)
+    MQ --> OPE: SUB(OrderStockRejected)
+    OPE -> Actor: NotifyStockRejectedAsync()
+    activate Actor
+    note over Actor: Đặt Reminder (StockRejectedReminder)
+    Actor -> Actor: Reminder kích hoạt
+    Actor -> MQ: PUB(OrderStatusChangedToCancelledIntegrationEvent)
+    deactivate Actor
+    MQ --> OSE: SUB(OrderStatusChangedToCancelledIntegrationEvent)
+end
+
+@enduml

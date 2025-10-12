@@ -1,0 +1,79 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+skinparam shadowing false
+skinparam responseMessageBelowArrow false
+skinparam DefaultFontColor #222
+skinparam TitleFontSize 25
+skinparam NoteBorderColor #teal
+skinparam NoteBackgroundColor #powderblue
+skinparam NoteFontColor 444
+skinparam DatabaseBorderColor #teal
+skinparam DatabaseBackgroundColor #bisque
+skinparam sequence {
+ParticipantBorderThickness 1
+ParticipantBorderColor #teal
+ParticipantBackgroundColor #teal
+ParticipantFontColor #white
+ParticipantFontSize 14
+ParticipantFontStyle bold
+LifeLineBorderColor #teal
+LifeLineBackgroundColor #aliceblue
+ArrowColor #teal
+ActorBorderColor #teal
+GroupBorderThickness 1
+GroupBorderColor #teal
+GroupHeaderFontColor #white
+GroupBackgroundColor #teal
+GroupFontColor #teal
+ReferenceBorderThickness 1
+ReferenceBorderColor #teal
+ReferenceBackgroundColor #aliceblue
+ReferenceHeaderBackgroundColor #white
+ReferenceFontColor #teal
+}
+autonumber
+
+title Luồng thanh toán
+
+' --- Participants Definition ---
+participant "Ordering Service" as Ordering
+participant "Rabbit" as MQ
+participant "Payment Service" as Payment
+
+' === Luồng 1: Đơn hàng được xác thực ===
+box "1. Order Validation" #LightBlue
+    Ordering -> MQ: Gửi sự kiện `OrderStatusChangedToValidated`
+    activate MQ
+end box
+
+' === Luồng 2: Payment Service xử lý thanh toán ===
+box "2. Payment Processing" #LightGreen
+    MQ -> Payment: Thông báo sự kiện tới Subscriber
+    activate Payment
+
+
+    ' Kết quả thanh toán có thể thành công hoặc thất bại
+    alt Payment Successful
+        Payment -> MQ: Gửi sự kiện `OrderPaymentSucceeded`
+    else Payment Failed
+        Payment -> MQ: Gửi sự kiện `OrderPaymentFailed`
+    end alt
+
+    deactivate Payment
+end box
+
+box "3. Final Order Update" #LightCoral
+    MQ -> Ordering: Gửi kết quả (Succeeded hoặc Failed Event)
+    deactivate MQ
+    activate Ordering
+    
+    note over Ordering
+        **Lắng nghe cả 2 sự kiện**
+        để cập nhật trạng thái cuối cùng
+        cho đơn hàng (ví dụ: Paid / PaymentFailed).
+    end note
+    
+    deactivate Ordering
+end box
+
+@enduml
