@@ -43,7 +43,7 @@ participant "Rabbit" as MQ
 participant "Ordering Status Event" as OSE
 
 ' --- Flow ---
-User -> OC: PUT /api/v1/orders/{id}/cancel
+User -> OC: PUT /api/v1/orders/{id}/ship
 activate OC
 
 OC -> DB: Tìm Order theo ID để lấy Actor GUID
@@ -51,12 +51,11 @@ activate DB
 DB --> OC: Trả về thông tin Order
 deactivate DB
 
-OC -> Actor: CancelAsync()
+OC -> Actor: ShipAsync()
 activate Actor
 
-note over Actor: Kiểm tra xem đơn hàng\ncó được phép hủy không.
-Actor -> Actor: Cập nhật trạng thái -> `Cancelled`
-Actor -> MQ: PUB(OrderStatusChangedToCancelled)
+Actor -> Actor: Cập nhật trạng thái -> `Shipped`
+Actor -> MQ: PUB(OrderStatusChangedToShipped)
 activate MQ
 
 Actor --> OC: Trả về kết quả `true`
@@ -66,7 +65,7 @@ OC --> User: Phản hồi 200 OK
 deactivate OC
 
 ' --- Background Update ---
-MQ -> OSE: SUB(OrderStatusChangedToCancelled))
+MQ -> OSE: SUB(OrderStatusChangedToShipped))
 deactivate MQ
 activate OSE
 OSE -> DB: Cập nhật trạng thái trong SQL

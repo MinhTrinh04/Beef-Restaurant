@@ -33,7 +33,7 @@ ReferenceFontColor #teal
 }
 autonumber
 
-title Luồng xử lý Đơn hàng thành công (Happy Path)
+title Luồng xử lý Đơn hàng
 
 participant "Basket" as Basket
 participant "Rabbit" as MQ
@@ -45,14 +45,14 @@ participant "Menu" as Menu
 participant "Payment" as Payment
 
     Basket -> MQ: PUB(UserCheckoutAcceptedIntegrationEvent)
-    MQ -> OPE: SUB(UserCheckoutAcceptedIntegrationEvent)
+    MQ --> OPE: SUB(UserCheckoutAcceptedIntegrationEvent)
     OPE -> Actor: orderingProcess.SubmitAsync
     activate Actor
     note over Actor: Đặt Reminder (GracePeriodElapsedReminder)
     Actor -> MQ: PUB(OrderStatusChangedToSubmittedIntegrationEvent)
 
-    MQ -> Basket: SUB(OrderStatusChangedToSubmittedIntegrationEvent)
-    MQ -> OSE: SUB(OrderStatusChangedToSubmittedIntegrationEvent)
+    MQ --> Basket: SUB(OrderStatusChangedToSubmittedIntegrationEvent)
+    MQ --> OSE: SUB(OrderStatusChangedToSubmittedIntegrationEvent)
     OSE -> DB: Tạo bản ghi Order mới
 
     ... Vài giây sau ...
@@ -60,22 +60,22 @@ participant "Payment" as Payment
     Actor -> MQ: PUB(OrderStatusChangedToAwaitingStockValidationIntegrationEvent)
     deactivate Actor
     
-    MQ -> Menu: SUB(OrderStatusChangedToAwaitingStockValidationIntegrationEvent)
+    MQ --> Menu: SUB(OrderStatusChangedToAwaitingStockValidationIntegrationEvent)
 
 alt Sản phẩm tồn kho
-    Menu --> MQ: PUB(OrderStockConfirmed)
-    MQ -> OPE: SUB(OrderStockConfirmed)
+    Menu -> MQ: PUB(OrderStockConfirmed)
+    MQ --> OPE: SUB(OrderStockConfirmed)
     OPE -> Actor: NotifyStockConfirmedAsync()
     activate Actor
     note over Actor: Đặt Reminder (StockConfirmedReminder)
     Actor -> Actor: Reminder kích hoạt
-    Actor --> MQ: PUB(OrderStatusChangedToValidatedIntegrationEvent)
+    Actor -> MQ: PUB(OrderStatusChangedToValidatedIntegrationEvent)
     deactivate Actor
-    MQ -> Payment: SUB(OrderStatusChangedToValidatedIntegrationEvent)
+    MQ --> Payment: SUB(OrderStatusChangedToValidatedIntegrationEvent)
 
     alt Thanh toán thành công
-        Payment --> MQ: PUB(OrderPaymentSucceededIntegrationEvent)
-        MQ -> OPE: SUB(OrderPaymentSucceededIntegrationEvent)
+        Payment -> MQ: PUB(OrderPaymentSucceededIntegrationEvent)
+        MQ --> OPE: SUB(OrderPaymentSucceededIntegrationEvent)
         OPE -> Actor: NotifyPaymentSucceededAsync()
         activate Actor
             note over Actor: Đặt Reminder (PaymentSucceeded)
@@ -86,11 +86,12 @@ alt Sản phẩm tồn kho
         Menu -> Menu: RemoveStock()
 
 
-    else Thanh toán ko thành công
-    Payment --> MQ: PUB(OrderPaymentFailedIntegrationEvent)
-    MQ-> OPE: SUB(OrderPaymentFailedIntegrationEvent)
+    else #Pink Thanh toán ko thành công
+    Payment -> MQ: PUB(OrderPaymentFailedIntegrationEvent)
+    MQ--> OPE: SUB(OrderPaymentFailedIntegrationEvent)
     OPE -> Actor: NotifyPaymentFailedAsync()
     activate Actor
+    note over Actor: Đặt Reminder (PaymentFailed)
     Actor -> Actor: Reminder kích hoạt
     Actor -> MQ: PUB(OrderStatusChangedToCancelledIntegrationEvent)
     deactivate Actor
@@ -98,16 +99,16 @@ alt Sản phẩm tồn kho
 
     end
 
-else Sản phẩm ko tồn kho
-    Menu --> MQ: PUB(OrderStockRejected)
-    MQ -> OPE: SUB(OrderStockRejected)
+else #Pink Sản phẩm ko tồn kho
+    Menu -> MQ: PUB(OrderStockRejected)
+    MQ --> OPE: SUB(OrderStockRejected)
     OPE -> Actor: NotifyStockRejectedAsync()
     activate Actor
     note over Actor: Đặt Reminder (StockRejectedReminder)
     Actor -> Actor: Reminder kích hoạt
-    Actor --> MQ: PUB(OrderStatusChangedToCancelledIntegrationEvent)
+    Actor -> MQ: PUB(OrderStatusChangedToCancelledIntegrationEvent)
     deactivate Actor
-    MQ-> OSE: SUB(OrderStatusChangedToCancelledIntegrationEvent)
+    MQ --> OSE: SUB(OrderStatusChangedToCancelledIntegrationEvent)
 end
 
 @enduml
