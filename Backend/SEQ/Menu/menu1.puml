@@ -1,10 +1,43 @@
 @startuml
-title Luong Pub/Sub - Xac thuc Ton kho (Stock Validation)
+'https://plantuml.com/sequence-diagram
+skinparam shadowing false
+skinparam responseMessageBelowArrow false
+skinparam DefaultFontColor #222
+skinparam TitleFontSize 25
+skinparam NoteBorderColor #teal
+skinparam NoteBackgroundColor #powderblue
+skinparam NoteFontColor 444
+skinparam DatabaseBorderColor #teal
+skinparam DatabaseBackgroundColor #bisque
+skinparam sequence {
+ParticipantBorderThickness 1
+ParticipantBorderColor #teal
+ParticipantBackgroundColor #teal
+ParticipantFontColor #white
+ParticipantFontSize 14
+ParticipantFontStyle bold
+LifeLineBorderColor #teal
+LifeLineBackgroundColor #aliceblue
+ArrowColor #teal
+ActorBorderColor #teal
+GroupBorderThickness 1
+GroupBorderColor #teal
+GroupHeaderFontColor #white
+GroupBackgroundColor #teal
+GroupFontColor #teal
+ReferenceBorderThickness 1
+ReferenceBorderColor #teal
+ReferenceBackgroundColor #aliceblue
+ReferenceHeaderBackgroundColor #white
+ReferenceFontColor #teal
+}
+autonumber
+title Xác thực tồn kho (Stock Validation)
 
-participant "Ordering Service" as Ordering
-participant "Message Broker" as Broker
-participant "Menu Service" as Catalog
-database "Catalog DB" as DB
+participant "Ordering" as Ordering
+participant "Rabbit" as MQ
+participant "Menu" as Menu
+database "Menu DB" as DB
 
 skinparam sequenceMessageAlign center
 skinparam participant {
@@ -18,27 +51,27 @@ skinparam database {
 
 autonumber
 
-Ordering -> Broker: Pub(OrderStatusChangedToAwaitingStockValidationIntegrationEvent)
+Ordering -> MQ: PUB(OrderStatusChangedToAwaitingStockValidationIntegrationEvent)
 note right: Don hang moi, can kiem tra ton kho.
 
-Broker --> Catalog: Sub(OrderStatusChangedToAwaitingStockValidationIntegrationEvent)
-activate Catalog
+MQ --> Menu: SUB(OrderStatusChangedToAwaitingStockValidationIntegrationEvent)
+activate Menu
 
-Catalog -> DB: Query: Lay AvailableStock cho tung san pham.
+Menu -> DB: Query: Lay AvailableStock cho tung san pham.
 activate DB
-DB --> Catalog: Return: So luong ton kho.
+DB --> Menu: Return: So luong ton kho.
 deactivate DB
 
-alt#Gold #LightBlue San pham hop le (Du so luong)
-    Catalog -> Broker: Pub(OrderStockConfirmedIntegrationEvent)
+alt San pham hop le (Du so luong)
+    Menu -> MQ: PUB(OrderStockConfirmedIntegrationEvent)
     note left: Tat ca san pham deu hop le.
-    Broker --> Ordering: Sub(OrderStockConfirmedIntegrationEvent)
+    MQ --> Ordering: SUB(OrderStockConfirmedIntegrationEvent)
 else #Pink #LightCoral San pham khong hop le (Khong du so luong)
-    Catalog -> Broker: Pub(OrderStockRejectedIntegrationEvent)
+    Menu -> MQ: PUB(OrderStockRejectedIntegrationEvent)
     note left: Co it nhat mot san pham khong hop le.
-    Broker --> Ordering: Sub(OrderStockRejectedIntegrationEvent)
+    MQ --> Ordering: SUB(OrderStockRejectedIntegrationEvent)
 end
 
-deactivate Catalog
+deactivate Menu
 
 @enduml

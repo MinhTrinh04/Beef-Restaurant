@@ -1,88 +1,113 @@
 @startuml
-' --- Style ---
-skinparam handwritten false
-skinparam sequenceArrowThickness 2
-skinparam roundcorner 10
-skinparam sequenceParticipant padding 15
-autonumber "<b>[0]"
+'https://plantuml.com/sequence-diagram
+skinparam shadowing false
+skinparam responseMessageBelowArrow false
+skinparam DefaultFontColor #222
+skinparam TitleFontSize 25
+skinparam NoteBorderColor #teal
+skinparam NoteBackgroundColor #powderblue
+skinparam NoteFontColor 444
+skinparam DatabaseBorderColor #teal
+skinparam DatabaseBackgroundColor #bisque
+skinparam sequence {
+ParticipantBorderThickness 1
+ParticipantBorderColor #teal
+ParticipantBackgroundColor #teal
+ParticipantFontColor #white
+ParticipantFontSize 14
+ParticipantFontStyle bold
+LifeLineBorderColor #teal
+LifeLineBackgroundColor #aliceblue
+ArrowColor #teal
+ActorBorderColor #teal
+GroupBorderThickness 1
+GroupBorderColor #teal
+GroupHeaderFontColor #white
+GroupBackgroundColor #teal
+GroupFontColor #teal
+ReferenceBorderThickness 1
+ReferenceBorderColor #teal
+ReferenceBackgroundColor #aliceblue
+ReferenceHeaderBackgroundColor #white
+ReferenceFontColor #teal
+}
+autonumber
 
 title Luồng xử lý Đơn hàng thành công (Happy Path)
 
-' --- Participants ---
-participant "Basket Service" as Basket
-participant "Dapr Pub/Sub" as PubSub
-participant "Ordering Svc\n(Event Controller)" as OrdEventCtrl
+participant "Basket" as Basket
+participant "Rabbit" as MQ
+participant "OrderingProcessEvent" as OPE
 participant "OrderingProcessActor" as Actor
-participant "Ordering Svc\n(Update Controller)" as OrdUpdateCtrl
-database "SQL Read Model" as SqlDB
-participant "Menu Service" as Menu
-participant "Payment Service" as Payment
+participant "OrderingStatusEvent" as OSE
+database "Order DB" as DB
+participant "Menu" as Menu
+participant "Payment" as Payment
 
-' === Giai đoạn 1: Khởi tạo Đơn hàng ===
-box "1. Order Submission" #LightBlue
-    Basket -> PubSub: Gửi sự kiện `UserCheckoutAccepted`
-    PubSub -> OrdEventCtrl: Thông báo sự kiện
-    OrdEventCtrl -> Actor: Gọi `SubmitAsync()` để tạo Actor
+    Basket -> MQ: PUB(UserCheckoutAcceptedIntegrationEvent)
+    MQ -> OPE: SUB(UserCheckoutAcceptedIntegrationEvent)
+    OPE -> Actor: orderingProcess.SubmitAsync
     activate Actor
-    note over Actor: - Lưu trạng thái `Submitted`\n- Đặt Reminder (GracePeriodElapsed)
-    Actor -> PubSub: Gửi sự kiện `OrderStatusChangedToSubmitted`
-end box
+    note over Actor: Đặt Reminder (GracePeriodElapsedReminder)
+    Actor -> MQ: PUB(OrderStatusChangedToSubmittedIntegrationEvent)
 
-' === Giai đoạn 1.1: Cập nhật Read Model ban đầu ===
-box "1.1. Initial Read Model Sync" #AliceBlue
-    PubSub -> OrdUpdateCtrl: Lắng nghe sự kiện `...Submitted`
-    activate OrdUpdateCtrl
-    OrdUpdateCtrl -> SqlDB: Tạo bản ghi Order mới
-    note right: Đồng thời gửi thông báo\nSignalR cho client
-    deactivate OrdUpdateCtrl
-end box
+    MQ -> Basket: SUB(OrderStatusChangedToSubmittedIntegrationEvent)
+    MQ -> OSE: SUB(OrderStatusChangedToSubmittedIntegrationEvent)
+    OSE -> DB: Tạo bản ghi Order mới
 
-' === Giai đoạn 2: Xác thực Kho ===
-box "2. Stock Validation" #LightGreen
     ... Vài giây sau ...
     Actor -> Actor: Reminder kích hoạt
-    Actor -> Actor: Chuyển trạng thái -> `AwaitingStockValidation`
-    Actor -> PubSub: Gửi sự kiện `...AwaitingStockValidation`
+    Actor -> MQ: PUB(OrderStatusChangedToAwaitingStockValidationIntegrationEvent)
     deactivate Actor
     
-    PubSub -> Menu: Yêu cầu kiểm tra tồn kho
-    Menu --> PubSub: Phản hồi với `OrderStockConfirmed`
-    
-    PubSub -> OrdEventCtrl: Thông báo sự kiện `...StockConfirmed`
-    OrdEventCtrl -> Actor: Gọi `NotifyStockConfirmedAsync()`
+    MQ -> Menu: SUB(OrderStatusChangedToAwaitingStockValidationIntegrationEvent)
+
+alt Sản phẩm tồn kho
+    Menu --> MQ: PUB(OrderStockConfirmed)
+    MQ -> OPE: SUB(OrderStockConfirmed)
+    OPE -> Actor: NotifyStockConfirmedAsync()
     activate Actor
-    Actor -> Actor: Chuyển trạng thái -> `Validated`
-    note over Actor: Đặt Reminder (StockConfirmed)
-end box
-
-' === Giai đoạn 3: Xử lý Thanh toán ===
-box "3. Payment Processing" #LightYellow
-    ... Vài giây sau ...
+    note over Actor: Đặt Reminder (StockConfirmedReminder)
     Actor -> Actor: Reminder kích hoạt
-    Actor -> PubSub: Gửi sự kiện `OrderStatusChangedToValidated`
+    Actor --> MQ: PUB(OrderStatusChangedToValidatedIntegrationEvent)
     deactivate Actor
+    MQ -> Payment: SUB(OrderStatusChangedToValidatedIntegrationEvent)
 
-    PubSub -> OrdUpdateCtrl: Lắng nghe `...Validated`, cập nhật SQL & báo client
-    
-    PubSub -> Payment: Yêu cầu xử lý thanh toán
-    Payment --> PubSub: Phản hồi với `OrderPaymentSucceeded`
-    
-    PubSub -> OrdEventCtrl: Thông báo sự kiện `...PaymentSucceeded`
-    OrdEventCtrl -> Actor: Gọi `NotifyPaymentSucceededAsync()`
+    alt Thanh toán thành công
+        Payment --> MQ: PUB(OrderPaymentSucceededIntegrationEvent)
+        MQ -> OPE: SUB(OrderPaymentSucceededIntegrationEvent)
+        OPE -> Actor: NotifyPaymentSucceededAsync()
+        activate Actor
+            note over Actor: Đặt Reminder (PaymentSucceeded)
+            Actor -> Actor: Reminder kích hoạt
+            Actor -> MQ: PUB(OrderStatusChangedToPaidIntegrationEvent)
+        deactivate Actor
+        MQ --> Menu: SUB(OrderStatusChangedToPaidIntegrationEvent)
+        Menu -> Menu: RemoveStock()
+
+
+    else Thanh toán ko thành công
+    Payment --> MQ: PUB(OrderPaymentFailedIntegrationEvent)
+    MQ-> OPE: SUB(OrderPaymentFailedIntegrationEvent)
+    OPE -> Actor: NotifyPaymentFailedAsync()
     activate Actor
-    Actor -> Actor: Chuyển trạng thái -> `Paid`
-    note over Actor: Đặt Reminder (PaymentSucceeded)
-end box
-
-' === Giai đoạn 4: Hoàn tất ===
-box "4. Finalization" #LightCoral
-    ... Vài giây sau ...
     Actor -> Actor: Reminder kích hoạt
-    Actor -> PubSub: Gửi sự kiện `OrderStatusChangedToPaid`
+    Actor -> MQ: PUB(OrderStatusChangedToCancelledIntegrationEvent)
     deactivate Actor
-    
-    PubSub -> OrdUpdateCtrl: Lắng nghe `...Paid`, cập nhật SQL & báo client
-    note right: Quy trình tiếp tục với các bước\nnhư Trừ kho, Giao hàng...
-end box
+    MQ--> OSE: SUB(OrderStatusChangedToCancelledIntegrationEvent)
+
+    end
+
+else Sản phẩm ko tồn kho
+    Menu --> MQ: PUB(OrderStockRejected)
+    MQ -> OPE: SUB(OrderStockRejected)
+    OPE -> Actor: NotifyStockRejectedAsync()
+    activate Actor
+    note over Actor: Đặt Reminder (StockRejectedReminder)
+    Actor -> Actor: Reminder kích hoạt
+    Actor --> MQ: PUB(OrderStatusChangedToCancelledIntegrationEvent)
+    deactivate Actor
+    MQ-> OSE: SUB(OrderStatusChangedToCancelledIntegrationEvent)
+end
 
 @enduml
