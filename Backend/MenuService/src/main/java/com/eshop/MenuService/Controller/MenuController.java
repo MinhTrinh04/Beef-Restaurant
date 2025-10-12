@@ -4,6 +4,7 @@ import com.eshop.MenuService.Constants.MenuConstants;
 import com.eshop.MenuService.DTO.MenuItemDto;
 import com.eshop.MenuService.DTO.ResponseDto;
 import com.eshop.MenuService.Service.IMenuService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,8 @@ public class MenuController {
     private final IMenuService menuService;
 
     @PostMapping("/items")
-    public ResponseEntity<ResponseDto> createMenuItem(@RequestBody MenuItemDto requestDto) {
+    public ResponseEntity<ResponseDto> createMenuItem(
+           @Valid @RequestBody MenuItemDto requestDto) {
         menuService.createMenuItem(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto(MenuConstants.STATUS_201, MenuConstants.MESSAGE_201));
     }
@@ -51,7 +53,7 @@ public class MenuController {
     }
 
     @PutMapping("/items/{id}")
-    public ResponseEntity<ResponseDto> updateMenuItem(@PathVariable Integer id, @RequestBody MenuItemDto requestDto) {
+    public ResponseEntity<ResponseDto> updateMenuItem(@PathVariable Integer id,@Valid @RequestBody MenuItemDto requestDto) {
         requestDto.setId(id);
         boolean isSuccess = menuService.updateMenuItem(requestDto);
         if (isSuccess) {
