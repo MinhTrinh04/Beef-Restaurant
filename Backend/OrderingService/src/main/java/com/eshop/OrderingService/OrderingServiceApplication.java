@@ -2,8 +2,10 @@ package com.eshop.OrderingService;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
+@ComponentScan(basePackages = {"com.eshop.OrderingService", "com.eshop.buildingblocks"})
 public class OrderingServiceApplication {
 
     public static void main(String[] args) {
