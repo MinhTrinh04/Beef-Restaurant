@@ -1,6 +1,7 @@
 package com.eshop.buildingblocks.EventBus.Impl;
 
 import com.eshop.buildingblocks.EventBus.Abstractions.IEventBus;
+import com.eshop.buildingblocks.EventBus.Abstractions.IIntegrationEventHandler;
 import com.eshop.buildingblocks.EventBus.Config.RabbitMQConfig;
 import com.eshop.buildingblocks.EventBus.Events.IntegrationEvent;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +37,7 @@ public class RabbitMQEventBus implements IEventBus {
      * @param <T> The type of the integration event.
      */
     @Override
-    public <T extends IntegrationEvent> void subscribe(Class<T> eventType, com.eshop.buildingblocks.EventBus.Abstractions.IIntegrationEventHandler<T> handler) {
+    public <T extends IntegrationEvent> void subscribe(Class<T> eventType, IIntegrationEventHandler<T> handler) {
         log.warn("Subscribe method is not implemented in RabbitMQEventBus. " +
                 "Use @RabbitListener in your service modules instead to subscribe to events.");
 
