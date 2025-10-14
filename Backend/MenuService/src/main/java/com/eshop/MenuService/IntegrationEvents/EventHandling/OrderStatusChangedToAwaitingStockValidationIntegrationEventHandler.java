@@ -1,6 +1,6 @@
-package com.eshop.MenuService.IntergrationEvents.EventHandling;
+package com.eshop.MenuService.IntegrationEvents.EventHandling;
 
-import com.eshop.MenuService.IntergrationEvents.Events.OrderStatusChangedToAwaitingStockValidationIntegrationEvent;
+import com.eshop.MenuService.IntegrationEvents.Events.OrderStatusChangedToAwaitingStockValidationIntegrationEvent;
 import com.eshop.buildingblocks.EventBus.Abstractions.IIntegrationEventHandler;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

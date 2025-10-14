@@ -17,3 +17,9 @@ spring:
 
   jpa:
     show-sql: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "beans,health" # Mở endpoint 'beans' và 'health'
