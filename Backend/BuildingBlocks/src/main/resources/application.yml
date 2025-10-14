@@ -7,4 +7,3 @@ spring:
     port: 5672
     username: guest
     password: guest
-    exchange: eshop_event_bus

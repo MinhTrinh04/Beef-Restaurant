@@ -1,4 +1,4 @@
-package com.eshop.MenuService.IntergrationEvents.Events;
+package com.eshop.MenuService.IntegrationEvents.Events;
 
 import com.eshop.buildingblocks.EventBus.Events.IntegrationEvent;
 import lombok.AllArgsConstructor;
