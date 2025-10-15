@@ -4,7 +4,7 @@ public class MenuConstants {
     private MenuConstants() {
 
     }
-
+    public static final String QUEUE_NAME = "menu-service-queue";
     public static final String  STATUS_201 = "201";
     public static final String  MESSAGE_201 = "Account created successfully";
     public static final String  STATUS_200 = "200";

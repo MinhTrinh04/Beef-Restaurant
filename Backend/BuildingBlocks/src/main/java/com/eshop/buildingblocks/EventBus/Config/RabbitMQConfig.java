@@ -17,16 +17,6 @@ public class RabbitMQConfig {
         return new TopicExchange(EXCHANGE_NAME);
     }
 
-//    @Bean
-//    public ObjectMapper objectMapper() {
-//        return new ObjectMapper();
-//    }
-
-    /**
-     * Cung cấp một bean MessageConverter để tự động chuyển đổi
-     * các đối tượng Event (POJO) sang JSON và ngược lại.
-     * Điều này giúp code ở publisher và listener sạch sẽ hơn rất nhiều.
-     */
     @Bean
     public MessageConverter jsonMessageConverter() {
         return new Jackson2JsonMessageConverter();
