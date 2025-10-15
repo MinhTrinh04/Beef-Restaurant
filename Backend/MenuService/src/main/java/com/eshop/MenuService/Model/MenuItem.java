@@ -39,9 +39,9 @@ public class MenuItem {
     private Integer menuCategory;
 
     public void Removestock(int quantityDesired) {
-        if (this.availableStock < quantityDesired) {
-            throw new IllegalArgumentException("Không đủ số lượng tồn kho cho món: " + this.name);
-        }
+//        if (this.availableStock < quantityDesired) {
+//            throw new IllegalArgumentException("Không đủ số lượng tồn kho cho món: " + this.name);
+//        }
         this.availableStock -= quantityDesired;
     }
 }

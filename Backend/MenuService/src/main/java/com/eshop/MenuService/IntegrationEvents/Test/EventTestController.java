@@ -1,6 +1,7 @@
 package com.eshop.MenuService.IntegrationEvents.Test;
 
 import com.eshop.MenuService.IntegrationEvents.Events.OrderStatusChangedToAwaitingStockValidationIntegrationEvent;
+import com.eshop.MenuService.IntegrationEvents.Events.OrderStatusChangedToPaidIntegrationEvent;
 import com.eshop.buildingblocks.EventBus.Abstractions.IEventBus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,5 +40,17 @@ public class EventTestController {
         eventBus.publish(event);
 
         return ResponseEntity.ok("Event for Order ID " + event.getOrderId() + " published successfully.");
+    }
+
+    @PostMapping("/publish/order-paid")
+    public ResponseEntity<String> publishOrderPaidEvent(
+            @RequestBody OrderStatusChangedToPaidIntegrationEvent event) {
+
+        log.info("Received test request to publish OrderStatusChangedToPaidIntegrationEvent for Order ID: {}", event.getOrderId());
+
+        // Sử dụng event bus đã được inject để phát hành sự kiện
+        eventBus.publish(event);
+
+        return ResponseEntity.ok("Event 'OrderStatusChangedToPaid' for Order ID " + event.getOrderId() + " published successfully.");
     }
 }

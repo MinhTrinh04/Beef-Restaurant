@@ -5,12 +5,14 @@ import com.eshop.MenuService.IntegrationEvents.EventHandling.OrderStatusChangedT
 import com.eshop.MenuService.IntegrationEvents.Events.OrderStatusChangedToAwaitingStockValidationIntegrationEvent;
 import com.eshop.MenuService.IntegrationEvents.Events.OrderStatusChangedToPaidIntegrationEvent;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class IntergrationEventController {
+@RabbitListener(queues = "menu-service-queue")
+public class IntegrationEventController {
     private final OrderStatusChangedToPaidIntegrationEventHandler paidEventHandler;
     private final OrderStatusChangedToAwaitingStockValidationIntegrationEventHandler awaitingStockEventHandler;
 
@@ -19,7 +21,7 @@ public class IntergrationEventController {
      * Spring AMQP, với MessageConverter đã cấu hình, sẽ tự động deserialize message JSON
      * thành đối tượng OrderStatusChangedToPaidIntegrationEvent.
      */
-    @RabbitListener(queues = "#{menuServiceQueue.name}")
+    @RabbitHandler
     public void handleOrderStatusChangedToPaid(OrderStatusChangedToPaidIntegrationEvent event) {
         paidEventHandler.handle(event);
     }
@@ -27,7 +29,7 @@ public class IntergrationEventController {
     /**
      * Lắng nghe các sự kiện có routing key là "OrderStatusChangedToAwaitingStockValidationIntegrationEvent".
      */
-    @RabbitListener(queues = "#{menuServiceQueue.name}")
+    @RabbitHandler
     public void handleOrderStatusChangedToAwaitingStockValidation(OrderStatusChangedToAwaitingStockValidationIntegrationEvent event) {
         awaitingStockEventHandler.handle(event);
     }
