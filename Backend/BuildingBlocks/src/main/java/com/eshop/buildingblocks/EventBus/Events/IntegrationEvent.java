@@ -14,9 +14,4 @@ public abstract class IntegrationEvent {
         this.id = UUID.randomUUID();
         this.creationDate = LocalDateTime.now();
     }
-//    @JsonCreator
-//    public IntegrationEvent(@JsonProperty("id") UUID id, @JsonProperty("creationDate") LocalDateTime creationDate) {
-//        this.id = id;
-//        this.creationDate = creationDate;
-//    }
 }

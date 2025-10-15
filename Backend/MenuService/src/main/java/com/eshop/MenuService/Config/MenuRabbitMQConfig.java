@@ -7,16 +7,11 @@ import org.springframework.amqp.core.TopicExchange;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import static com.eshop.MenuService.Constants.MenuConstants.QUEUE_NAME;
+
 @Configuration
 public class MenuRabbitMQConfig {
 
-    public static final String QUEUE_NAME = "menu-service-queue";
-
-    /**
-     * Khai báo một Queue (hàng đợi) riêng cho MenuService.
-     * durable = true: Hàng đợi sẽ không bị mất khi RabbitMQ khởi động lại,
-     * đảm bảo không message nào bị thất lạc.
-     */
     @Bean
     public Queue menuServiceQueue() {
         return new Queue(QUEUE_NAME, true);

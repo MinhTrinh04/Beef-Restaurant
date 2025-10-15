@@ -18,8 +18,6 @@ public class IntegrationEventController {
 
     /**
      * Lắng nghe các sự kiện có routing key là "OrderStatusChangedToPaidIntegrationEvent".
-     * Spring AMQP, với MessageConverter đã cấu hình, sẽ tự động deserialize message JSON
-     * thành đối tượng OrderStatusChangedToPaidIntegrationEvent.
      */
     @RabbitHandler
     public void handleOrderStatusChangedToPaid(OrderStatusChangedToPaidIntegrationEvent event) {
