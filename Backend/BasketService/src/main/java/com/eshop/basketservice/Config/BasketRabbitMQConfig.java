@@ -32,9 +32,9 @@ public class BasketRabbitMQConfig {
     // Tự động subscribe handler vào event bus khi service khởi động
     @PostConstruct
     public void configureEventBus() {
-        eventBus.subscribe(
-                "order.submitted",
-                "basket_order_submitted_queue",
-                handler);
+//        eventBus.subscribe(
+//                "order.submitted",
+//                "basket_order_submitted_queue",
+//                handler);
     }
 }

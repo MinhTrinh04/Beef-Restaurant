@@ -1,6 +1,6 @@
-package com.eshop.basketservice.repository;
+package com.eshop.basketservice.Repository;
 
-import com.eshop.basketservice.model.Basket;
+import com.eshop.basketservice.Model.Basket;
 import java.util.Optional;
 
 /**

@@ -4,5 +4,6 @@ import com.eshop.buildingblocks.EventBus.Events.IntegrationEvent;
 
 public interface IEventBus {
     void publish(IntegrationEvent event);
+    
 
 }
