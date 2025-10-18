@@ -71,7 +71,8 @@ alt Sản phẩm tồn kho
     Actor -> Actor: Reminder kích hoạt
     Actor -> MQ: PUB(OrderStatusChangedToValidatedIntegrationEvent)
     deactivate Actor
-    MQ --> Payment: SUB(OrderStatusChangedToValidatedIntegrationEvent)
+    MQ --> OSE: SUB(OrderStatusChangedToValidatedIntegrationEvent)
+    MQ --> Payment: SUB(OrderStatusChangedToValidatedIntegrationEvent) //Bỏ -> Open Feign Basket -> Payment
 
     alt Thanh toán thành công
         Payment -> MQ: PUB(OrderPaymentSucceededIntegrationEvent)
@@ -82,6 +83,7 @@ alt Sản phẩm tồn kho
             Actor -> Actor: Reminder kích hoạt
             Actor -> MQ: PUB(OrderStatusChangedToPaidIntegrationEvent)
         deactivate Actor
+        MQ --> OSE: SUB(OrderStatusChangedToPaidIntegrationEvent)
         MQ --> Menu: SUB(OrderStatusChangedToPaidIntegrationEvent)
         Menu -> Menu: RemoveStock()
 
