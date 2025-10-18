@@ -73,6 +73,8 @@ alt Sản phẩm tồn kho
     deactivate Actor
     MQ --> OSE: SUB(OrderStatusChangedToValidatedIntegrationEvent)
     MQ --> Payment: SUB(OrderStatusChangedToValidatedIntegrationEvent) //Bỏ -> Open Feign Basket -> Payment
+    OSE -> Basket: Theo gemini bảo là Basket poll/websocket về trạng thái của đơn khi được validate (Lý do bẻ: khi thanh toán cần truyền httpServletRequest mà 1 event ko thể chứa ttin này)
+    Basket -> Payment: OpenFeign(api/v1/payment/create-url)
 
     alt Thanh toán thành công
         Payment -> MQ: PUB(OrderPaymentSucceededIntegrationEvent)
