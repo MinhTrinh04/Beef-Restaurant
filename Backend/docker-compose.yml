@@ -1,24 +1,17 @@
-# Sử dụng phiên bản 3.8 của Docker Compose để có cú pháp và tính năng hiện đại.
 version: '3.8'
 
-# Định nghĩa các container (dịch vụ) sẽ được chạy.
 services:
 
-  # 1. RabbitMQ: Hệ thống Message Broker để các microservices giao tiếp với nhau.
   rabbitmq:
-    image: rabbitmq:3-management-alpine # Sử dụng image có giao diện quản lý.
+    image: rabbitmq:3-management-alpine
     container_name: rabbitmq
     ports:
-      # Cổng 5672 cho các ứng dụng kết nối tới.
       - "5672:5672"
-      # Cổng 15672 cho giao diện quản lý trên web.
       - "15672:15672"
     environment:
-      # Cấu hình tài khoản đăng nhập mặc định.
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
     volumes:
-      # Lưu trữ dữ liệu của RabbitMQ để không bị mất khi container khởi động lại.
       - rabbitmq_data:/var/lib/rabbitmq/
       - rabbitmq_log:/var/log/rabbitmq/
 
