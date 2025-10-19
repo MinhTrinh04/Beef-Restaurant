@@ -1,15 +1,61 @@
-# docker-compose.yml
+# Sử dụng phiên bản 3.8 của Docker Compose để có cú pháp và tính năng hiện đại.
 version: '3.8'
 
+# Định nghĩa các container (dịch vụ) sẽ được chạy.
 services:
+
+  # 1. RabbitMQ: Hệ thống Message Broker để các microservices giao tiếp với nhau.
   rabbitmq:
-    image: rabbitmq:3.13-management-alpine
+    image: rabbitmq:3-management-alpine # Sử dụng image có giao diện quản lý.
     container_name: rabbitmq
     ports:
-      # Port cho AMQP protocol (để Spring Boot kết nối)
+      # Cổng 5672 cho các ứng dụng kết nối tới.
       - "5672:5672"
-      # Port cho giao diện quản lý (truy cập bằng trình duyệt)
+      # Cổng 15672 cho giao diện quản lý trên web.
       - "15672:15672"
     environment:
+      # Cấu hình tài khoản đăng nhập mặc định.
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
+    volumes:
+      # Lưu trữ dữ liệu của RabbitMQ để không bị mất khi container khởi động lại.
+      - rabbitmq_data:/var/lib/rabbitmq/
+      - rabbitmq_log:/var/log/rabbitmq/
+
+  # 2. Redis: Cơ sở dữ liệu key-value trong bộ nhớ, dùng để lưu giỏ hàng.
+  redis:
+    image: redis:alpine # Sử dụng image nhẹ của Redis.
+    container_name: redis
+    ports:
+      # Cổng 6379 là cổng mặc định của Redis.
+      - "6379:6379"
+    volumes:
+      # Lưu trữ dữ liệu của Redis.
+      - redis_data:/data
+
+  # 3. Zipkin: Dùng để theo dõi và gỡ lỗi các request đi qua nhiều microservices.
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      # Cổng 9411 cho giao diện web của Zipkin.
+      - "9411:9411"
+
+  # 4. Seq: Công cụ quản lý log tập trung.
+  seq:
+    image: datalust/seq:latest
+    container_name: seq
+    environment:
+      # Bắt buộc phải chấp nhận điều khoản sử dụng.
+      - ACCEPT_EULA=Y
+    ports:
+      # Cổng 8080 cho giao diện web của Seq (ánh xạ ra cổng 80 bên trong).
+      - "8080:80"
+      # Cổng 5341 để các ứng dụng gửi log tới.
+      - "5341:5341"
+
+# Định nghĩa các "volumes" để lưu trữ dữ liệu bền vững.
+volumes:
+  rabbitmq_data:
+  rabbitmq_log:
+  redis_data:

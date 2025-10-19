@@ -4,5 +4,6 @@
     <file url="file://$PROJECT_DIR$/Backend/BasketService/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Backend/BuildingBlocks/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Backend/MenuService/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Backend/PaymentService/src/main/java" charset="UTF-8" />
   </component>
 </project>
