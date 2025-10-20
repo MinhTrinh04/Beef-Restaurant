@@ -15,6 +15,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
+import static com.eshop.OrderingService.Constants.OrderingConstants.QUEUE_NAME;
+
 @Configuration
 @Import(RabbitMQConfig.class)
 @Slf4j
@@ -87,13 +89,18 @@ public class OrderingRabbitMQConfig {
         return QueueBuilder.durable(ORDER_PAYMENT_FAILED_QUEUE).build();
     }
 
+    @Bean
+    public Queue orderServiceQueue() {
+        return new Queue(QUEUE_NAME, true);
+    }
+
     // Declare bindings
     @Bean
-    public Binding userCheckoutAcceptedBinding() {
+    public Binding userCheckoutAcceptedBinding(TopicExchange eventBusExchange) {
         return BindingBuilder
-                .bind(userCheckoutAcceptedQueue())
-                .to(basketExchange())
-                .with(USER_CHECKOUT_ACCEPTED_ROUTING_KEY);
+                .bind(orderServiceQueue())
+                .to(eventBusExchange)
+                .with("UserCheckoutAcceptedIntegrationEvent");
     }
 
     @Bean

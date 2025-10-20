@@ -29,4 +29,8 @@ public class OrderingConstants {
     // Default values
     public static final String DEFAULT_CARD_TYPE = "Visa";
     public static final String DEFAULT_CURRENCY = "VND";
+
+
+
+    public static final String QUEUE_NAME = "order-service-queue";
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 @AllArgsConstructor
+
 public class OrderingRabbitMQListener {
 
     private final UserCheckoutAcceptedIntegrationEventHandler userCheckoutAcceptedHandler;
