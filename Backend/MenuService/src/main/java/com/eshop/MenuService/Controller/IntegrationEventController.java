@@ -9,9 +9,11 @@ import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
+import static com.eshop.MenuService.Constants.MenuConstants.QUEUE_NAME;
+
 @Component
 @RequiredArgsConstructor
-@RabbitListener(queues = "menu-service-queue")
+@RabbitListener(queues = QUEUE_NAME)
 public class IntegrationEventController {
     private final OrderStatusChangedToPaidIntegrationEventHandler paidEventHandler;
     private final OrderStatusChangedToAwaitingStockValidationIntegrationEventHandler awaitingStockEventHandler;

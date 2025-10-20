@@ -16,13 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class OrderStatusChangedToSubmittedIntegrationEvent extends IntegrationEvent {
 
-    /**
-     * ID của đơn hàng vừa được tạo.
-     */
     private UUID orderId;
-
-    /**
-     * ID của người mua hàng, dùng để xác định và xóa giỏ hàng.
-     */
+    private String orderStatus;
     private String buyerId;
 }

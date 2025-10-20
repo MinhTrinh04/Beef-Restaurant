@@ -1,26 +1,33 @@
 package com.eshop.basketservice.Integrationevents.eventhandling;
 
+import com.eshop.basketservice.Exception.BasketNotFoundException;
 import com.eshop.basketservice.Integrationevents.Events.OrderStatusChangedToSubmittedIntegrationEvent;
+import com.eshop.basketservice.Model.Basket;
 import com.eshop.basketservice.Repository.BasketRepository;
+import com.eshop.buildingblocks.EventBus.Abstractions.IIntegrationEventHandler;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
+@Slf4j
 @Component
 @RequiredArgsConstructor
-public class OrderStatusChangedToSubmittedIntegrationEventHandler {
+public class OrderStatusChangedToSubmittedIntegrationEventHandler implements IIntegrationEventHandler<OrderStatusChangedToSubmittedIntegrationEvent> {
 
     private final BasketRepository basketRepository;
-    private static final Logger logger = LoggerFactory.getLogger(OrderStatusChangedToSubmittedIntegrationEventHandler.class);
 
-    /**
-     * --- PHIÊN BẢN CHUẨN ---
-     * Phương thức này nhận trực tiếp đối tượng Event đã được MessageConverter dịch sẵn.
-     */
+    @Override
+    @Transactional
     public void handle(OrderStatusChangedToSubmittedIntegrationEvent event) {
-        logger.info("Handling integration event: {} ({})", event.getId(), event.getClass().getSimpleName());
-        logger.info("Deleting basket for buyer: {}", event.getBuyerId());
+        log.info("⏳ OrderStatusChangedToSubmittedIntegrationEvent received for OrderId: {}", event.getOrderId());
+        Optional<Basket> basket = basketRepository.findById(event.getBuyerId());
+        if (basket.isEmpty()) {
+            throw new BasketNotFoundException("Basket", "buyerId", event.getBuyerId());
+        }
         basketRepository.deleteById(event.getBuyerId());
+        log.info("Deleted basket for buyer: {}", event.getBuyerId());
     }
 }
