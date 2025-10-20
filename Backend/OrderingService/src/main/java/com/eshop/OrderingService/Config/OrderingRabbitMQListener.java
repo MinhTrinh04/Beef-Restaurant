@@ -4,13 +4,16 @@ import com.eshop.OrderingService.IntegrationEvents.EventHandling.*;
 import com.eshop.OrderingService.IntegrationEvents.Events.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
+
+import static com.eshop.OrderingService.Constants.OrderingConstants.QUEUE_NAME;
 
 @Component
 @Slf4j
 @AllArgsConstructor
-
+@RabbitListener(queues = QUEUE_NAME)
 public class OrderingRabbitMQListener {
 
     private final UserCheckoutAcceptedIntegrationEventHandler userCheckoutAcceptedHandler;
@@ -19,38 +22,38 @@ public class OrderingRabbitMQListener {
     private final OrderPaymentSucceededIntegrationEventHandler orderPaymentSucceededHandler;
     private final OrderPaymentFailedIntegrationEventHandler orderPaymentFailedHandler;
 
-    @RabbitListener(queues = OrderingRabbitMQConfig.USER_CHECKOUT_ACCEPTED_QUEUE)
+    @RabbitHandler
     public void handleUserCheckoutAccepted(UserCheckoutAcceptedIntegrationEvent event) {
         log.info("📨 Received UserCheckoutAcceptedIntegrationEvent from queue: {}",
-                OrderingRabbitMQConfig.USER_CHECKOUT_ACCEPTED_QUEUE);
+                QUEUE_NAME);
         userCheckoutAcceptedHandler.handle(event);
     }
 
-    @RabbitListener(queues = OrderingRabbitMQConfig.ORDER_STOCK_CONFIRMED_QUEUE)
+    @RabbitHandler
     public void handleOrderStockConfirmed(OrderStockConfirmedIntegrationEvent event) {
         log.info("📨 Received OrderStockConfirmedIntegrationEvent from queue: {}",
-                OrderingRabbitMQConfig.ORDER_STOCK_CONFIRMED_QUEUE);
+                QUEUE_NAME);
         orderStockConfirmedHandler.handle(event);
     }
 
-    @RabbitListener(queues = OrderingRabbitMQConfig.ORDER_STOCK_REJECTED_QUEUE)
+    @RabbitListener
     public void handleOrderStockRejected(OrderStockRejectedIntegrationEvent event) {
         log.info("📨 Received OrderStockRejectedIntegrationEvent from queue: {}",
-                OrderingRabbitMQConfig.ORDER_STOCK_REJECTED_QUEUE);
+                QUEUE_NAME);
         orderStockRejectedHandler.handle(event);
     }
 
-    @RabbitListener(queues = OrderingRabbitMQConfig.ORDER_PAYMENT_SUCCEEDED_QUEUE)
+    @RabbitHandler
     public void handleOrderPaymentSucceeded(OrderPaymentSucceededIntegrationEvent event) {
         log.info("📨 Received OrderPaymentSucceededIntegrationEvent from queue: {}",
-                OrderingRabbitMQConfig.ORDER_PAYMENT_SUCCEEDED_QUEUE);
+                QUEUE_NAME);
         orderPaymentSucceededHandler.handle(event);
     }
 
-    @RabbitListener(queues = OrderingRabbitMQConfig.ORDER_PAYMENT_FAILED_QUEUE)
+    @RabbitHandler
     public void handleOrderPaymentFailed(OrderPaymentFailedIntegrationEvent event) {
         log.info("📨 Received OrderPaymentFailedIntegrationEvent from queue: {}",
-                OrderingRabbitMQConfig.ORDER_PAYMENT_FAILED_QUEUE);
+                QUEUE_NAME);
         orderPaymentFailedHandler.handle(event);
     }
 }
