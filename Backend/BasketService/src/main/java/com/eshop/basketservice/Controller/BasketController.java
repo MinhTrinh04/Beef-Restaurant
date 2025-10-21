@@ -1,17 +1,19 @@
 package com.eshop.basketservice.Controller;
 
-import com.eshop.basketservice.Integrationevents.Events.UserCheckoutAcceptedIntegrationEvent;
 import com.eshop.basketservice.Model.Basket;
-import com.eshop.basket.model.BasketCheckout;
-import com.eshop.basketservice.Repository.BasketRepository;
-import com.eshop.basketservice.Service.Client.PaymentServiceClient;
+import com.eshop.basketservice.Repository.IBasketRepository;
+import com.eshop.basketservice.Service.IIdentityService;
 import com.eshop.buildingblocks.EventBus.Abstractions.IEventBus;
+import com.eshop.basketservice.DTO.BasketCheckout;
+import com.eshop.basketservice.Integrationevents.Events.UserCheckoutAcceptedIntegrationEvent;
+
+import com.eshop.buildingblocks.EventBus.Events.IntegrationEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.math.BigDecimal;
+
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -19,57 +21,86 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class BasketController {
 
-    private final BasketRepository basketRepository;
-    private final IEventBus eventBus;
-    private final PaymentServiceClient paymentServiceClient;
+    private final IBasketRepository basketRepository;
+    private final IIdentityService identityService;
+    private final IEventBus eventBus; // Tiêm IEventBus từ BuildingBlocks
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Basket> getBasketById(@PathVariable String id) {
-        return basketRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.ok(new Basket(id)));
+    @GetMapping
+    public ResponseEntity<Basket> getBasket() {
+        String userId = identityService.getUserIdentity();
+        log.info("Fetching basket for user {}", userId);
+
+        // Trả về giỏ hàng mới nếu không tồn tại
+        Basket basket = basketRepository.findById(userId)
+                .orElse(new Basket(userId));
+
+        return ResponseEntity.ok(basket);
     }
 
     @PostMapping
     public ResponseEntity<Basket> updateBasket(@RequestBody Basket basket) {
-        return ResponseEntity.ok(basketRepository.save(basket));
+        String userId = identityService.getUserIdentity();
+        basket.setBuyerId(userId); // Đảm bảo giỏ hàng thuộc về đúng người dùng
+
+        log.info("Updating basket for user {}", userId);
+        Basket updatedBasket = basketRepository.save(basket);
+
+        return ResponseEntity.ok(updatedBasket);
     }
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public void deleteBasket(@PathVariable String id) {
-        basketRepository.deleteById(id);
+    @DeleteMapping
+    public ResponseEntity<Void> deleteBasket() {
+        String userId = identityService.getUserIdentity();
+        log.info("Deleting basket for user {}", userId);
+
+        basketRepository.deleteById(userId);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/checkout")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public void checkout(@RequestBody BasketCheckout basketCheckout) {
-        log.info("Jump here");
-        var basket = basketRepository.findById(basketCheckout.getBuyer()).orElse(null);
-        if (basket == null) {
-            log.error("Basket died");
-            return;
+    public ResponseEntity<Void> checkout(
+            @RequestBody BasketCheckout checkout,
+            @RequestHeader(name = "X-Request-Id", required = false) String requestId) {
+
+        String userId = identityService.getUserIdentity();
+        log.info("Checkout initiated for user {}", userId);
+
+        Basket basket = basketRepository.findById(userId)
+                .orElse(null);
+
+        if (basket == null || basket.getItems() == null || basket.getItems().isEmpty()) {
+            log.warn("User {} attempted checkout with empty or null basket", userId);
+            return ResponseEntity.badRequest().build(); // Giống [BadRequest()] trong C#
         }
 
-        var orderTotal = basket.getItems().stream()
-                .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        // Xử lý Request ID
+        UUID eventRequestId = (requestId != null) ? parseOrNewGuid(requestId) : UUID.randomUUID();
 
-        basketCheckout.setOrderTotal(orderTotal);
-
-        var event = new UserCheckoutAcceptedIntegrationEvent(
-                basketCheckout.getBuyer(),
-                basketCheckout.getCardNumber(),
-                basketCheckout.getCardHolderName(),
-                basketCheckout.getCardExpiration(),
-                basketCheckout.getCardSecurityNumber(),
-                basketCheckout.getCardTypeId(),
-                basket,
-                orderTotal
+        // Tạo sự kiện (Giả định bạn đã có lớp UserCheckoutAcceptedIntegrationEvent)
+        IntegrationEvent event = new UserCheckoutAcceptedIntegrationEvent(
+                userId,
+                checkout.getUserEmail(),
+                checkout.getCity(),
+                checkout.getStreet(),
+                checkout.getState(),
+                checkout.getCountry(),
+                eventRequestId,
+                basket
         );
 
-        // Lời gọi đúng là chỉ truyền vào một tham số event
+        // Gửi sự kiện bằng IEventBus
+        log.info("Publishing UserCheckoutAcceptedIntegrationEvent: {}", event.getId());
         eventBus.publish(event);
-        log.info("⏳ Publish UserCheckoutAcceptedIntegrationEvent");
+
+        // Trả về 202 Accepted
+        return ResponseEntity.accepted().build();
+    }
+
+    private UUID parseOrNewGuid(String uuid) {
+        try {
+            return UUID.fromString(uuid);
+        } catch (IllegalArgumentException ex) {
+            return UUID.randomUUID();
+        }
     }
 }
