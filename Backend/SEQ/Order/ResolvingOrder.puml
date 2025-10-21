@@ -53,10 +53,12 @@ participant "Payment" as Payment
 
     MQ --> Basket: SUB(OrderStatusChangedToSubmittedIntegrationEvent)
     MQ --> OSE: SUB(OrderStatusChangedToSubmittedIntegrationEvent)
+    note over OSE: Đã save nên OSE ko cần có handler để nghe
     OSE -> DB: Tạo bản ghi Order mới
 
     ... Vài giây sau ...
     Actor -> Actor: Reminder kích hoạt
+    note over Actor: Ko cần có Reminder vì đã update ngay sau khi pub
     Actor -> MQ: PUB(OrderStatusChangedToAwaitingStockValidationIntegrationEvent)
     deactivate Actor
     
@@ -86,6 +88,8 @@ alt Sản phẩm tồn kho
             Actor -> MQ: PUB(OrderStatusChangedToPaidIntegrationEvent)
         deactivate Actor
         MQ --> OSE: SUB(OrderStatusChangedToPaidIntegrationEvent)
+        note over OSE: Đã save nên OSE ko cần có handler để nghe
+
         MQ --> Menu: SUB(OrderStatusChangedToPaidIntegrationEvent)
         Menu -> Menu: RemoveStock()
 
@@ -100,6 +104,8 @@ alt Sản phẩm tồn kho
     Actor -> MQ: PUB(OrderStatusChangedToCancelledIntegrationEvent)
     deactivate Actor
     MQ--> OSE: SUB(OrderStatusChangedToCancelledIntegrationEvent)
+    note over OSE: Đã save nên OSE ko cần có handler để nghe
+
 
     end
 
@@ -113,6 +119,8 @@ else #Pink Sản phẩm ko tồn kho
     Actor -> MQ: PUB(OrderStatusChangedToCancelledIntegrationEvent)
     deactivate Actor
     MQ --> OSE: SUB(OrderStatusChangedToCancelledIntegrationEvent)
+    note over OSE: Đã save nên OSE ko cần có handler để nghe
+
 end
 
 @enduml

@@ -31,10 +31,5 @@ public interface IOrderingService {
 
     void updateOrderStatusToPaid(String orderId);
 
-    // Order Processing (Actor-like behavior)
     void processOrderSubmission(String orderId);
-
-    void processStockValidation(String orderId);
-
-    void processPaymentConfirmation(String orderId);
 }

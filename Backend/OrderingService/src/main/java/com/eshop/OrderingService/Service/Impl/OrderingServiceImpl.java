@@ -301,17 +301,6 @@ public class OrderingServiceImpl implements IOrderingService {
     @Override
     public void processOrderSubmission(String orderId) {
         log.info("Processing order submission: {}", orderId);
-
-        // Simulate grace period (in real implementation, this would be handled by an
-        // actor)
-        // For now, we'll immediately proceed to stock validation
-        processStockValidation(orderId);
-    }
-
-    @Override
-    public void processStockValidation(String orderId) {
-        log.info("Processing stock validation: {}", orderId);
-
         Order order = orderRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order", "orderId", orderId));
 
@@ -330,17 +319,6 @@ public class OrderingServiceImpl implements IOrderingService {
         eventBus.publish(event);
 
         log.info("Stock validation event published for order: {}", orderId);
-    }
-
-    @Override
-    public void processPaymentConfirmation(String orderId) {
-        log.info("Processing payment confirmation: {}", orderId);
-
-        Order order = orderRepository.findByOrderId(orderId)
-                .orElseThrow(() -> new OrderNotFoundException("Order", "orderId", orderId));
-
-        // Update status to paid
-        updateOrderStatusToPaid(orderId);
     }
 
     private boolean canCancelOrder(String orderStatus) {
