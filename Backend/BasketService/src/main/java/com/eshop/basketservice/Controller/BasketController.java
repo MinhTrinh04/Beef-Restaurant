@@ -1,7 +1,10 @@
 package com.eshop.basketservice.Controller;
 
+import com.eshop.basketservice.Constants.BasketConstants;
+import com.eshop.basketservice.DTO.ResponseDto;
 import com.eshop.basketservice.Model.Basket;
 import com.eshop.basketservice.Repository.IBasketRepository;
+import com.eshop.basketservice.Service.IBasketService;
 import com.eshop.basketservice.Service.IIdentityService;
 import com.eshop.buildingblocks.EventBus.Abstractions.IEventBus;
 import com.eshop.basketservice.DTO.BasketCheckout;
@@ -10,6 +13,7 @@ import com.eshop.basketservice.Integrationevents.Events.UserCheckoutAcceptedInte
 import com.eshop.buildingblocks.EventBus.Events.IntegrationEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +26,7 @@ import java.util.UUID;
 public class BasketController {
 
     private final IBasketRepository basketRepository;
+    private final IBasketService basketService;
     private final IIdentityService identityService;
     private final IEventBus eventBus; // Tiêm IEventBus từ BuildingBlocks
 
@@ -38,14 +43,16 @@ public class BasketController {
     }
 
     @PostMapping
-    public ResponseEntity<Basket> updateBasket(@RequestBody Basket basket) {
+    public ResponseEntity<ResponseDto> updateBasket(@RequestBody Basket basket) {
         String userId = identityService.getUserIdentity();
-        basket.setBuyerId(userId); // Đảm bảo giỏ hàng thuộc về đúng người dùng
+        basket.setBuyerId(userId);
 
-        log.info("Updating basket for user {}", userId);
-        Basket updatedBasket = basketRepository.save(basket);
-
-        return ResponseEntity.ok(updatedBasket);
+        boolean isSuccess = basketService.updateBasket(basket);
+        if (isSuccess) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(BasketConstants.STATUS_200, BasketConstants.MESSAGE_200));
+        } else {
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseDto(BasketConstants.STATUS_417,BasketConstants.MESSAGE_417_UPDATE));
+        }
     }
 
     @DeleteMapping
