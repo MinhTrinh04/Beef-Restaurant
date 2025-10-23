@@ -26,9 +26,10 @@ public class BasketController {
     private final IIdentityService identityService;
     private final IEventBus eventBus;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Basket> getBasketById(@PathVariable String id) {
-        Basket basket = basketService.getBasketById(id);
+    @GetMapping
+    public ResponseEntity<Basket> getBasketById() {
+        String buyerId = identityService.getUserIdentity();
+        Basket basket = basketService.getBasketById(buyerId);
         return ResponseEntity.status(HttpStatus.OK).body(basket);
     }
 
@@ -44,10 +45,15 @@ public class BasketController {
         }
     }
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public void deleteBasket(@PathVariable String id) {
-        basketRepository.deleteById(id);
+    @DeleteMapping
+    public ResponseEntity<ResponseDto> deleteBasket() {
+        String buyerId = identityService.getUserIdentity();
+        boolean isDeleted = basketService.deleteBasket(buyerId);
+        if (isDeleted) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(BasketConstants.STATUS_200, BasketConstants.MESSAGE_200));
+        } else {
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseDto(BasketConstants.STATUS_417, BasketConstants.MESSAGE_417_DELETE));
+        }
     }
 
     @PostMapping("/checkout")
