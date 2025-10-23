@@ -4,6 +4,7 @@ import com.eshop.basketservice.Integrationevents.Events.UserCheckoutAcceptedInte
 import com.eshop.basketservice.Model.Basket;
 import com.eshop.basket.model.BasketCheckout;
 import com.eshop.basketservice.Repository.BasketRepository;
+import com.eshop.basketservice.Service.IBasketService;
 import com.eshop.buildingblocks.EventBus.Abstractions.IEventBus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,15 +18,14 @@ import java.math.BigDecimal;
 @RequestMapping("/api/v1/basket")
 @RequiredArgsConstructor
 public class BasketController {
-
+    private final IBasketService basketService;
     private final BasketRepository basketRepository;
     private final IEventBus eventBus;
 
     @GetMapping("/{id}")
     public ResponseEntity<Basket> getBasketById(@PathVariable String id) {
-        return basketRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.ok(new Basket(id)));
+        Basket basket = basketService.getBasketById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(basket);
     }
 
     @PostMapping
