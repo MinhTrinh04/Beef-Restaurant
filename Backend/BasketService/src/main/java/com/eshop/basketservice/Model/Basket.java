@@ -10,8 +10,4 @@ import java.util.List;
 public class Basket {
     private String buyerId;
     private List<BasketItem> items = new ArrayList<>();
-
-    public Basket(String buyerId) {
-        this.buyerId = buyerId;
-    }
 }

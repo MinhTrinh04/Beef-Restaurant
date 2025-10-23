@@ -18,7 +18,7 @@ public class BasketService implements IBasketService {
 
     @Override
     public Basket getBasketById (String id){
-        Basket existingBasket = basketRepository.findById(id).orElseThrow(() -> new BasketNotFoundException("Basket", "id", id));
+        Basket existingBasket = basketRepository.findById(id).orElseThrow(() -> new BasketNotFoundException("Basket", "buyerId", id));
         return existingBasket;
     }
 
@@ -26,8 +26,10 @@ public class BasketService implements IBasketService {
     @Transactional
     public boolean updateBasket (Basket basket){
         boolean isUpdated = false;
-
-
+        Basket existingBasket = basketRepository.findById(basket.getBuyerId()).orElseThrow(() -> new BasketNotFoundException("Basket", "buyerId", basket.getBuyerId()));
+        existingBasket.setItems(basket.getItems());
+        basketRepository.save(basket);
+        isUpdated = true;
         return isUpdated;
     }
 
