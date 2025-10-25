@@ -1,20 +1,24 @@
 package com.eshop.basketservice.Service.Impl;
 
 import com.eshop.basketservice.Exception.BasketNotFoundException;
+import com.eshop.basketservice.Integrationevents.Events.UserCheckoutAcceptedIntegrationEvent;
 import com.eshop.basketservice.Model.Basket;
 import com.eshop.basketservice.Repository.BasketRepository;
 import com.eshop.basketservice.Service.IBasketService;
+import com.eshop.buildingblocks.EventBus.Abstractions.IEventBus;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.eshop.basketservice.Model.BasketCheckout;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
 @Slf4j
 public class BasketService implements IBasketService {
     private final BasketRepository basketRepository;
-
+    private final IEventBus eventBus;
 
     @Override
     public Basket getBasketById(String id) {
@@ -40,5 +44,38 @@ public class BasketService implements IBasketService {
     public boolean deleteBasket(String id) {
         basketRepository.deleteById(id);
         return true;
+    }
+
+    @Override
+    public void checkout(String buyerId, BasketCheckout basketCheckout, String requestId) {
+        Basket basket = basketRepository.findById(buyerId)
+                .orElseThrow(() -> new BasketNotFoundException("Basket", "buyerId" , buyerId));
+
+        UUID eventRequestId;
+        try {
+            eventRequestId = UUID.fromString(requestId);
+        } catch (IllegalArgumentException | NullPointerException e) {
+            log.warn("Invalid or missing X-Request-Id. Generating new ID.");
+            eventRequestId = UUID.randomUUID();
+        }
+
+        UserCheckoutAcceptedIntegrationEvent eventMessage = new UserCheckoutAcceptedIntegrationEvent(
+                buyerId,
+                basketCheckout.getUserEmail(),
+                basketCheckout.getCity(),
+                basketCheckout.getStreet(),
+                basketCheckout.getState(),
+                basketCheckout.getCountry(),
+                eventRequestId,
+                basket
+        );
+
+        try {
+            log.info("Publishing checkout event: {}", eventRequestId);
+            eventBus.publish(eventMessage);
+        } catch (Exception e) {
+            log.error("Error publishing checkout event: {}", e.getMessage(), e);
+            throw new RuntimeException("Error publishing checkout event", e);
+        }
     }
 }

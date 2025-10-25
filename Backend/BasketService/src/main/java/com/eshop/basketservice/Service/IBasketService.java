@@ -1,6 +1,8 @@
 package com.eshop.basketservice.Service;
 
 import com.eshop.basketservice.Model.Basket;
+import com.eshop.basketservice.Model.BasketCheckout;
+
 
 public interface IBasketService {
     //Get
@@ -12,4 +14,5 @@ public interface IBasketService {
     //Delete
     boolean deleteBasket (String id);
 
+    void checkout(String id, BasketCheckout basket, String requestId);
 }
