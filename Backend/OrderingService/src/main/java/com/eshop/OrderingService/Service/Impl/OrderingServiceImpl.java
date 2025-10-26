@@ -115,9 +115,9 @@ public class OrderingServiceImpl implements IOrderingService {
     }
 
     @Override
-    public OrderDto getOrderByOrderId(String orderId) {
+    public OrderDto getOrderByOrderId(UUID orderId) {
         Order order = orderRepository.findByOrderId(orderId)
-                .orElseThrow(() -> new OrderNotFoundException("Order", "orderId", orderId));
+                .orElseThrow(() -> new OrderNotFoundException("Order", "orderId", orderId.toString()));
         return orderMapper.toDto(order);
     }
 
@@ -139,11 +139,11 @@ public class OrderingServiceImpl implements IOrderingService {
 
     @Override
     @Transactional
-    public boolean cancelOrder(String orderId, String reason) {
+    public boolean cancelOrder(UUID orderId, String reason) {
         log.info("Cancelling order: {} with reason: {}", orderId, reason);
 
         Order order = orderRepository.findByOrderId(orderId)
-                .orElseThrow(() -> new OrderNotFoundException("Order", "orderId", orderId));
+                .orElseThrow(() -> new OrderNotFoundException("Order", "orderId", orderId.toString()));
 
         // Check if order can be cancelled
         if (!canCancelOrder(order.getOrderStatus())) {
@@ -164,11 +164,11 @@ public class OrderingServiceImpl implements IOrderingService {
 
     @Override
     @Transactional
-    public boolean shipOrder(String orderId) {
+    public boolean shipOrder(UUID orderId) {
         log.info("Shipping order: {}", orderId);
 
         Order order = orderRepository.findByOrderId(orderId)
-                .orElseThrow(() -> new OrderNotFoundException("Order", "orderId", orderId));
+                .orElseThrow(() -> new OrderNotFoundException("Order", "orderId", orderId.toString()));
 
         // Check if order can be shipped
         if (!OrderingConstants.ORDER_STATUS_PAID.equals(order.getOrderStatus())) {
@@ -217,19 +217,19 @@ public class OrderingServiceImpl implements IOrderingService {
                     return orderItem;
                 })
                 .collect(Collectors.toList());
+        order.setOrderItems(orderItems);
 
-        // Calculate total amount
+        // Calculate total amount - Xem xét lại cần lưu khi nào
         BigDecimal totalAmount = orderItems.stream()
                 .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getUnits())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         order.setTotalAmount(totalAmount);
 
-        order.setOrderItems(orderItems);
         Order savedOrder = orderRepository.save(order);
 
         // Publish submitted event
         OrderStatusChangedToSubmittedIntegrationEvent submittedEvent = new OrderStatusChangedToSubmittedIntegrationEvent(
-                savedOrder.getOrderId(), savedOrder.getBuyerId());
+                savedOrder.getOrderId(), savedOrder.getBuyerId(),savedOrder.getBuyerEmail());
         eventBus.publish(submittedEvent);
         log.info("✅ OrderStatusChangedToSubmittedIntegrationEvent published for OrderId: {}", savedOrder.getOrderId());
 
@@ -239,11 +239,11 @@ public class OrderingServiceImpl implements IOrderingService {
 
     @Override
     @Transactional
-    public void updateOrderStatusToValidated(String orderId) {
+    public void updateOrderStatusToValidated(UUID orderId) {
         log.info("Updating order status to Validated: {}", orderId);
 
         Order order = orderRepository.findByOrderId(orderId)
-                .orElseThrow(() -> new OrderNotFoundException("Order", "orderId", orderId));
+                .orElseThrow(() -> new OrderNotFoundException("Order", "orderId", orderId.toString()));
 
         order.setOrderStatus(OrderingConstants.ORDER_STATUS_VALIDATED);
         orderRepository.save(order);
@@ -258,11 +258,11 @@ public class OrderingServiceImpl implements IOrderingService {
 
     @Override
     @Transactional
-    public void updateOrderStatusToPaid(String orderId) {
+    public void updateOrderStatusToPaid(UUID orderId) {
         log.info("Updating order status to Paid: {}", orderId);
 
         Order order = orderRepository.findByOrderId(orderId)
-                .orElseThrow(() -> new OrderNotFoundException("Order", "orderId", orderId));
+                .orElseThrow(() -> new OrderNotFoundException("Order", "orderId", orderId.toString()));
 
         order.setOrderStatus(OrderingConstants.ORDER_STATUS_PAID);
         orderRepository.save(order);
@@ -276,10 +276,10 @@ public class OrderingServiceImpl implements IOrderingService {
     }
 
     @Override
-    public void processOrderSubmission(String orderId) {
+    public void processOrderSubmission(UUID orderId) {
         log.info("Processing order submission: {}", orderId);
         Order order = orderRepository.findByOrderId(orderId)
-                .orElseThrow(() -> new OrderNotFoundException("Order", "orderId", orderId));
+                .orElseThrow(() -> new OrderNotFoundException("Order", "orderId", orderId.toString()));
 
         // Convert order items to stock items for validation
         List<OrderStockItem> orderStockItems = order.getOrderItems().stream()

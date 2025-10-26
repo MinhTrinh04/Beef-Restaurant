@@ -8,17 +8,18 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    Optional<Order> findByOrderId(String orderId);
+    Optional<Order> findByOrderId(UUID orderId);
 
-    List<Order> findByUserId(String userId);
+    List<Order> findByBuyerId(String userId);
 
     List<Order> findByOrderStatus(String orderStatus);
 
-    @Query("SELECT o FROM Order o WHERE o.userId = :userId ORDER BY o.orderDate DESC")
+    @Query("SELECT o FROM Order o WHERE o.buyerId = :userId ORDER BY o.orderDate DESC")
     List<Order> findByUserIdOrderByOrderDateDesc(@Param("userId") String userId);
 
     @Query("SELECT o FROM Order o WHERE o.orderStatus = :status ORDER BY o.orderDate DESC")

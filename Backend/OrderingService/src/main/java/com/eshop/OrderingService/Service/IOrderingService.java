@@ -5,6 +5,7 @@ import com.eshop.OrderingService.DTO.OrderDto;
 import com.eshop.OrderingService.IntegrationEvents.Events.UserCheckoutAcceptedIntegrationEvent;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface IOrderingService {
 
@@ -13,23 +14,23 @@ public interface IOrderingService {
 
     OrderDto getOrderById(Long id);
 
-    OrderDto getOrderByOrderId(String orderId);
+    OrderDto getOrderByOrderId(UUID orderId);
 
     List<OrderDto> getOrdersByUserId(String userId);
 
     List<OrderDto> getAllOrders();
 
     // Order Status Management
-    boolean cancelOrder(String orderId, String reason);
+    boolean cancelOrder(UUID orderId, String reason);
 
-    boolean shipOrder(String orderId);
+    boolean shipOrder(UUID orderId);
 
     // Integration Event Handlers
     void createOrderFromCheckout(UserCheckoutAcceptedIntegrationEvent event);
 
-    void updateOrderStatusToValidated(String orderId);
+    void updateOrderStatusToValidated(UUID orderId);
 
-    void updateOrderStatusToPaid(String orderId);
+    void updateOrderStatusToPaid(UUID orderId);
 
-    void processOrderSubmission(String orderId);
+    void processOrderSubmission(UUID orderId);
 }

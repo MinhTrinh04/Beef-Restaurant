@@ -4,18 +4,21 @@ import com.eshop.buildingblocks.EventBus.Events.IntegrationEvent;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 public class OrderStatusChangedToSubmittedIntegrationEvent extends IntegrationEvent {
 
-    private final String orderId;
-    private final String userId;
+    private final UUID orderId;
+    private final String buyerId;
     private final String orderStatus;
+    private final String buyerEmail;
 
-    public OrderStatusChangedToSubmittedIntegrationEvent(String orderId, String userId) {
+    public OrderStatusChangedToSubmittedIntegrationEvent(UUID orderId, String buyerId, String buyerEmail) {
         super();
         this.orderId = orderId;
-        this.userId = userId;
+        this.buyerId = buyerId;
         this.orderStatus = "Submitted";
+        this.buyerEmail = buyerEmail;
     }
 }

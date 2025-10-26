@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/orders")
@@ -51,7 +52,7 @@ public class OrderController {
     }
 
     @GetMapping("/order-id/{orderId}")
-    public ResponseEntity<ResponseDto<OrderDto>> getOrderByOrderId(@PathVariable String orderId) {
+    public ResponseEntity<ResponseDto<OrderDto>> getOrderByOrderId(@PathVariable UUID orderId) {
         log.info("Getting order by Order ID: {}", orderId);
 
         try {
@@ -93,7 +94,7 @@ public class OrderController {
     }
 
     @PutMapping("/{orderId}/cancel")
-    public ResponseEntity<ResponseDto<Boolean>> cancelOrder(@PathVariable String orderId,
+    public ResponseEntity<ResponseDto<Boolean>> cancelOrder(@PathVariable UUID orderId,
             @RequestParam(required = false) String reason) {
         log.info("Cancelling order: {} with reason: {}", orderId, reason);
 
@@ -109,7 +110,7 @@ public class OrderController {
     }
 
     @PutMapping("/{orderId}/ship")
-    public ResponseEntity<ResponseDto<Boolean>> shipOrder(@PathVariable String orderId) {
+    public ResponseEntity<ResponseDto<Boolean>> shipOrder(@PathVariable UUID orderId) {
         log.info("Shipping order: {}", orderId);
 
         try {

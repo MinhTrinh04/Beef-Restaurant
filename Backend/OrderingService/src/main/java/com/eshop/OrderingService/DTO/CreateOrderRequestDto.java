@@ -19,14 +19,6 @@ public class CreateOrderRequestDto {
     private String addressCity;
     private String addressState;
     private String addressCountry;
-    private String addressZipCode;
-
-    // Payment fields
-    private String cardNumber;
-    private String cardHolderName;
-    private String cardExpiration;
-    private String cardSecurityNumber;
-    private Integer cardTypeId;
 
     // Buyer information
     private String buyerName;

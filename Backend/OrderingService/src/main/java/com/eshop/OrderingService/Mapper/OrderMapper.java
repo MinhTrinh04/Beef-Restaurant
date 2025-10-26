@@ -18,9 +18,8 @@ public class OrderMapper {
         }
 
         OrderDto dto = new OrderDto();
-        dto.setId(order.getId());
         dto.setOrderId(order.getOrderId());
-        dto.setUserId(order.getUserId());
+        dto.setUserId(order.getBuyerId());
         dto.setOrderDate(order.getOrderDate());
         dto.setOrderStatus(order.getOrderStatus());
         dto.setDescription(order.getDescription());
@@ -30,14 +29,6 @@ public class OrderMapper {
         dto.setAddressCity(order.getAddressCity());
         dto.setAddressState(order.getAddressState());
         dto.setAddressCountry(order.getAddressCountry());
-        dto.setAddressZipCode(order.getAddressZipCode());
-
-        // Payment fields
-        dto.setCardNumber(order.getCardNumber());
-        dto.setCardHolderName(order.getCardHolderName());
-        dto.setCardExpiration(order.getCardExpiration());
-        dto.setCardSecurityNumber(order.getCardSecurityNumber());
-        dto.setCardTypeId(order.getCardTypeId());
 
         // Buyer information
         dto.setBuyerName(order.getBuyerName());
@@ -65,7 +56,6 @@ public class OrderMapper {
 
         OrderItemDto dto = new OrderItemDto();
         dto.setId(orderItem.getId());
-        dto.setOrderId(orderItem.getOrder().getId());
         dto.setProductId(orderItem.getProductId());
         dto.setProductName(orderItem.getProductName());
         dto.setUnitPrice(orderItem.getUnitPrice());
