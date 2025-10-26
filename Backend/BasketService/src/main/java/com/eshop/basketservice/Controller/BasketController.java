@@ -55,9 +55,9 @@ public class BasketController {
     }
 
     @PostMapping("/checkout")
-    public void checkout(@RequestBody BasketCheckout basketCheckout,@RequestHeader(value = "X-Request-Id", required = false) String requestId) {
+    public ResponseEntity<ResponseDto> checkout(@RequestBody BasketCheckout basketCheckout,@RequestHeader(value = "X-Request-Id", required = false) String requestId) {
         String buyerId = identityService.getUserIdentity();
         basketService.checkout(buyerId, basketCheckout, requestId);
-
+        return  ResponseEntity.ok(new ResponseDto(BasketConstants.STATUS_200, BasketConstants.MESSAGE_200));
     }
 }

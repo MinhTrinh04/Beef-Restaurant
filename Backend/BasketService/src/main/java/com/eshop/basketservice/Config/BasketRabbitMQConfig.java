@@ -28,19 +28,19 @@ public class BasketRabbitMQConfig {
         return BindingBuilder.bind(basketServiceQueue).to(eventBusExchange).with(ORDER_STATUS_CHANGE_TO_SUBMITTED);
     }
 
-    @Bean
-    public MessageListenerAdapter listenerAdapter(OrderStatusChangedToSubmittedIntegrationEventHandler handler, MessageConverter messageConverter) {
-        MessageListenerAdapter adapter = new MessageListenerAdapter(handler, "handle");
-        adapter.setMessageConverter(messageConverter);
-        return adapter;
-    }
-
-    @Bean
-    public SimpleMessageListenerContainer container(ConnectionFactory connectionFactory, MessageListenerAdapter listenerAdapter) {
-        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
-        container.setConnectionFactory(connectionFactory);
-        container.setQueueNames(); // Lắng nghe trên queue đã khai báo.
-        container.setMessageListener(listenerAdapter); // Sử dụng adapter để xử lý message.
-        return container;
-    }
+//    @Bean
+//    public MessageListenerAdapter listenerAdapter(OrderStatusChangedToSubmittedIntegrationEventHandler handler, MessageConverter messageConverter) {
+//        MessageListenerAdapter adapter = new MessageListenerAdapter(handler, "handle");
+//        adapter.setMessageConverter(messageConverter);
+//        return adapter;
+//    }
+//
+//    @Bean
+//    public SimpleMessageListenerContainer container(ConnectionFactory connectionFactory, MessageListenerAdapter listenerAdapter) {
+//        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
+//        container.setConnectionFactory(connectionFactory);
+//        container.setQueueNames(); // Lắng nghe trên queue đã khai báo.
+//        container.setMessageListener(listenerAdapter); // Sử dụng adapter để xử lý message.
+//        return container;
+//    }
 }

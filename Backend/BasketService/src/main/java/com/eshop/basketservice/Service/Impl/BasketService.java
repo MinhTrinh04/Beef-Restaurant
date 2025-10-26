@@ -71,10 +71,10 @@ public class BasketService implements IBasketService {
         );
 
         try {
-            log.info("Publishing checkout event: {}", eventRequestId);
             eventBus.publish(eventMessage);
+            log.info("✅ Publishing UserCheckoutAcceptedIntegrationEvent for buyerId {}", buyerId);
         } catch (Exception e) {
-            log.error("Error publishing checkout event: {}", e.getMessage(), e);
+            log.error("❌ Error publishing UserCheckoutAcceptedIntegrationEvent for buyerId {}", buyerId);
             throw new RuntimeException("Error publishing checkout event", e);
         }
     }
