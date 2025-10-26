@@ -21,20 +21,20 @@ public class OrderController {
 
     private final IOrderingService orderingService;
 
-    @PostMapping
-    public ResponseEntity<ResponseDto<OrderDto>> createOrder(@Valid @RequestBody CreateOrderRequestDto request) {
-        log.info("Creating new order for user: {}", request.getUserId());
-
-        try {
-            OrderDto order = orderingService.createOrder(request);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(ResponseDto.success("Order created successfully", order));
-        } catch (Exception e) {
-            log.error("Failed to create order: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ResponseDto.error("Failed to create order: " + e.getMessage()));
-        }
-    }
+//    @PostMapping
+//    public ResponseEntity<ResponseDto<OrderDto>> createOrder(@Valid @RequestBody CreateOrderRequestDto request) {
+//        log.info("Creating new order for user: {}", request.getUserId());
+//
+//        try {
+//            OrderDto order = orderingService.createOrder(request);
+//            return ResponseEntity.status(HttpStatus.CREATED)
+//                    .body(ResponseDto.success("Order created successfully", order));
+//        } catch (Exception e) {
+//            log.error("Failed to create order: {}", e.getMessage(), e);
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body(ResponseDto.error("Failed to create order: " + e.getMessage()));
+//        }
+//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDto<OrderDto>> getOrderById(@PathVariable Long id) {

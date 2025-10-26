@@ -35,77 +35,77 @@ public class OrderingServiceImpl implements IOrderingService {
     private final OrderMapper orderMapper;
     private final IEventBus eventBus;
 
-    @Override
-    @Transactional
-    public OrderDto createOrder(CreateOrderRequestDto request) {
-        log.info("Creating new order for user: {}", request.getUserId());
-
-        Order order = new Order();
-        order.setOrderId(UUID.randomUUID().toString());
-        order.setUserId(request.getUserId());
-        order.setOrderDate(LocalDateTime.now());
-        order.setOrderStatus(OrderingConstants.ORDER_STATUS_SUBMITTED);
-        order.setDescription(request.getDescription());
-
-        // Set address
-        order.setAddressStreet(request.getAddressStreet());
-        order.setAddressCity(request.getAddressCity());
-        order.setAddressState(request.getAddressState());
-        order.setAddressCountry(request.getAddressCountry());
-        order.setAddressZipCode(request.getAddressZipCode());
-
-        // Set payment info
-        order.setCardNumber(request.getCardNumber());
-        order.setCardHolderName(request.getCardHolderName());
-        order.setCardSecurityNumber(request.getCardSecurityNumber());
-        order.setCardTypeId(request.getCardTypeId());
-
-        // Set buyer info
-        order.setBuyerName(request.getBuyerName());
-        order.setBuyerEmail(request.getBuyerEmail());
-
-        // Parse card expiration
-        if (request.getCardExpiration() != null) {
-            try {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yy");
-                order.setCardExpiration(LocalDateTime.parse("01/" + request.getCardExpiration(), formatter));
-            } catch (Exception e) {
-                log.warn("Failed to parse card expiration: {}", request.getCardExpiration());
-            }
-        }
-
-        // Calculate total amount
-        BigDecimal totalAmount = request.getOrderItems().stream()
-                .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getUnits())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        order.setTotalAmount(totalAmount);
-
-        // Save order
-        Order savedOrder = orderRepository.save(order);
-
-        // Create order items
-        List<OrderItem> orderItems = request.getOrderItems().stream()
-                .map(itemRequest -> {
-                    OrderItem orderItem = new OrderItem();
-                    orderItem.setOrder(savedOrder);
-                    orderItem.setProductId(itemRequest.getProductId());
-                    orderItem.setProductName(itemRequest.getProductName());
-                    orderItem.setUnitPrice(itemRequest.getUnitPrice());
-                    orderItem.setUnits(itemRequest.getUnits());
-                    orderItem.setPictureUrl(itemRequest.getPictureUrl());
-                    return orderItem;
-                })
-                .collect(Collectors.toList());
-
-        savedOrder.setOrderItems(orderItems);
-        orderRepository.save(savedOrder);
-
-        // Publish event for stock validation
-        processOrderSubmission(savedOrder.getOrderId());
-
-        log.info("Order created successfully with ID: {}", savedOrder.getOrderId());
-        return orderMapper.toDto(savedOrder);
-    }
+//    @Override
+//    @Transactional
+//    public OrderDto createOrder(CreateOrderRequestDto request) {
+//        log.info("Creating new order for user: {}", request.getUserId());
+//
+//        Order order = new Order();
+//        order.setOrderId(UUID.randomUUID().toString());
+//        order.setUserId(request.getUserId());
+//        order.setOrderDate(LocalDateTime.now());
+//        order.setOrderStatus(OrderingConstants.ORDER_STATUS_SUBMITTED);
+//        order.setDescription(request.getDescription());
+//
+//        // Set address
+//        order.setAddressStreet(request.getAddressStreet());
+//        order.setAddressCity(request.getAddressCity());
+//        order.setAddressState(request.getAddressState());
+//        order.setAddressCountry(request.getAddressCountry());
+//        order.setAddressZipCode(request.getAddressZipCode());
+//
+//        // Set payment info
+//        order.setCardNumber(request.getCardNumber());
+//        order.setCardHolderName(request.getCardHolderName());
+//        order.setCardSecurityNumber(request.getCardSecurityNumber());
+//        order.setCardTypeId(request.getCardTypeId());
+//
+//        // Set buyer info
+//        order.setBuyerName(request.getBuyerName());
+//        order.setBuyerEmail(request.getBuyerEmail());
+//
+//        // Parse card expiration
+//        if (request.getCardExpiration() != null) {
+//            try {
+//                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yy");
+//                order.setCardExpiration(LocalDateTime.parse("01/" + request.getCardExpiration(), formatter));
+//            } catch (Exception e) {
+//                log.warn("Failed to parse card expiration: {}", request.getCardExpiration());
+//            }
+//        }
+//
+//        // Calculate total amount
+//        BigDecimal totalAmount = request.getOrderItems().stream()
+//                .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getUnits())))
+//                .reduce(BigDecimal.ZERO, BigDecimal::add);
+//        order.setTotalAmount(totalAmount);
+//
+//        // Save order
+//        Order savedOrder = orderRepository.save(order);
+//
+//        // Create order items
+//        List<OrderItem> orderItems = request.getOrderItems().stream()
+//                .map(itemRequest -> {
+//                    OrderItem orderItem = new OrderItem();
+//                    orderItem.setOrder(savedOrder);
+//                    orderItem.setProductId(itemRequest.getProductId());
+//                    orderItem.setProductName(itemRequest.getProductName());
+//                    orderItem.setUnitPrice(itemRequest.getUnitPrice());
+//                    orderItem.setUnits(itemRequest.getUnits());
+//                    orderItem.setPictureUrl(itemRequest.getPictureUrl());
+//                    return orderItem;
+//                })
+//                .collect(Collectors.toList());
+//
+//        savedOrder.setOrderItems(orderItems);
+//        orderRepository.save(savedOrder);
+//
+//        // Publish event for stock validation
+//        processOrderSubmission(savedOrder.getOrderId());
+//
+//        log.info("Order created successfully with ID: {}", savedOrder.getOrderId());
+//        return orderMapper.toDto(savedOrder);
+//    }
 
     @Override
     public OrderDto getOrderById(Long id) {
@@ -155,7 +155,7 @@ public class OrderingServiceImpl implements IOrderingService {
 
         // Publish cancellation event
         OrderStatusChangedToCancelledIntegrationEvent event = new OrderStatusChangedToCancelledIntegrationEvent(orderId,
-                order.getUserId(), reason);
+                order.getBuyerId(), reason);
         eventBus.publish(event);
 
         log.info("Order cancelled successfully: {}", orderId);
@@ -180,7 +180,7 @@ public class OrderingServiceImpl implements IOrderingService {
 
         // Publish shipped event
         OrderStatusChangedToShippedIntegrationEvent event = new OrderStatusChangedToShippedIntegrationEvent(orderId,
-                order.getUserId());
+                order.getBuyerId());
         eventBus.publish(event);
 
         log.info("Order shipped successfully: {}", orderId);
@@ -193,49 +193,27 @@ public class OrderingServiceImpl implements IOrderingService {
         log.info("Creating order from checkout for user: {}", event.getUserId());
 
         Order order = new Order();
-        order.setOrderId(UUID.randomUUID().toString());
-        order.setUserId(event.getUserId());
         order.setOrderDate(LocalDateTime.now());
         order.setOrderStatus(OrderingConstants.ORDER_STATUS_SUBMITTED);
 
-        // Set address from event
         order.setAddressStreet(event.getStreet());
         order.setAddressCity(event.getCity());
         order.setAddressState(event.getState());
         order.setAddressCountry(event.getCountry());
-        order.setAddressZipCode(event.getZipCode());
 
-        // Set payment info from event
-        order.setCardNumber(event.getCardNumber());
-        order.setCardHolderName(event.getCardHolderName());
-        order.setCardSecurityNumber(event.getCardSecurityNumber());
-        order.setCardTypeId(event.getCardTypeId());
-
-        // Set buyer info from event
-        order.setBuyerName(event.getBuyer());
-        order.setBuyerEmail(event.getBuyerEmail());
-
-        // Parse card expiration
-        if (event.getCardExpiration() != null) {
-            try {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yy");
-                order.setCardExpiration(LocalDateTime.parse("01/" + event.getCardExpiration(), formatter));
-            } catch (Exception e) {
-                log.warn("Failed to parse card expiration: {}", event.getCardExpiration());
-            }
-        }
+        order.setBuyerId(event.getUserId());
+        order.setBuyerEmail(event.getUserEmail());
 
         // Create order items from basket items
-        List<OrderItem> orderItems = event.getBasketItems().stream()
+        List<OrderItem> orderItems = event.getBasket().getItems().stream()
                 .map(basketItem -> {
                     OrderItem orderItem = new OrderItem();
                     orderItem.setOrder(order);
                     orderItem.setProductId(basketItem.getProductId());
                     orderItem.setProductName(basketItem.getProductName());
+                    orderItem.setUnitPrice(basketItem.getUnitPrice());
                     orderItem.setUnits(basketItem.getUnits());
                     orderItem.setPictureUrl(basketItem.getPictureUrl());
-                    // Note: unitPrice would need to be fetched from MenuService
-                    orderItem.setUnitPrice(BigDecimal.ZERO); // Placeholder
                     return orderItem;
                 })
                 .collect(Collectors.toList());
@@ -251,7 +229,7 @@ public class OrderingServiceImpl implements IOrderingService {
 
         // Publish submitted event
         OrderStatusChangedToSubmittedIntegrationEvent submittedEvent = new OrderStatusChangedToSubmittedIntegrationEvent(
-                savedOrder.getOrderId(), savedOrder.getUserId());
+                savedOrder.getOrderId(), savedOrder.getBuyerId());
         eventBus.publish(submittedEvent);
         log.info("✅ OrderStatusChangedToSubmittedIntegrationEvent published for OrderId: {}", savedOrder.getOrderId());
 
@@ -272,7 +250,7 @@ public class OrderingServiceImpl implements IOrderingService {
 
         // Publish validated event
         OrderStatusChangedToValidatedIntegrationEvent event = new OrderStatusChangedToValidatedIntegrationEvent(orderId,
-                order.getUserId());
+                order.getBuyerId());
         eventBus.publish(event);
 
         log.info("Order status updated to Validated: {}", orderId);
@@ -291,7 +269,7 @@ public class OrderingServiceImpl implements IOrderingService {
 
         // Publish paid event
         OrderStatusChangedToPaidIntegrationEvent event = new OrderStatusChangedToPaidIntegrationEvent(orderId,
-                order.getUserId());
+                order.getBuyerId());
         eventBus.publish(event);
 
         log.info("Order status updated to Paid: {}", orderId);
@@ -314,7 +292,7 @@ public class OrderingServiceImpl implements IOrderingService {
 
         // Publish stock validation event
         OrderStatusChangedToAwaitingStockValidationIntegrationEvent event = new OrderStatusChangedToAwaitingStockValidationIntegrationEvent(
-                orderId, order.getUserId(), orderStockItems);
+                orderId, order.getBuyerId(), orderStockItems);
         eventBus.publish(event);
 
         log.info("Stock validation event published for order: {}", orderId);

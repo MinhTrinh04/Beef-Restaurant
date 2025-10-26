@@ -18,13 +18,8 @@ public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(name = "order_id", unique = true, nullable = false)
     private String orderId;
-
-    @Column(name = "user_id", nullable = false)
-    private String userId;
 
     @Column(name = "order_date", nullable = false)
     private LocalDateTime orderDate;
@@ -48,26 +43,10 @@ public class Order {
     @Column(name = "address_country")
     private String addressCountry;
 
-    @Column(name = "address_zip_code")
-    private String addressZipCode;
-
-    // Payment fields
-    @Column(name = "card_number")
-    private String cardNumber;
-
-    @Column(name = "card_holder_name")
-    private String cardHolderName;
-
-    @Column(name = "card_expiration")
-    private LocalDateTime cardExpiration;
-
-    @Column(name = "card_security_number")
-    private String cardSecurityNumber;
-
-    @Column(name = "card_type_id")
-    private Integer cardTypeId;
-
     // Buyer information
+    @Column(name = "buyer_id", nullable = false)
+    private String buyerId;
+
     @Column(name = "buyer_name")
     private String buyerName;
 
@@ -98,5 +77,14 @@ public class Order {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    public BigDecimal GetTotal() {
+        if (orderItems == null || orderItems.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        return orderItems.stream()
+                .map(item -> item.getUnitPrice().multiply(new BigDecimal(item.getUnits())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

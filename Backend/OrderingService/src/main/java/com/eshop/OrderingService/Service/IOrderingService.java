@@ -9,7 +9,7 @@ import java.util.List;
 public interface IOrderingService {
 
     // Order Management
-    OrderDto createOrder(CreateOrderRequestDto request);
+//    OrderDto createOrder(CreateOrderRequestDto request);
 
     OrderDto getOrderById(Long id);
 
