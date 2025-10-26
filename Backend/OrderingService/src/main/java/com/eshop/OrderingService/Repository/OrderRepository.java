@@ -25,5 +25,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT o FROM Order o WHERE o.orderStatus = :status ORDER BY o.orderDate DESC")
     List<Order> findByOrderStatusOrderByOrderDateDesc(@Param("status") String status);
 
-    boolean existsByOrderId(String orderId);
+    boolean existsByOrderId(UUID orderId);
 }

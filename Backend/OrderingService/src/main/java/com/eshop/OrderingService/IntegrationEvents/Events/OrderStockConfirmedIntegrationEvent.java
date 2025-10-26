@@ -3,12 +3,14 @@ package com.eshop.OrderingService.IntegrationEvents.Events;
 import com.eshop.buildingblocks.EventBus.Events.IntegrationEvent;
 import lombok.Getter;
 
+import java.util.UUID;
+
 @Getter
 public class OrderStockConfirmedIntegrationEvent extends IntegrationEvent {
 
-    private final String orderId;
+    private final UUID orderId;
 
-    public OrderStockConfirmedIntegrationEvent(String orderId) {
+    public OrderStockConfirmedIntegrationEvent(UUID orderId) {
         super();
         this.orderId = orderId;
     }
