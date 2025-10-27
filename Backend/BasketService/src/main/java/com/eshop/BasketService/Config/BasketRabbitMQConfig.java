@@ -1,4 +1,4 @@
-package com.eshop.MenuService.Config;
+package com.eshop.BasketService.Config;
 
 import com.eshop.buildingblocks.EventBus.Config.ConventionBasedJavaTypeMapper;
 import org.springframework.amqp.core.Binding;
@@ -10,28 +10,20 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static com.eshop.MenuService.Constants.MenuConstants.*;
+import static com.eshop.BasketService.Constants.BasketConstants.ORDER_STATUS_CHANGE_TO_SUBMITTED;
+import static com.eshop.BasketService.Constants.BasketConstants.QUEUE_NAME;
 
 @Configuration
-public class MenuRabbitMQConfig {
+public class BasketRabbitMQConfig {
 
     @Bean
-    public Queue menuServiceQueue() {
+    public Queue basketServiceQueue() {
         return new Queue(QUEUE_NAME, true);
     }
 
     @Bean
-    public Binding bindingOrderStatusChangedToPaid(TopicExchange eventBusExchange, Queue menuServiceQueue) {
-        return BindingBuilder.bind(menuServiceQueue)
-                .to(eventBusExchange)
-                .with(ORDER_STATUS_CHANGE_TO_PAID_INTEGRATION_EVENT);
-    }
-
-    @Bean
-    public Binding bindingOrderStatusChangedToAwaitingStockValidation(TopicExchange eventBusExchange, Queue menuServiceQueue) {
-        return BindingBuilder.bind(menuServiceQueue)
-                .to(eventBusExchange)
-                .with(ORDER_STATUS_CHANGE_TO_AWAITING_STOCK_VALIDATION_INTEGRATION_EVENT);
+    public Binding bindingOrderStatusChangedToSubmitted(TopicExchange eventBusExchange, Queue basketServiceQueue) {
+        return BindingBuilder.bind(basketServiceQueue).to(eventBusExchange).with(ORDER_STATUS_CHANGE_TO_SUBMITTED);
     }
 
     @Bean
@@ -39,7 +31,7 @@ public class MenuRabbitMQConfig {
         Jackson2JsonMessageConverter converter = new Jackson2JsonMessageConverter();
 
         ConventionBasedJavaTypeMapper typeMapper = new ConventionBasedJavaTypeMapper(
-                "com.eshop.MenuService.IntegrationEvents.Events"
+                "com.eshop.BasketService.IntegrationEvents.Events"
         );
 
         typeMapper.setTrustedPackages("*");

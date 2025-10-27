@@ -253,7 +253,7 @@ public class OrderingServiceImpl implements IOrderingService {
                 order.getBuyerId());
         eventBus.publish(event);
 
-        log.info("Order status updated to Validated: {}", orderId);
+        log.info("✅ Publishing OrderStatusChangedToValidatedIntegrationEvent for buyerId: {}", order.getBuyerId());
     }
 
     @Override
@@ -272,7 +272,7 @@ public class OrderingServiceImpl implements IOrderingService {
                 order.getBuyerId());
         eventBus.publish(event);
 
-        log.info("Order status updated to Paid: {}", orderId);
+        log.info("✅ Publishing OrderStatusChangedToPaidIntegrationEvent for buyerId: {}", order.getBuyerId());
     }
 
     @Override
@@ -295,7 +295,7 @@ public class OrderingServiceImpl implements IOrderingService {
                 orderId, order.getBuyerId(), orderStockItems);
         eventBus.publish(event);
 
-        log.info("Stock validation event published for order: {}", orderId);
+        log.info("✅ Publishing OrderStatusChangedToAwaitingStockValidationIntegrationEvent for buyerId {}", order.getBuyerId());
     }
 
     private boolean canCancelOrder(String orderStatus) {

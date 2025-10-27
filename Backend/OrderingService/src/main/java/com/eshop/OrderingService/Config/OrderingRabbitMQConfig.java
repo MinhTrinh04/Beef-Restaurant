@@ -1,11 +1,11 @@
 package com.eshop.OrderingService.Config;
 
+import com.eshop.buildingblocks.EventBus.Config.ConventionBasedJavaTypeMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
-import org.springframework.amqp.support.converter.DefaultJackson2JavaTypeMapper;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
@@ -71,7 +71,7 @@ public class OrderingRabbitMQConfig {
                 "com.eshop.OrderingService.IntegrationEvents.Events"
         );
 
-        // 2. Tin tưởng tất cả các gói (để chấp nhận message từ BasketService)
+        // 2. Tin tưởng tất cả các gói
         typeMapper.setTrustedPackages("*");
 
         converter.setJavaTypeMapper(typeMapper);

@@ -41,3 +41,9 @@ logging:
     level:
         com.eshop.OrderingService: DEBUG
         org.springframework.amqp: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
