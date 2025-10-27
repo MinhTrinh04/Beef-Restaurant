@@ -1,4 +1,4 @@
-package com.eshop.OrderingService.Config;
+package com.eshop.OrderingService.Controller;
 
 import com.eshop.OrderingService.IntegrationEvents.EventHandling.*;
 import com.eshop.OrderingService.IntegrationEvents.Events.*;
@@ -14,7 +14,7 @@ import static com.eshop.OrderingService.Constants.OrderingConstants.QUEUE_NAME;
 @Slf4j
 @AllArgsConstructor
 @RabbitListener(queues = QUEUE_NAME)
-public class OrderingRabbitMQListener {
+public class IntegrationEventController {
 
     private final UserCheckoutAcceptedIntegrationEventHandler userCheckoutAcceptedHandler;
     private final OrderStockConfirmedIntegrationEventHandler orderStockConfirmedHandler;

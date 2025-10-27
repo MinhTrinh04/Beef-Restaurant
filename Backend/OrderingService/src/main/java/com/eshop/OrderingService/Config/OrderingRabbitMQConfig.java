@@ -5,6 +5,9 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.support.converter.DefaultJackson2JavaTypeMapper;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -57,5 +60,21 @@ public class OrderingRabbitMQConfig {
                 .bind(orderServiceQueue)
                 .to(eventBusExchange)
                 .with(ORDER_PAYMENT_FAILED_EVENT);
+    }
+
+    @Bean
+    public MessageConverter jsonMessageConverter() {
+        Jackson2JsonMessageConverter converter = new Jackson2JsonMessageConverter();
+
+        // 1. Sử dụng mapper tùy chỉnh
+        ConventionBasedJavaTypeMapper typeMapper = new ConventionBasedJavaTypeMapper(
+                "com.eshop.OrderingService.IntegrationEvents.Events"
+        );
+
+        // 2. Tin tưởng tất cả các gói (để chấp nhận message từ BasketService)
+        typeMapper.setTrustedPackages("*");
+
+        converter.setJavaTypeMapper(typeMapper);
+        return converter;
     }
 }
