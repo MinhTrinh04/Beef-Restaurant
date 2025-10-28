@@ -1,7 +1,7 @@
 package com.eshop.BasketService.Service.Impl;
 
 import com.eshop.BasketService.Exception.BasketNotFoundException;
-import com.eshop.BasketService.Integrationevents.Events.UserCheckoutAcceptedIntegrationEvent;
+import com.eshop.BasketService.IntegrationEvents.Events.UserCheckoutAcceptedIntegrationEvent;
 import com.eshop.BasketService.Model.Basket;
 import com.eshop.BasketService.Repository.BasketRepository;
 import com.eshop.BasketService.Service.IBasketService;

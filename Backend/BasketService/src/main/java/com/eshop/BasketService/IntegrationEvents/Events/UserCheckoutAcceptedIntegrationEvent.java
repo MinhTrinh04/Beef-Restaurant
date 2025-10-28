@@ -1,4 +1,4 @@
-package com.eshop.BasketService.Integrationevents.Events;
+package com.eshop.BasketService.IntegrationEvents.Events;
 
 import com.eshop.BasketService.Model.Basket;
 import com.eshop.buildingblocks.EventBus.Events.IntegrationEvent;

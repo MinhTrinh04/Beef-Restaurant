@@ -1,8 +1,8 @@
 package com.eshop.BasketService.Controller;
 
 
-import com.eshop.BasketService.Integrationevents.Events.OrderStatusChangedToSubmittedIntegrationEvent;
-import com.eshop.BasketService.Integrationevents.eventhandling.OrderStatusChangedToSubmittedIntegrationEventHandler;
+import com.eshop.BasketService.IntegrationEvents.Events.OrderStatusChangedToSubmittedIntegrationEvent;
+import com.eshop.BasketService.IntegrationEvents.EventHandling.OrderStatusChangedToSubmittedIntegrationEventHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;

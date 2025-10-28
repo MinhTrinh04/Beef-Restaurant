@@ -1,7 +1,7 @@
-package com.eshop.BasketService.Integrationevents.eventhandling;
+package com.eshop.BasketService.IntegrationEvents.EventHandling;
 
 import com.eshop.BasketService.Exception.BasketNotFoundException;
-import com.eshop.BasketService.Integrationevents.Events.OrderStatusChangedToSubmittedIntegrationEvent;
+import com.eshop.BasketService.IntegrationEvents.Events.OrderStatusChangedToSubmittedIntegrationEvent;
 import com.eshop.BasketService.Model.Basket;
 import com.eshop.BasketService.Repository.BasketRepository;
 import com.eshop.buildingblocks.EventBus.Abstractions.IIntegrationEventHandler;
