@@ -2,6 +2,7 @@ package com.eshop.BasketService.Service.Impl;
 
 import com.eshop.BasketService.Exception.BasketNotFoundException;
 import com.eshop.BasketService.IntegrationEvents.Events.UserCheckoutAcceptedIntegrationEvent;
+import com.eshop.BasketService.IntegrationEvents.Events.UserPlaceOrderIntegrationEvent;
 import com.eshop.BasketService.Model.Basket;
 import com.eshop.BasketService.Repository.BasketRepository;
 import com.eshop.BasketService.Service.IBasketService;
@@ -31,16 +32,16 @@ public class BasketService implements IBasketService {
     public boolean updateBasket(Basket basket) {
         Basket resBasket = basketRepository.save(basket);
 
-        UserCheckoutAcceptedIntegrationEvent eventMessage = new UserCheckoutAcceptedIntegrationEvent(
+        UserPlaceOrderIntegrationEvent eventMessage = new UserPlaceOrderIntegrationEvent(
                 basket.getBuyerId(),
                 basket
         );
 
         try {
             eventBus.publish(eventMessage);
-            log.info("✅ Publishing UserCheckoutAcceptedIntegrationEvent for buyerId: {}", basket.getBuyerId());
+            log.info("✅ Publishing UserPlaceOrderIntegrationEvent for buyerId: {}", basket.getBuyerId());
         } catch (Exception e) {
-            log.error("❌ Error publishing UserCheckoutAcceptedIntegrationEvent for buyerId: {}", basket.getBuyerId());
+            log.error("❌ Error publishing UserPlaceOrderIntegrationEvent for buyerId: {}", basket.getBuyerId());
             throw new RuntimeException("Error publishing checkout event", e);
         }
 

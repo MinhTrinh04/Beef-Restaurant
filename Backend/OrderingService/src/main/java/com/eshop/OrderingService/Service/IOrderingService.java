@@ -3,6 +3,7 @@ package com.eshop.OrderingService.Service;
 import com.eshop.OrderingService.DTO.CreateOrderRequestDto;
 import com.eshop.OrderingService.DTO.OrderDto;
 import com.eshop.OrderingService.IntegrationEvents.Events.UserCheckoutAcceptedIntegrationEvent;
+import com.eshop.OrderingService.IntegrationEvents.Events.UserPlaceOrderIntegrationEvent;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,7 +27,9 @@ public interface IOrderingService {
     boolean shipOrder(UUID orderId);
 
     // Integration Event Handlers
-    void createOrderFromCheckout(UserCheckoutAcceptedIntegrationEvent event);
+//    void createOrderFromCheckout(UserCheckoutAcceptedIntegrationEvent event);
+
+    void createOrderFromCheckout(UserPlaceOrderIntegrationEvent event);
 
     void updateOrderStatusToValidated(UUID orderId);
 

@@ -31,6 +31,14 @@ public class OrderingRabbitMQConfig {
     }
 
     @Bean
+    public Binding bindingUserPlaceOrder(TopicExchange eventBusExchange, Queue orderServiceQueue) {
+        return BindingBuilder
+                .bind(orderServiceQueue)
+                .to(eventBusExchange)
+                .with(USER_PLACE_ORDER_EVENT);
+    }
+
+    @Bean
     public Binding bindingOrderStockConfirmed(TopicExchange eventBusExchange, Queue orderServiceQueue) {
         return BindingBuilder
                 .bind(orderServiceQueue)

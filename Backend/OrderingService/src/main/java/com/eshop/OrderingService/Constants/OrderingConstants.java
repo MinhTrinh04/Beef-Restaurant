@@ -11,6 +11,7 @@ public class OrderingConstants {
     public static final String ORDER_STATUS_CANCELLED = "Cancelled";
 
     // Event Names
+    public static final String USER_PLACE_ORDER_EVENT = "UserPlaceOrderIntegrationEvent";
     public static final String USER_CHECKOUT_ACCEPTED_EVENT = "UserCheckoutAcceptedIntegrationEvent";
     public static final String ORDER_STATUS_CHANGED_TO_SUBMITTED_EVENT = "OrderStatusChangedToSubmittedIntegrationEvent";
     public static final String ORDER_STATUS_CHANGED_TO_AWAITING_STOCK_VALIDATION_EVENT = "OrderStatusChangedToAwaitingStockValidationIntegrationEvent";

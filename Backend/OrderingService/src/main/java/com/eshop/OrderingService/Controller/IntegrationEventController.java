@@ -21,6 +21,7 @@ public class IntegrationEventController {
     private final OrderStockRejectedIntegrationEventHandler orderStockRejectedHandler;
     private final OrderPaymentSucceededIntegrationEventHandler orderPaymentSucceededHandler;
     private final OrderPaymentFailedIntegrationEventHandler orderPaymentFailedHandler;
+    private final UserPlaceOrderIntegrationEventHandler userPlaceOrderHandler;
 
     @RabbitHandler
     public void handleUserCheckoutAccepted(UserCheckoutAcceptedIntegrationEvent event) {
@@ -28,6 +29,13 @@ public class IntegrationEventController {
                 QUEUE_NAME);
         userCheckoutAcceptedHandler.handle(event);
     }
+    @RabbitHandler
+    public void handleUserPlaceOrder(UserPlaceOrderIntegrationEvent event) {
+        log.info("📨 Received UserPlaceOrderIntegrationEvent from queue: {}",
+                QUEUE_NAME);
+        userPlaceOrderHandler.handle(event);
+    }
+
 
     @RabbitHandler
     public void handleOrderStockConfirmed(OrderStockConfirmedIntegrationEvent event) {

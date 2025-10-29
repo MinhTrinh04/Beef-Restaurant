@@ -35,78 +35,6 @@ public class OrderingServiceImpl implements IOrderingService {
     private final OrderMapper orderMapper;
     private final IEventBus eventBus;
 
-//    @Override
-//    @Transactional
-//    public OrderDto createOrder(CreateOrderRequestDto request) {
-//        log.info("Creating new order for user: {}", request.getUserId());
-//
-//        Order order = new Order();
-//        order.setOrderId(UUID.randomUUID().toString());
-//        order.setUserId(request.getUserId());
-//        order.setOrderDate(LocalDateTime.now());
-//        order.setOrderStatus(OrderingConstants.ORDER_STATUS_SUBMITTED);
-//        order.setDescription(request.getDescription());
-//
-//        // Set address
-//        order.setAddressStreet(request.getAddressStreet());
-//        order.setAddressCity(request.getAddressCity());
-//        order.setAddressState(request.getAddressState());
-//        order.setAddressCountry(request.getAddressCountry());
-//        order.setAddressZipCode(request.getAddressZipCode());
-//
-//        // Set payment info
-//        order.setCardNumber(request.getCardNumber());
-//        order.setCardHolderName(request.getCardHolderName());
-//        order.setCardSecurityNumber(request.getCardSecurityNumber());
-//        order.setCardTypeId(request.getCardTypeId());
-//
-//        // Set buyer info
-//        order.setBuyerName(request.getBuyerName());
-//        order.setBuyerEmail(request.getBuyerEmail());
-//
-//        // Parse card expiration
-//        if (request.getCardExpiration() != null) {
-//            try {
-//                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yy");
-//                order.setCardExpiration(LocalDateTime.parse("01/" + request.getCardExpiration(), formatter));
-//            } catch (Exception e) {
-//                log.warn("Failed to parse card expiration: {}", request.getCardExpiration());
-//            }
-//        }
-//
-//        // Calculate total amount
-//        BigDecimal totalAmount = request.getOrderItems().stream()
-//                .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getUnits())))
-//                .reduce(BigDecimal.ZERO, BigDecimal::add);
-//        order.setTotalAmount(totalAmount);
-//
-//        // Save order
-//        Order savedOrder = orderRepository.save(order);
-//
-//        // Create order items
-//        List<OrderItem> orderItems = request.getOrderItems().stream()
-//                .map(itemRequest -> {
-//                    OrderItem orderItem = new OrderItem();
-//                    orderItem.setOrder(savedOrder);
-//                    orderItem.setProductId(itemRequest.getProductId());
-//                    orderItem.setProductName(itemRequest.getProductName());
-//                    orderItem.setUnitPrice(itemRequest.getUnitPrice());
-//                    orderItem.setUnits(itemRequest.getUnits());
-//                    orderItem.setPictureUrl(itemRequest.getPictureUrl());
-//                    return orderItem;
-//                })
-//                .collect(Collectors.toList());
-//
-//        savedOrder.setOrderItems(orderItems);
-//        orderRepository.save(savedOrder);
-//
-//        // Publish event for stock validation
-//        processOrderSubmission(savedOrder.getOrderId());
-//
-//        log.info("Order created successfully with ID: {}", savedOrder.getOrderId());
-//        return orderMapper.toDto(savedOrder);
-//    }
-
     @Override
     public OrderDto getOrderById(Long id) {
         Order order = orderRepository.findById(id)
@@ -189,7 +117,7 @@ public class OrderingServiceImpl implements IOrderingService {
 
     @Override
     @Transactional
-    public void createOrderFromCheckout(UserCheckoutAcceptedIntegrationEvent event) {
+    public void createOrderFromCheckout(UserPlaceOrderIntegrationEvent event) {
         log.info("Creating order from checkout for user: {}", event.getUserId());
 
         Order order = new Order();
