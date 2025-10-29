@@ -42,32 +42,36 @@ database "Order DB" as DB
 participant "Menu" as Menu
 participant "Payment" as Payment
 
+    -> Basket: POST /api/v2/basket/checkout
+    Basket -> Menu: OpenFeign (Pre-check stock)
+    alt Hết hàng
+    Menu --> Basket: 400 Bad Request -> Break
+    end
+
     Basket -> MQ: PUB(UserCheckoutAcceptedIntegrationEvent)
     MQ --> OPE: SUB(UserCheckoutAcceptedIntegrationEvent)
     activate OPE
         OPE -> DB: ORDER_STATUS_SUBMITTED
-        OPE -> MQ: PUB(OrderStatusChangedToSubmittedIntegrationEvent)
-        MQ --> Basket: SUB(OrderStatusChangedToSubmittedIntegrationEvent)
+'        OPE -> MQ: PUB(OrderStatusChangedToSubmittedIntegrationEvent)
+'        MQ --> Basket: SUB(OrderStatusChangedToSubmittedIntegrationEvent)
         OPE -> MQ: PUB(OrderStatusChangedToAwaitingStockValidationIntegrationEvent)
     deactivate OPE
 
 
-
-
     MQ --> Menu: SUB(OrderStatusChangedToAwaitingStockValidationIntegrationEvent)
+    activate Menu
+        Menu -> Menu: Reservation Pattern (giảm stock/ khoá số lượng)
+    deactivate Menu
 
 alt Sản phẩm tồn kho
     Menu -> MQ: PUB(OrderStockConfirmed)
     MQ --> OPE: SUB(OrderStockConfirmed)
     activate OPE
         OPE -> DB: ORDER_STATUS_VALIDATED
-        OPE -> MQ: PUB(OrderStatusChangedToValidatedIntegrationEvent)
+        OPE -> Payment: OpenFeign(api/v1/payment/create-url)
 
     deactivate OPE
 
-    MQ --> Payment: SUB(OrderStatusChangedToValidatedIntegrationEvent) //Bỏ -> Open Feign Basket -> Payment
-    OPE -> Basket: Theo gemini bảo là Basket poll/websocket về trạng thái của đơn khi được validate (Lý do bẻ: khi thanh toán cần truyền httpServletRequest mà 1 event ko thể chứa ttin này)
-    Basket -> Payment: OpenFeign(api/v1/payment/create-url)
 
     alt Thanh toán thành công
         Payment -> MQ: PUB(OrderPaymentSucceededIntegrationEvent)
@@ -76,21 +80,25 @@ alt Sản phẩm tồn kho
             OPE -> DB: ORDER_STATUS_PAID
             OPE -> MQ: PUB(OrderStatusChangedToPaidIntegrationEvent)
         deactivate OPE
+        MQ --> Basket: SUB(OrderStatusChangedToPaidIntegrationEvent)
+        Basket -> Basket: RemoveBasket()
         MQ --> Menu: SUB(OrderStatusChangedToPaidIntegrationEvent)
         activate Menu
             Menu -> Menu: RemoveStock()
         deactivate Menu
 
 
-    else #Pink Thanh toán ko thành công
+    else #Pink Thanh toán ko thành công/ Huỷ
     Payment -> MQ: PUB(OrderPaymentFailedIntegrationEvent)
     MQ--> OPE: SUB(OrderPaymentFailedIntegrationEvent)
     activate OPE
         OPE -> DB: ORDER_STATUS_CANCELLED
         OPE -> MQ: PUB(OrderStatusChangedToCancelledIntegrationEvent)
     deactivate OPE
-    note over MQ: Cancel Event đang ko có service nào tiêu thụ
-
+        MQ--> Menu: SUB(OrderStatusChangedToCancelledIntegrationEvent)
+        activate Menu
+            Menu -> Menu: Stock += Reservation
+        deactivate Menu
     end
 
 else #Pink Sản phẩm ko tồn kho

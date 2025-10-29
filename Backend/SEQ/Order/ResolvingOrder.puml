@@ -37,89 +37,71 @@ title Luồng xử lý Đơn hàng
 
 participant "Basket" as Basket
 participant "Rabbit" as MQ
-participant "OrderingProcessEvent" as OPE
-participant "OrderingProcessActor" as Actor
-participant "OrderingStatusEvent" as OSE
+participant "Ordering" as OPE
 database "Order DB" as DB
 participant "Menu" as Menu
 participant "Payment" as Payment
 
     Basket -> MQ: PUB(UserCheckoutAcceptedIntegrationEvent)
     MQ --> OPE: SUB(UserCheckoutAcceptedIntegrationEvent)
-    OPE -> Actor: orderingProcess.SubmitAsync
-    activate Actor
-    note over Actor: Đặt Reminder (GracePeriodElapsedReminder)
-    Actor -> MQ: PUB(OrderStatusChangedToSubmittedIntegrationEvent)
+    activate OPE
+        OPE -> DB: ORDER_STATUS_SUBMITTED
+        OPE -> MQ: PUB(OrderStatusChangedToSubmittedIntegrationEvent)
+        MQ --> Basket: SUB(OrderStatusChangedToSubmittedIntegrationEvent)
+        OPE -> MQ: PUB(OrderStatusChangedToAwaitingStockValidationIntegrationEvent)
+    deactivate OPE
 
-    MQ --> Basket: SUB(OrderStatusChangedToSubmittedIntegrationEvent)
-    MQ --> OSE: SUB(OrderStatusChangedToSubmittedIntegrationEvent)
-    note over OSE: Đã save nên OSE ko cần có handler để nghe
-    OSE -> DB: Tạo bản ghi Order mới
 
-    ... Vài giây sau ...
-    Actor -> Actor: Reminder kích hoạt
-    note over Actor: Ko cần có Reminder vì đã update ngay sau khi pub
-    Actor -> MQ: PUB(OrderStatusChangedToAwaitingStockValidationIntegrationEvent)
-    deactivate Actor
-    
+
+
     MQ --> Menu: SUB(OrderStatusChangedToAwaitingStockValidationIntegrationEvent)
 
 alt Sản phẩm tồn kho
     Menu -> MQ: PUB(OrderStockConfirmed)
     MQ --> OPE: SUB(OrderStockConfirmed)
-    OPE -> Actor: NotifyStockConfirmedAsync()
-    activate Actor
-    note over Actor: Đặt Reminder (StockConfirmedReminder)
-    Actor -> Actor: Reminder kích hoạt
-    Actor -> MQ: PUB(OrderStatusChangedToValidatedIntegrationEvent)
-    deactivate Actor
-    MQ --> OSE: SUB(OrderStatusChangedToValidatedIntegrationEvent)
+    activate OPE
+        OPE -> DB: ORDER_STATUS_VALIDATED
+        OPE -> MQ: PUB(OrderStatusChangedToValidatedIntegrationEvent)
+
+    deactivate OPE
+
     MQ --> Payment: SUB(OrderStatusChangedToValidatedIntegrationEvent) //Bỏ -> Open Feign Basket -> Payment
-    OSE -> Basket: Theo gemini bảo là Basket poll/websocket về trạng thái của đơn khi được validate (Lý do bẻ: khi thanh toán cần truyền httpServletRequest mà 1 event ko thể chứa ttin này)
+    OPE -> Basket: Theo gemini bảo là Basket poll/websocket về trạng thái của đơn khi được validate (Lý do bẻ: khi thanh toán cần truyền httpServletRequest mà 1 event ko thể chứa ttin này)
     Basket -> Payment: OpenFeign(api/v1/payment/create-url)
 
     alt Thanh toán thành công
         Payment -> MQ: PUB(OrderPaymentSucceededIntegrationEvent)
         MQ --> OPE: SUB(OrderPaymentSucceededIntegrationEvent)
-        OPE -> Actor: NotifyPaymentSucceededAsync()
-        activate Actor
-            note over Actor: Đặt Reminder (PaymentSucceeded)
-            Actor -> Actor: Reminder kích hoạt
-            Actor -> MQ: PUB(OrderStatusChangedToPaidIntegrationEvent)
-        deactivate Actor
-        MQ --> OSE: SUB(OrderStatusChangedToPaidIntegrationEvent)
-        note over OSE: Đã save nên OSE ko cần có handler để nghe
-
+        activate OPE
+            OPE -> DB: ORDER_STATUS_PAID
+            OPE -> MQ: PUB(OrderStatusChangedToPaidIntegrationEvent)
+        deactivate OPE
         MQ --> Menu: SUB(OrderStatusChangedToPaidIntegrationEvent)
-        Menu -> Menu: RemoveStock()
+        activate Menu
+            Menu -> Menu: RemoveStock()
+        deactivate Menu
 
 
     else #Pink Thanh toán ko thành công
     Payment -> MQ: PUB(OrderPaymentFailedIntegrationEvent)
     MQ--> OPE: SUB(OrderPaymentFailedIntegrationEvent)
-    OPE -> Actor: NotifyPaymentFailedAsync()
-    activate Actor
-    note over Actor: Đặt Reminder (PaymentFailed)
-    Actor -> Actor: Reminder kích hoạt
-    Actor -> MQ: PUB(OrderStatusChangedToCancelledIntegrationEvent)
-    deactivate Actor
-    MQ--> OSE: SUB(OrderStatusChangedToCancelledIntegrationEvent)
-    note over OSE: Đã save nên OSE ko cần có handler để nghe
-
+    activate OPE
+        OPE -> DB: ORDER_STATUS_CANCELLED
+        OPE -> MQ: PUB(OrderStatusChangedToCancelledIntegrationEvent)
+    deactivate OPE
+    note over MQ: Cancel Event đang ko có service nào tiêu thụ
 
     end
 
 else #Pink Sản phẩm ko tồn kho
     Menu -> MQ: PUB(OrderStockRejected)
     MQ --> OPE: SUB(OrderStockRejected)
-    OPE -> Actor: NotifyStockRejectedAsync()
-    activate Actor
-    note over Actor: Đặt Reminder (StockRejectedReminder)
-    Actor -> Actor: Reminder kích hoạt
-    Actor -> MQ: PUB(OrderStatusChangedToCancelledIntegrationEvent)
-    deactivate Actor
-    MQ --> OSE: SUB(OrderStatusChangedToCancelledIntegrationEvent)
-    note over OSE: Đã save nên OSE ko cần có handler để nghe
+    activate OPE
+        OPE -> DB: ORDER_STATUS_CANCELLED
+        OPE -> MQ: PUB(OrderStatusChangedToCancelledIntegrationEvent)
+    deactivate OPE
+
+    note over MQ: Cancel Event đang ko có service nào tiêu thụ
 
 end
 
