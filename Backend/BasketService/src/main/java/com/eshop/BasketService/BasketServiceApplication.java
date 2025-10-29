@@ -2,10 +2,11 @@ package com.eshop.BasketService;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-// Thêm dòng này để Spring quét cả 2 package
+@EnableFeignClients
 @ComponentScan(basePackages = {"com.eshop.BasketService", "com.eshop.buildingblocks"})
 public class BasketServiceApplication {
 

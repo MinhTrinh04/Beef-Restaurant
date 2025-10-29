@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: "discovery-service"
+
+server:
+  port: 8761
+
+eureka:
+  client:
+    fetch-registry: false
+    register-with-eureka: false
+  server:
+    # T?t ch? ?? t? b?o v? khi test ? local ?? các service
+    # b? "ch?t" s? b? xóa ?i nhanh h?n
+    enable-self-preservation: false
