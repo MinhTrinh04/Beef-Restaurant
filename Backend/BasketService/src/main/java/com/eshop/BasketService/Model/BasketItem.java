@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 @Data
 public class BasketItem {
 
-    private Long productId;
+    private Integer productId;
     private String productName;
     private BigDecimal unitPrice;
     private Integer units;

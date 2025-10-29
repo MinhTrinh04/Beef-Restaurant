@@ -79,8 +79,9 @@ alt Sản phẩm tồn kho
         activate OPE
             OPE -> DB: ORDER_STATUS_PAID
             OPE -> MQ: PUB(OrderStatusChangedToPaidIntegrationEvent)
+            OPE -> MQ: PUB(OrderStatusChangedToSubmittedIntegrationEvent)
         deactivate OPE
-        MQ --> Basket: SUB(OrderStatusChangedToPaidIntegrationEvent)
+            MQ --> Basket: SUB(OrderStatusChangedToSubmittedIntegrationEvent)
         Basket -> Basket: RemoveBasket()
         MQ --> Menu: SUB(OrderStatusChangedToPaidIntegrationEvent)
         activate Menu

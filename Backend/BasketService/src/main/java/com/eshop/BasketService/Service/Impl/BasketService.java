@@ -1,17 +1,24 @@
 package com.eshop.BasketService.Service.Impl;
 
+import com.eshop.BasketService.DTO.StockValidationItem;
 import com.eshop.BasketService.Exception.BasketNotFoundException;
+import com.eshop.BasketService.Exception.StockValidationException;
 import com.eshop.BasketService.IntegrationEvents.Events.UserCheckoutAcceptedIntegrationEvent;
 import com.eshop.BasketService.Model.Basket;
 import com.eshop.BasketService.Repository.BasketRepository;
 import com.eshop.BasketService.Service.IBasketService;
+import com.eshop.BasketService.Service.client.MenuServiceClient;
 import com.eshop.buildingblocks.EventBus.Abstractions.IEventBus;
+import feign.FeignException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.eshop.BasketService.Model.BasketCheckout;
+
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -19,6 +26,7 @@ import java.util.UUID;
 public class BasketService implements IBasketService {
     private final BasketRepository basketRepository;
     private final IEventBus eventBus;
+    private final MenuServiceClient menuServiceClient;
 
     @Override
     public Basket getBasketById(String id) {
@@ -76,6 +84,54 @@ public class BasketService implements IBasketService {
         } catch (Exception e) {
             log.error("❌ Error publishing UserCheckoutAcceptedIntegrationEvent for buyerId {}", buyerId);
             throw new RuntimeException("Error publishing checkout event", e);
+        }
+    }
+
+    @Override
+    public void checkoutV2(String buyerId, BasketCheckout basketCheckout, String requestId) {
+        Basket basket = basketRepository.findById(buyerId)
+                .orElseThrow(() -> new BasketNotFoundException("Basket", "buyerId" , buyerId));
+
+        // Tạo request cho Pre-check
+        List<StockValidationItem> validationRequest = basket.getItems().stream()
+                .map(item -> new StockValidationItem(item.getProductId(), item.getUnits()))
+                .collect(Collectors.toList());
+
+        // Gọi Feign Client (Pre-check đồng bộ)
+        try {
+            menuServiceClient.validateStock(validationRequest);
+        } catch (FeignException.BadRequest e) {
+            throw new StockValidationException("Stock validation failed: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Menu service is unavailable: " + e.getMessage());
+        }
+
+        UUID eventRequestId;
+        try {
+            eventRequestId = UUID.fromString(requestId);
+        } catch (IllegalArgumentException | NullPointerException e) {
+            log.warn("Invalid or missing X-Request-Id. Generating new ID.");
+            eventRequestId = UUID.randomUUID();
+        }
+
+        // Nếu Pre-check thành công, mới bắt đầu luồng cũ
+        UserCheckoutAcceptedIntegrationEvent event = new UserCheckoutAcceptedIntegrationEvent(
+                buyerId,
+                basketCheckout.getUserEmail(),
+                basketCheckout.getCity(),
+                basketCheckout.getStreet(),
+                basketCheckout.getState(),
+                basketCheckout.getCountry(),
+                eventRequestId,
+                basket
+        );
+
+        try {
+            eventBus.publish(event);
+            log.info("✅ Publishing UserCheckoutAcceptedIntegrationEvent for buyerId {}", buyerId);
+        } catch (Exception e) {
+            log.error("❌ Error publishing UserCheckoutAcceptedIntegrationEvent for buyerId {}", buyerId);
+            throw new RuntimeException("Failed to publish checkout event: " + e.getMessage());
         }
     }
 }
