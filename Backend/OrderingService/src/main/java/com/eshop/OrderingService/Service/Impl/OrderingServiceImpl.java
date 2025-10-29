@@ -196,13 +196,13 @@ public class OrderingServiceImpl implements IOrderingService {
         order.setOrderDate(LocalDateTime.now());
         order.setOrderStatus(OrderingConstants.ORDER_STATUS_SUBMITTED);
 
-        order.setAddressStreet(event.getStreet());
-        order.setAddressCity(event.getCity());
-        order.setAddressState(event.getState());
-        order.setAddressCountry(event.getCountry());
+//        order.setAddressStreet(event.getStreet());
+//        order.setAddressCity(event.getCity());
+//        order.setAddressState(event.getState());
+//        order.setAddressCountry(event.getCountry());
 
         order.setBuyerId(event.getUserId());
-        order.setBuyerEmail(event.getUserEmail());
+//        order.setBuyerEmail(event.getUserEmail());
 
         // Create order items from basket items
         List<OrderItem> orderItems = event.getBasket().getItems().stream()
@@ -227,11 +227,11 @@ public class OrderingServiceImpl implements IOrderingService {
 
         Order savedOrder = orderRepository.save(order);
 
-        // Publish submitted event
-        OrderStatusChangedToSubmittedIntegrationEvent submittedEvent = new OrderStatusChangedToSubmittedIntegrationEvent(
-                savedOrder.getOrderId(), savedOrder.getBuyerId(),savedOrder.getBuyerEmail());
-        eventBus.publish(submittedEvent);
-        log.info("✅ OrderStatusChangedToSubmittedIntegrationEvent published for OrderId: {}", savedOrder.getOrderId());
+        // SubmittedEvent tạm thời để publish chỗ khác maybe xoá giỏ sau khi paid
+//        OrderStatusChangedToSubmittedIntegrationEvent submittedEvent = new OrderStatusChangedToSubmittedIntegrationEvent(
+//                savedOrder.getOrderId(), savedOrder.getBuyerId(),savedOrder.getBuyerEmail());
+//        eventBus.publish(submittedEvent);
+//        log.info("✅ OrderStatusChangedToSubmittedIntegrationEvent published for OrderId: {}", savedOrder.getOrderId());
 
         // Start processing
         processOrderSubmission(savedOrder.getOrderId());

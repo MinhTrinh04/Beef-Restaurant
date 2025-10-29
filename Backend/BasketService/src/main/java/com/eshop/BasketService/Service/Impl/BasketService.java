@@ -30,6 +30,20 @@ public class BasketService implements IBasketService {
     @Transactional
     public boolean updateBasket(Basket basket) {
         Basket resBasket = basketRepository.save(basket);
+
+        UserCheckoutAcceptedIntegrationEvent eventMessage = new UserCheckoutAcceptedIntegrationEvent(
+                basket.getBuyerId(),
+                basket
+        );
+
+        try {
+            eventBus.publish(eventMessage);
+            log.info("✅ Publishing UserCheckoutAcceptedIntegrationEvent for buyerId: {}", basket.getBuyerId());
+        } catch (Exception e) {
+            log.error("❌ Error publishing UserCheckoutAcceptedIntegrationEvent for buyerId: {}", basket.getBuyerId());
+            throw new RuntimeException("Error publishing checkout event", e);
+        }
+
         if (resBasket == null){
             log.error("Error updating/creating basket for buyerId: {}", basket.getBuyerId());
             return false;
@@ -51,22 +65,22 @@ public class BasketService implements IBasketService {
         Basket basket = basketRepository.findById(buyerId)
                 .orElseThrow(() -> new BasketNotFoundException("Basket", "buyerId" , buyerId));
 
-        UUID eventRequestId;
-        try {
-            eventRequestId = UUID.fromString(requestId);
-        } catch (IllegalArgumentException | NullPointerException e) {
-            log.warn("Invalid or missing X-Request-Id. Generating new ID.");
-            eventRequestId = UUID.randomUUID();
-        }
+//        UUID eventRequestId;
+//        try {
+//            eventRequestId = UUID.fromString(requestId);
+//        } catch (IllegalArgumentException | NullPointerException e) {
+//            log.warn("Invalid or missing X-Request-Id. Generating new ID.");
+//            eventRequestId = UUID.randomUUID();
+//        }
 
         UserCheckoutAcceptedIntegrationEvent eventMessage = new UserCheckoutAcceptedIntegrationEvent(
                 buyerId,
-                basketCheckout.getUserEmail(),
-                basketCheckout.getCity(),
-                basketCheckout.getStreet(),
-                basketCheckout.getState(),
-                basketCheckout.getCountry(),
-                eventRequestId,
+//                basketCheckout.getUserEmail(),
+//                basketCheckout.getCity(),
+//                basketCheckout.getStreet(),
+//                basketCheckout.getState(),
+//                basketCheckout.getCountry(),
+//                eventRequestId,
                 basket
         );
 
