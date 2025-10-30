@@ -1,10 +1,7 @@
 package com.eshop.OrderingService.Service.Impl;
 
 import com.eshop.OrderingService.Constants.OrderingConstants;
-import com.eshop.OrderingService.DTO.CreateOrderRequestDto;
-import com.eshop.OrderingService.DTO.OrderDto;
-import com.eshop.OrderingService.DTO.OrderItemDto;
-import com.eshop.OrderingService.DTO.OrderItemRequestDto;
+import com.eshop.OrderingService.DTO.*;
 import com.eshop.OrderingService.Exception.InvalidOrderStatusException;
 import com.eshop.OrderingService.Exception.OrderNotFoundException;
 import com.eshop.OrderingService.IntegrationEvents.Events.*;
@@ -12,10 +9,12 @@ import com.eshop.OrderingService.Mapper.OrderMapper;
 import com.eshop.OrderingService.Model.Order;
 import com.eshop.OrderingService.Model.OrderItem;
 import com.eshop.OrderingService.Repository.OrderRepository;
+import com.eshop.OrderingService.Service.Client.PaymentServiceClient;
 import com.eshop.OrderingService.Service.IOrderingService;
 import com.eshop.buildingblocks.EventBus.Abstractions.IEventBus;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,78 +33,7 @@ public class OrderingServiceImpl implements IOrderingService {
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
     private final IEventBus eventBus;
-
-//    @Override
-//    @Transactional
-//    public OrderDto createOrder(CreateOrderRequestDto request) {
-//        log.info("Creating new order for user: {}", request.getUserId());
-//
-//        Order order = new Order();
-//        order.setOrderId(UUID.randomUUID().toString());
-//        order.setUserId(request.getUserId());
-//        order.setOrderDate(LocalDateTime.now());
-//        order.setOrderStatus(OrderingConstants.ORDER_STATUS_SUBMITTED);
-//        order.setDescription(request.getDescription());
-//
-//        // Set address
-//        order.setAddressStreet(request.getAddressStreet());
-//        order.setAddressCity(request.getAddressCity());
-//        order.setAddressState(request.getAddressState());
-//        order.setAddressCountry(request.getAddressCountry());
-//        order.setAddressZipCode(request.getAddressZipCode());
-//
-//        // Set payment info
-//        order.setCardNumber(request.getCardNumber());
-//        order.setCardHolderName(request.getCardHolderName());
-//        order.setCardSecurityNumber(request.getCardSecurityNumber());
-//        order.setCardTypeId(request.getCardTypeId());
-//
-//        // Set buyer info
-//        order.setBuyerName(request.getBuyerName());
-//        order.setBuyerEmail(request.getBuyerEmail());
-//
-//        // Parse card expiration
-//        if (request.getCardExpiration() != null) {
-//            try {
-//                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yy");
-//                order.setCardExpiration(LocalDateTime.parse("01/" + request.getCardExpiration(), formatter));
-//            } catch (Exception e) {
-//                log.warn("Failed to parse card expiration: {}", request.getCardExpiration());
-//            }
-//        }
-//
-//        // Calculate total amount
-//        BigDecimal totalAmount = request.getOrderItems().stream()
-//                .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getUnits())))
-//                .reduce(BigDecimal.ZERO, BigDecimal::add);
-//        order.setTotalAmount(totalAmount);
-//
-//        // Save order
-//        Order savedOrder = orderRepository.save(order);
-//
-//        // Create order items
-//        List<OrderItem> orderItems = request.getOrderItems().stream()
-//                .map(itemRequest -> {
-//                    OrderItem orderItem = new OrderItem();
-//                    orderItem.setOrder(savedOrder);
-//                    orderItem.setProductId(itemRequest.getProductId());
-//                    orderItem.setProductName(itemRequest.getProductName());
-//                    orderItem.setUnitPrice(itemRequest.getUnitPrice());
-//                    orderItem.setUnits(itemRequest.getUnits());
-//                    orderItem.setPictureUrl(itemRequest.getPictureUrl());
-//                    return orderItem;
-//                })
-//                .collect(Collectors.toList());
-//
-//        savedOrder.setOrderItems(orderItems);
-//        orderRepository.save(savedOrder);
-//
-//        // Publish event for stock validation
-//        processOrderSubmission(savedOrder.getOrderId());
-//
-//        log.info("Order created successfully with ID: {}", savedOrder.getOrderId());
-//        return orderMapper.toDto(savedOrder);
-//    }
+    private final PaymentServiceClient paymentServiceClient;
 
     @Override
     public OrderDto getOrderById(Long id) {
@@ -239,6 +167,50 @@ public class OrderingServiceImpl implements IOrderingService {
 
     @Override
     @Transactional
+    public void createOrderFromCheckoutV2(UserCheckoutAcceptedIntegrationEventV2 event) {
+        log.info("Creating order from checkout for user: {}", event.getUserId());
+
+        Order order = new Order();
+        order.setOrderDate(LocalDateTime.now());
+        order.setOrderStatus(OrderingConstants.ORDER_STATUS_SUBMITTED);
+
+        order.setAddressStreet(event.getStreet());
+        order.setAddressCity(event.getCity());
+        order.setAddressState(event.getState());
+        order.setAddressCountry(event.getCountry());
+
+        order.setBuyerId(event.getUserId());
+        order.setBuyerEmail(event.getUserEmail());
+
+        // Create order items from basket items
+        List<OrderItem> orderItems = event.getBasket().getItems().stream()
+                .map(basketItem -> {
+                    OrderItem orderItem = new OrderItem();
+                    orderItem.setOrder(order);
+                    orderItem.setProductId(basketItem.getProductId());
+                    orderItem.setProductName(basketItem.getProductName());
+                    orderItem.setUnitPrice(basketItem.getUnitPrice());
+                    orderItem.setUnits(basketItem.getUnits());
+                    orderItem.setPictureUrl(basketItem.getPictureUrl());
+                    return orderItem;
+                })
+                .collect(Collectors.toList());
+        order.setOrderItems(orderItems);
+
+        // Calculate total amount - Xem xét lại cần lưu khi nào
+        BigDecimal totalAmount = orderItems.stream()
+                .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getUnits())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        order.setTotalAmount(totalAmount);
+
+        Order savedOrder = orderRepository.save(order);
+
+        // Start processing
+        processOrderSubmissionV2(savedOrder.getOrderId());
+    }
+
+    @Override
+    @Transactional
     public void updateOrderStatusToValidated(UUID orderId) {
         log.info("Updating order status to Validated: {}", orderId);
 
@@ -246,14 +218,47 @@ public class OrderingServiceImpl implements IOrderingService {
                 .orElseThrow(() -> new OrderNotFoundException("Order", "orderId", orderId.toString()));
 
         order.setOrderStatus(OrderingConstants.ORDER_STATUS_VALIDATED);
+
+        try {
+            CreatePaymentUrlRequestDto paymentRequest = new CreatePaymentUrlRequestDto();
+            paymentRequest.setOrderId(order.getOrderId());
+            paymentRequest.setAmount(order.getTotalAmount());
+
+            // (Bạn nên cải tiến để BasketCheckout mang theo 2 trường này)
+            paymentRequest.setBankCode(null);
+            paymentRequest.setLanguage("vn");
+
+            // [SỬA] Gọi Feign client chính xác
+            ResponseEntity<PaymentUrlResponseDto> responseEntity = paymentServiceClient.createPaymentUrl(paymentRequest);
+
+            PaymentUrlResponseDto responseBody = responseEntity.getBody();
+
+            // [SỬA] Kiểm tra response code từ PaymentService
+            if (responseEntity.getStatusCode().is2xxSuccessful() &&
+                    responseBody != null &&
+                    "00".equals(responseBody.getCode())) {
+
+                order.setPaymentUrl(responseBody.getPaymentUrl());
+                log.info("Payment URL received and saved for order: {}", order.getOrderId());
+            } else {
+                // Ném lỗi nếu PaymentService trả về lỗi
+                String errorMessage = (responseBody != null) ? responseBody.getMessage() : "Unknown error from PaymentService";
+                throw new Exception("Failed to create payment URL: " + errorMessage);
+            }
+
+        } catch (Exception e) {
+            log.error("Failed to create payment link: {}", e.getMessage(), e);
+            return;
+        }
         orderRepository.save(order);
 
-        // Publish validated event
-        OrderStatusChangedToValidatedIntegrationEvent event = new OrderStatusChangedToValidatedIntegrationEvent(orderId,
-                order.getBuyerId());
-        eventBus.publish(event);
 
-        log.info("✅ Publishing OrderStatusChangedToValidatedIntegrationEvent for buyerId: {}", order.getBuyerId());
+        // Publish validated event luồng cũ
+//        OrderStatusChangedToValidatedIntegrationEvent event = new OrderStatusChangedToValidatedIntegrationEvent(orderId,
+//                order.getBuyerId());
+//        eventBus.publish(event);
+//
+//        log.info("✅ Publishing OrderStatusChangedToValidatedIntegrationEvent for buyerId: {}", order.getBuyerId());
     }
 
     @Override
@@ -273,6 +278,12 @@ public class OrderingServiceImpl implements IOrderingService {
         eventBus.publish(event);
 
         log.info("✅ Publishing OrderStatusChangedToPaidIntegrationEvent for buyerId: {}", order.getBuyerId());
+        //Thêm tạm luồng pub cho luồng mới
+        OrderStatusChangedToSubmittedIntegrationEvent submittedEvent = new OrderStatusChangedToSubmittedIntegrationEvent(
+                order.getOrderId(), order.getBuyerId(),order.getBuyerEmail());
+        eventBus.publish(submittedEvent);
+        log.info("✅ OrderStatusChangedToSubmittedIntegrationEventV2 published for OrderId: {}", order.getOrderId());
+
     }
 
     @Override
@@ -296,6 +307,30 @@ public class OrderingServiceImpl implements IOrderingService {
         eventBus.publish(event);
 
         log.info("✅ Publishing OrderStatusChangedToAwaitingStockValidationIntegrationEvent for buyerId {}", order.getBuyerId());
+    }
+
+    @Override
+    public void processOrderSubmissionV2(UUID orderId) {
+        log.info("Processing order submission: {}", orderId);
+        Order order = orderRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new OrderNotFoundException("Order", "orderId", orderId.toString()));
+
+        // Convert order items to stock items for validation
+        List<OrderStockItem> orderStockItems = order.getOrderItems().stream()
+                .map(item -> new OrderStockItem(
+                        item.getProductId(),
+                        item.getProductName(),
+                        item.getUnits(),
+                        item.getPictureUrl()))
+                .collect(Collectors.toList());
+
+        // Publish stock validation event
+        OrderStatusChangedToAwaitingStockValidationIntegrationEventV2 event = new OrderStatusChangedToAwaitingStockValidationIntegrationEventV2(
+                orderId, order.getBuyerId(), orderStockItems);
+
+        eventBus.publish(event);
+
+        log.info("✅ Publishing OrderStatusChangedToAwaitingStockValidationIntegrationEventV2 for buyerId {}", order.getBuyerId());
     }
 
     private boolean canCancelOrder(String orderStatus) {
