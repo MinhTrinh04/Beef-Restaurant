@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
-@FeignClient(name = "MENU-SERVICE")
+@FeignClient(name = "menu-service")
 public interface MenuServiceClient {
 
     @PostMapping("/api/v2/menu/validate-stock")

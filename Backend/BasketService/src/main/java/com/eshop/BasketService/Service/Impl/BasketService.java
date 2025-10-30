@@ -92,10 +92,18 @@ public class BasketService implements IBasketService {
     public void checkoutV2(String buyerId, BasketCheckout basketCheckout, String requestId) {
         Basket basket = basketRepository.findById(buyerId)
                 .orElseThrow(() -> new BasketNotFoundException("Basket", "buyerId" , buyerId));
-
+        log.info("BƯỚC 2: Đã tìm thấy giỏ hàng. Tổng số items: {}. Chuẩn bị map sang List<StockValidationItem>.", basket.getItems().size());
         // Tạo request cho Pre-check
         List<StockValidationItem> validationRequest = basket.getItems().stream()
-                .map(item -> new StockValidationItem(item.getProductId(), item.getUnits()))
+                .map(item -> {
+                    log.info("...Đang map item: ProductId=[{}], Units=[{}]", item.getProductId(), item.getUnits());
+
+                    if (item.getUnits() == null) {
+                        log.warn("CẢNH BÁO: Item với ProductId [{}] có 'units' BỊ NULL trong Redis!", item.getProductId());
+                    }
+
+                    return new StockValidationItem(item.getProductId(), item.getUnits());
+                })
                 .collect(Collectors.toList());
 
         // Gọi Feign Client (Pre-check đồng bộ)

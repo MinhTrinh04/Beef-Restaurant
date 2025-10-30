@@ -17,6 +17,7 @@ import static com.eshop.OrderingService.Constants.OrderingConstants.QUEUE_NAME;
 public class IntegrationEventController {
 
     private final UserCheckoutAcceptedIntegrationEventHandler userCheckoutAcceptedHandler;
+    private final UserCheckoutAcceptedIntegrationEventV2Handler userCheckoutAcceptedV2Handler;
     private final OrderStockConfirmedIntegrationEventHandler orderStockConfirmedHandler;
     private final OrderStockRejectedIntegrationEventHandler orderStockRejectedHandler;
     private final OrderPaymentSucceededIntegrationEventHandler orderPaymentSucceededHandler;
@@ -27,6 +28,13 @@ public class IntegrationEventController {
         log.info("📨 Received UserCheckoutAcceptedIntegrationEvent from queue: {}",
                 QUEUE_NAME);
         userCheckoutAcceptedHandler.handle(event);
+    }
+
+    @RabbitHandler
+    public void handleUserCheckoutAcceptedV2(UserCheckoutAcceptedIntegrationEventV2 event) {
+        log.info("📨 Received UserCheckoutAcceptedIntegrationEvent from queue: {}",
+                QUEUE_NAME);
+        userCheckoutAcceptedV2Handler.handle(event);
     }
 
     @RabbitHandler

@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class StockValidationItem {
     private Integer menuItemId;
-    private Integer quantity;
+    private Integer units;
 }
