@@ -4,6 +4,7 @@ import com.eshop.BasketService.DTO.StockValidationItem;
 import com.eshop.BasketService.Exception.BasketNotFoundException;
 import com.eshop.BasketService.Exception.StockValidationException;
 import com.eshop.BasketService.IntegrationEvents.Events.UserCheckoutAcceptedIntegrationEvent;
+import com.eshop.BasketService.IntegrationEvents.Events.UserCheckoutAcceptedIntegrationEventV2;
 import com.eshop.BasketService.Model.Basket;
 import com.eshop.BasketService.Repository.BasketRepository;
 import com.eshop.BasketService.Service.IBasketService;
@@ -114,8 +115,8 @@ public class BasketService implements IBasketService {
             eventRequestId = UUID.randomUUID();
         }
 
-        // Nếu Pre-check thành công, mới bắt đầu luồng cũ
-        UserCheckoutAcceptedIntegrationEvent event = new UserCheckoutAcceptedIntegrationEvent(
+        // Nếu Pre-check thành công, dùng event mới để ko ảnh hướng tới luồng cũ
+        UserCheckoutAcceptedIntegrationEventV2 event = new UserCheckoutAcceptedIntegrationEventV2(
                 buyerId,
                 basketCheckout.getUserEmail(),
                 basketCheckout.getCity(),
@@ -128,9 +129,9 @@ public class BasketService implements IBasketService {
 
         try {
             eventBus.publish(event);
-            log.info("✅ Publishing UserCheckoutAcceptedIntegrationEvent for buyerId {}", buyerId);
+            log.info("✅ Publishing UserCheckoutAcceptedIntegrationEventV2 for buyerId {}", buyerId);
         } catch (Exception e) {
-            log.error("❌ Error publishing UserCheckoutAcceptedIntegrationEvent for buyerId {}", buyerId);
+            log.error("❌ Error publishing UserCheckoutAcceptedIntegrationEventV2 for buyerId {}", buyerId);
             throw new RuntimeException("Failed to publish checkout event: " + e.getMessage());
         }
     }

@@ -35,6 +35,9 @@ public class MenuItem {
     @Column(name="available_stock")
     private Integer availableStock;
 
+    @Column(name = "reserved_stock", nullable = false)
+    private int reservedStock;
+
     @Column(name="menu_category_id")
     private Integer menuCategory;
 

@@ -1,8 +1,10 @@
 package com.eshop.MenuService.Service.Impl;
 
 import com.eshop.MenuService.DTO.MenuItemDto;
+import com.eshop.MenuService.DTO.StockValidationItem;
 import com.eshop.MenuService.Exception.MenuItemAlreadyExistsException;
 import com.eshop.MenuService.Exception.ResourceNotFoundException;
+import com.eshop.MenuService.Exception.StockValidationException;
 import com.eshop.MenuService.Repository.MenuCategoryRepository;
 import com.eshop.MenuService.Repository.MenuItemRepository;
 import com.eshop.MenuService.Mapper.MenuItemsMapper;
@@ -94,5 +96,17 @@ public class MenuServiceImpl implements IMenuService {
         MenuItem menuItem = menuItemRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("MenuItem", "id", id.toString()));
         menuItemRepository.deleteById(id);
         return true;
+    }
+
+    @Override
+    public void validateStockAvailability(List<StockValidationItem> items) {
+        for (StockValidationItem item : items) {
+            MenuItem menuItem = menuItemRepository.findById(item.getMenuItemId())
+                    .orElseThrow(() -> new ResourceNotFoundException("MenuItem", "id", item.getMenuItemId().toString()));
+
+            if (menuItem.getAvailableStock() < item.getQuantity()) {
+                throw new StockValidationException("Not enough stock for item: " + menuItem.getName());
+            }
+        }
     }
 }

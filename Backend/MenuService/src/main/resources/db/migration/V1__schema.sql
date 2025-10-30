@@ -17,6 +17,7 @@ CREATE TABLE menu_items
     slug             VARCHAR(150) UNIQUE,
     image            VARCHAR(255),
     available_stock  INT              NOT NULL DEFAULT 0,
+    reserved_stock  INT              NOT NULL DEFAULT 0,
     menu_category_id INT              NOT NULL,
     CONSTRAINT fk_menu_items_to_categories FOREIGN KEY (menu_category_id) REFERENCES menu_categories (id)
 );
