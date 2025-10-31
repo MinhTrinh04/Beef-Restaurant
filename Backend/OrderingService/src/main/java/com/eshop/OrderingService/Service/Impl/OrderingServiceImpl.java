@@ -263,6 +263,30 @@ public class OrderingServiceImpl implements IOrderingService {
 
     @Override
     @Transactional
+    public void updateOrderStatusToPaidV2(UUID orderId) {
+        log.info("Updating order status to Paid: {}", orderId);
+
+        Order order = orderRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new OrderNotFoundException("Order", "orderId", orderId.toString()));
+
+        order.setOrderStatus(OrderingConstants.ORDER_STATUS_PAID);
+        orderRepository.save(order);
+
+        List<OrderStockItem> stockItems = order.getOrderItems().stream()
+                .map(orderItem -> new OrderStockItem(orderItem.getProductId(), orderItem.getProductName(), orderItem.getUnits(),  orderItem.getPictureUrl()))
+                .collect(Collectors.toList());
+
+        // Publish paid event
+        OrderStatusChangedToPaidIntegrationEventV2 event = new OrderStatusChangedToPaidIntegrationEventV2(orderId,
+                order.getBuyerId(),stockItems);
+        eventBus.publish(event);
+
+        log.info("✅ Publishing OrderStatusChangedToPaidIntegrationEventV2 for buyerId: {}", order.getBuyerId());
+
+    }
+
+    @Override
+    @Transactional
     public void updateOrderStatusToPaid(UUID orderId) {
         log.info("Updating order status to Paid: {}", orderId);
 
@@ -279,10 +303,10 @@ public class OrderingServiceImpl implements IOrderingService {
 
         log.info("✅ Publishing OrderStatusChangedToPaidIntegrationEvent for buyerId: {}", order.getBuyerId());
         //Thêm tạm luồng pub cho luồng mới
-        OrderStatusChangedToSubmittedIntegrationEvent submittedEvent = new OrderStatusChangedToSubmittedIntegrationEvent(
-                order.getOrderId(), order.getBuyerId(),order.getBuyerEmail());
-        eventBus.publish(submittedEvent);
-        log.info("✅ OrderStatusChangedToSubmittedIntegrationEventV2 published for OrderId: {}", order.getOrderId());
+//        OrderStatusChangedToSubmittedIntegrationEvent submittedEvent = new OrderStatusChangedToSubmittedIntegrationEvent(
+//                order.getOrderId(), order.getBuyerId(),order.getBuyerEmail());
+//        eventBus.publish(submittedEvent);
+//        log.info("✅ OrderStatusChangedToSubmittedIntegrationEventV2 published for OrderId: {}", order.getOrderId());
 
     }
 

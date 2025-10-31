@@ -11,6 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "payment-service")
 public interface PaymentServiceClient {
 
-    @PostMapping("/api/payment/url")
+    @PostMapping("/api/v1/payment/create-url")
     ResponseEntity<PaymentUrlResponseDto> createPaymentUrl(@RequestBody CreatePaymentUrlRequestDto requestDto);
 }

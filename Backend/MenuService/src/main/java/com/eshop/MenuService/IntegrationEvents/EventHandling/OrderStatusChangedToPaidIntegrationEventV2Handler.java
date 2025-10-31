@@ -2,6 +2,7 @@ package com.eshop.MenuService.IntegrationEvents.EventHandling;
 
 import com.eshop.MenuService.Exception.ResourceNotFoundException;
 import com.eshop.MenuService.IntegrationEvents.Events.OrderStatusChangedToPaidIntegrationEvent;
+import com.eshop.MenuService.IntegrationEvents.Events.OrderStatusChangedToPaidIntegrationEventV2;
 import com.eshop.MenuService.IntegrationEvents.Events.OrderStockItem;
 import com.eshop.MenuService.Model.MenuItem;
 import com.eshop.MenuService.Repository.MenuItemRepository;
@@ -18,13 +19,13 @@ import java.util.Optional;
 @Service
 @Slf4j
 @AllArgsConstructor
-public class OrderStatusChangedToPaidIntegrationEventV2Handler implements IIntegrationEventHandler<OrderStatusChangedToPaidIntegrationEvent> {
+public class OrderStatusChangedToPaidIntegrationEventV2Handler implements IIntegrationEventHandler<OrderStatusChangedToPaidIntegrationEventV2> {
 
     private final MenuItemRepository menuItemRepository;
 
     @Override
     @Transactional
-    public void handle(OrderStatusChangedToPaidIntegrationEvent event) {
+    public void handle(OrderStatusChangedToPaidIntegrationEventV2 event) {
         log.info("⏳ OrderStatusChangedToPaidIntegrationEventV2 received for OrderId: {}", event.getOrderId());
 
         List<MenuItem> itemsToUpdate = new ArrayList<>();

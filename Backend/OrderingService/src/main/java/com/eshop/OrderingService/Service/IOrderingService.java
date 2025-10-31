@@ -35,6 +35,8 @@ public interface IOrderingService {
 
     void updateOrderStatusToPaid(UUID orderId);
 
+    void updateOrderStatusToPaidV2(UUID orderId);
+
     void processOrderSubmission(UUID orderId);
 
     void processOrderSubmissionV2(UUID orderId);

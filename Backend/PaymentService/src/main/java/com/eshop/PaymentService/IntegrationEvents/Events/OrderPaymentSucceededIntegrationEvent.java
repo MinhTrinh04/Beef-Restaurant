@@ -1,4 +1,4 @@
-package com.eshop.PaymentService.IntegrationEvent.Events;
+package com.eshop.PaymentService.IntegrationEvents.Events;
 
 import com.eshop.buildingblocks.EventBus.Events.IntegrationEvent;
 import lombok.AllArgsConstructor;

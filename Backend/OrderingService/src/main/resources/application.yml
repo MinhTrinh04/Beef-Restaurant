@@ -9,7 +9,7 @@ spring:
         url: jdbc:h2:mem:orderingdb
         driver-class-name: org.h2.Driver
         username: sa
-        password: password
+        password: ''
 
     h2:
         console:

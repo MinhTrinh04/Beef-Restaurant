@@ -22,7 +22,7 @@ public class OrderPaymentSucceededIntegrationEventHandler
 
         try {
             // Update order status to paid
-            orderingService.updateOrderStatusToPaid(event.getOrderId());
+            orderingService.updateOrderStatusToPaidV2(event.getOrderId());
             log.info("✅ Order status updated to Paid for OrderId: {}", event.getOrderId());
         } catch (Exception e) {
             log.error("❌ Failed to update order status to Paid for OrderId: {}. Error: {}", event.getOrderId(),
