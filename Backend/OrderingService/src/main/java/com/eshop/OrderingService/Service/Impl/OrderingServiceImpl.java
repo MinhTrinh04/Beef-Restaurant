@@ -283,6 +283,11 @@ public class OrderingServiceImpl implements IOrderingService {
 
         log.info("✅ Publishing OrderStatusChangedToPaidIntegrationEventV2 for buyerId: {}", order.getBuyerId());
 
+        OrderStatusChangedToSubmittedIntegrationEvent submittedEvent = new OrderStatusChangedToSubmittedIntegrationEvent(
+                order.getOrderId(), order.getBuyerId(),order.getBuyerEmail());
+        eventBus.publish(submittedEvent);
+        log.info("✅ OrderStatusChangedToSubmittedIntegrationEventV2 published for OrderId: {}", order.getOrderId());
+
     }
 
     @Override

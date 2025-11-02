@@ -32,7 +32,7 @@ public class IntegrationEventController {
 
     @RabbitHandler
     public void handleUserCheckoutAcceptedV2(UserCheckoutAcceptedIntegrationEventV2 event) {
-        log.info("📨 Received UserCheckoutAcceptedIntegrationEvent from queue: {}",
+        log.info("📨 Received UserCheckoutAcceptedIntegrationEventV2 from queue: {}",
                 QUEUE_NAME);
         userCheckoutAcceptedV2Handler.handle(event);
     }
