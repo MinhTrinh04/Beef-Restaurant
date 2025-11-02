@@ -1,0 +1,60 @@
+server:
+    port: 8082
+
+spring:
+    application:
+        name: ordering-service
+
+    datasource:
+        url: jdbc:h2:mem:orderingdb
+        driver-class-name: org.h2.Driver
+        username: sa
+        password: ''
+
+    h2:
+        console:
+            enabled: true
+            path: /h2-console
+
+    jpa:
+        hibernate:
+            ddl-auto: validate
+        show-sql: true
+        properties:
+            hibernate:
+                format_sql: true
+                dialect: org.hibernate.dialect.H2Dialect
+
+    flyway:
+        enabled: true
+        locations: classpath:db/migration
+        baseline-on-migrate: true
+
+    rabbitmq:
+        host: localhost
+        port: 5672
+        username: guest
+        password: guest
+        virtual-host: /
+
+app:
+  payment:
+    timeout-minutes: 1
+
+logging:
+    level:
+        com.eshop.OrderingService: DEBUG
+        org.springframework.amqp: DEBUG
+
+eureka:
+  client:
+    fetchRegistry: true
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

@@ -1,0 +1,75 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+skinparam shadowing false
+skinparam responseMessageBelowArrow false
+skinparam DefaultFontColor #222
+skinparam TitleFontSize 25
+skinparam NoteBorderColor #teal
+skinparam NoteBackgroundColor #powderblue
+skinparam NoteFontColor 444
+skinparam DatabaseBorderColor #teal
+skinparam DatabaseBackgroundColor #bisque
+skinparam sequence {
+ParticipantBorderThickness 1
+ParticipantBorderColor #teal
+ParticipantBackgroundColor #teal
+ParticipantFontColor #white
+ParticipantFontSize 14
+ParticipantFontStyle bold
+LifeLineBorderColor #teal
+LifeLineBackgroundColor #aliceblue
+ArrowColor #teal
+ActorBorderColor #teal
+GroupBorderThickness 1
+GroupBorderColor #teal
+GroupHeaderFontColor #white
+GroupBackgroundColor #teal
+GroupFontColor #teal
+ReferenceBorderThickness 1
+ReferenceBorderColor #teal
+ReferenceBackgroundColor #aliceblue
+ReferenceHeaderBackgroundColor #white
+ReferenceFontColor #teal
+}
+autonumber
+title Luồng đặt đơn hàng
+
+' --- Participants ---
+actor "Người dùng" as User
+participant "Orders Controller" as OC
+database "Orders DB" as DB
+participant "OrderingProcessActor" as Actor
+participant "Rabbit" as MQ
+participant "Ordering Status Event" as OSE
+
+' --- Flow ---
+User -> OC: PUT /api/v1/orders/{id}/cancel
+activate OC
+
+OC -> DB: Tìm Order theo ID để lấy Actor GUID
+activate DB
+DB --> OC: Trả về thông tin Order
+deactivate DB
+
+OC -> Actor: CancelAsync()
+activate Actor
+
+note over Actor: Kiểm tra xem đơn hàng\ncó được phép hủy không.
+Actor -> Actor: Cập nhật trạng thái -> `Cancelled`
+Actor -> MQ: PUB(OrderStatusChangedToCancelled)
+activate MQ
+
+Actor --> OC: Trả về kết quả `true`
+deactivate Actor
+
+OC --> User: Phản hồi 200 OK
+deactivate OC
+
+' --- Background Update ---
+MQ -> OSE: SUB(OrderStatusChangedToCancelled))
+deactivate MQ
+activate OSE
+OSE -> DB: Cập nhật trạng thái trong SQL
+deactivate OSE
+
+@enduml

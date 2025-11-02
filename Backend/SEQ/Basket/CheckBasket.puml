@@ -1,0 +1,60 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+skinparam shadowing false
+skinparam responseMessageBelowArrow false
+skinparam DefaultFontColor #222
+skinparam TitleFontSize 25
+skinparam NoteBorderColor #teal
+skinparam NoteBackgroundColor #powderblue
+skinparam NoteFontColor 444
+skinparam DatabaseBorderColor #teal
+skinparam DatabaseBackgroundColor #bisque
+skinparam sequence {
+ParticipantBorderThickness 1
+ParticipantBorderColor #teal
+ParticipantBackgroundColor #teal
+ParticipantFontColor #white
+ParticipantFontSize 14
+ParticipantFontStyle bold
+LifeLineBorderColor #teal
+LifeLineBackgroundColor #aliceblue
+ArrowColor #teal
+ActorBorderColor #teal
+GroupBorderThickness 1
+GroupBorderColor #teal
+GroupHeaderFontColor #white
+GroupBackgroundColor #teal
+GroupFontColor #teal
+ReferenceBorderThickness 1
+ReferenceBorderColor #teal
+ReferenceBackgroundColor #aliceblue
+ReferenceHeaderBackgroundColor #white
+ReferenceFontColor #teal
+}
+autonumber
+
+title Luồng 1: Checkout Giỏ hàng
+
+actor "Người dùng" as User
+
+participant "Basket Service" as Basket
+participant "Rabbit" as MB
+participant "Ordering Service" as Ordering
+
+User -> Basket: POST /api/v1/basket/checkout
+
+Basket -> Basket: Lấy giỏ hàng từ Redis
+
+Basket -> MB: PUB(UserCheckoutAcceptedIntegrationEvent)
+activate MB
+note right: Payload chứa thông tin (BỔ SUNG SAU)
+
+MB -> Ordering: SUB(Thông báo sự kiện tới Subscriber)
+deactivate MB
+note right of Ordering: Ordering Service tạo đơn hàng mới
+
+Basket --> User: Phản hồi "Yêu cầu đang xử lý"
+
+
+
+@enduml

@@ -1,9 +1,9 @@
 package com.eshop.buildingblocks.EventBus.Impl;
 
 import com.eshop.buildingblocks.EventBus.Abstractions.IEventBus;
+import com.eshop.buildingblocks.EventBus.Config.RabbitMQConfig;
 import com.eshop.buildingblocks.EventBus.Events.IntegrationEvent;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
@@ -14,18 +14,14 @@ import org.springframework.stereotype.Component;
 public class RabbitMQEventBus implements IEventBus {
     private final RabbitTemplate rabbitTemplate;
 
-    @Value("${spring.rabbitmq.exchange}")
-    private String exchangeName;
-
     @Override
     public void publish(IntegrationEvent event) {
-
         String routingKey = event.getClass().getSimpleName();
-
-        log.info("Publishing event: {}. ID: {}. RoutingKey: '{}', Exchange: '{}'",
-                routingKey, event.getId(), routingKey, exchangeName);
-
-        rabbitTemplate.convertAndSend(exchangeName, routingKey, event);
+        log.info("Publishing event to RabbitMQ. Exchange: {}, RoutingKey: {}. Event ID: {}", RabbitMQConfig.EXCHANGE_NAME, routingKey, event.getId());
+        try {
+            rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, routingKey, event);
+        } catch (Exception e) {
+            log.error("Error publishing event with ID: {}", event.getId(), e);
+        }
     }
-
 }

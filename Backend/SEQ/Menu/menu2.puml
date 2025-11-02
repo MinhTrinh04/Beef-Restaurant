@@ -1,0 +1,67 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+skinparam shadowing false
+skinparam responseMessageBelowArrow false
+skinparam DefaultFontColor #222
+skinparam TitleFontSize 25
+skinparam NoteBorderColor #teal
+skinparam NoteBackgroundColor #powderblue
+skinparam NoteFontColor 444
+skinparam DatabaseBorderColor #teal
+skinparam DatabaseBackgroundColor #bisque
+skinparam sequence {
+ParticipantBorderThickness 1
+ParticipantBorderColor #teal
+ParticipantBackgroundColor #teal
+ParticipantFontColor #white
+ParticipantFontSize 14
+ParticipantFontStyle bold
+LifeLineBorderColor #teal
+LifeLineBackgroundColor #aliceblue
+ArrowColor #teal
+ActorBorderColor #teal
+GroupBorderThickness 1
+GroupBorderColor #teal
+GroupHeaderFontColor #white
+GroupBackgroundColor #teal
+GroupFontColor #teal
+ReferenceBorderThickness 1
+ReferenceBorderColor #teal
+ReferenceBackgroundColor #aliceblue
+ReferenceHeaderBackgroundColor #white
+ReferenceFontColor #teal
+}
+autonumber
+title Cap nhat Ton kho (Sau khi thanh toan)
+
+participant "Ordering" as Ordering
+participant "Rabbit" as Broker
+participant "Menu" as Menu
+database "Menu DB" as DB
+
+skinparam sequenceMessageAlign center
+skinparam participant {
+    BackgroundColor LightBlue
+    BorderColor Blue
+}
+skinparam database {
+    BackgroundColor LightGreen
+    BorderColor Green
+}
+
+autonumber
+
+Ordering -> Broker: PUB(OrderStatusChangedToPaidIntegrationEvent)
+note right: Don hang da duoc thanh toan thanh cong.
+
+Broker --> Menu: SUB(OrderStatusChangedToPaidIntegrationEvent)
+activate Menu
+
+Menu -> DB: Tru AvailableStock cua cac san pham da ban.
+activate DB
+DB --> Menu: Return: Cap nhat thanh cong.
+deactivate DB
+
+deactivate Menu
+
+@enduml
