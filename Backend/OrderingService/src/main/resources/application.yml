@@ -37,6 +37,10 @@ spring:
         password: guest
         virtual-host: /
 
+app:
+  payment:
+    timeout-minutes: 1
+
 logging:
     level:
         com.eshop.OrderingService: DEBUG

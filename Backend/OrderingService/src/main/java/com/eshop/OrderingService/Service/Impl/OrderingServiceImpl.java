@@ -81,10 +81,17 @@ public class OrderingServiceImpl implements IOrderingService {
         order.setOrderStatus(OrderingConstants.ORDER_STATUS_CANCELLED);
         orderRepository.save(order);
 
+        List<OrderStockItem> stockItems = order.getOrderItems().stream()
+                .map(item -> new OrderStockItem(item.getProductId(), item.getProductName(), item.getUnits(), item.getPictureUrl()))
+                .collect(Collectors.toList());
+
         // Publish cancellation event
-        OrderStatusChangedToCancelledIntegrationEvent event = new OrderStatusChangedToCancelledIntegrationEvent(orderId,
-                order.getBuyerId(), reason);
-        eventBus.publish(event);
+        eventBus.publish(new OrderStatusChangedToCancelledIntegrationEvent(
+                order.getOrderId(),
+                order.getBuyerId(),
+                "Order cancelled",
+                stockItems
+        ));
 
         log.info("Order cancelled successfully: {}", orderId);
         return true;
@@ -118,7 +125,7 @@ public class OrderingServiceImpl implements IOrderingService {
     @Override
     @Transactional
     public void createOrderFromCheckout(UserCheckoutAcceptedIntegrationEvent event) {
-        log.info("Creating order from checkout for user: {}", event.getUserId());
+        log.info("Creating order from checkoutV2 for user: {}", event.getUserId());
 
         Order order = new Order();
         order.setOrderDate(LocalDateTime.now());
