@@ -1,0 +1,57 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+skinparam shadowing false
+skinparam responseMessageBelowArrow false
+skinparam DefaultFontColor #222
+skinparam TitleFontSize 25
+skinparam NoteBorderColor #teal
+skinparam NoteBackgroundColor #powderblue
+skinparam NoteFontColor 444
+skinparam DatabaseBorderColor #teal
+skinparam DatabaseBackgroundColor #bisque
+skinparam sequence {
+ParticipantBorderThickness 1
+ParticipantBorderColor #teal
+ParticipantBackgroundColor #teal
+ParticipantFontColor #white
+ParticipantFontSize 14
+ParticipantFontStyle bold
+LifeLineBorderColor #teal
+LifeLineBackgroundColor #aliceblue
+ArrowColor #teal
+ActorBorderColor #teal
+GroupBorderThickness 1
+GroupBorderColor #teal
+GroupHeaderFontColor #white
+GroupBackgroundColor #teal
+GroupFontColor #teal
+ReferenceBorderThickness 1
+ReferenceBorderColor #teal
+ReferenceBackgroundColor #aliceblue
+ReferenceHeaderBackgroundColor #white
+ReferenceFontColor #teal
+}
+autonumber
+
+title Luồng 2: Dọn dẹp giỏ hàng
+
+participant "Ordering" as Ordering
+participant "Rabbit" as MQ
+participant "Basket" as Basket
+database "Redis" as Redis
+
+note left of Ordering: Đơn hàng đã được tạo\nvà lưu vào DB thành công.
+
+Ordering -> MQ: PUB(OrderStatusChangedToSubmittedIntegrationEvent)
+activate MQ
+
+MQ -> Basket: SUB(Thông báo sự kiện tới Subscriber)
+deactivate MQ
+activate Basket
+
+Basket -> Redis: Xóa giỏ hàng theo `BuyerId`
+
+
+
+
+@enduml

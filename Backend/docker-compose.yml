@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq/
+      - rabbitmq_log:/var/log/rabbitmq/
+
+  # 2. Redis: Cơ sở dữ liệu key-value trong bộ nhớ, dùng để lưu giỏ hàng.
+  redis:
+    image: redis:alpine # Sử dụng image nhẹ của Redis.
+    container_name: redis
+    ports:
+      # Cổng 6379 là cổng mặc định của Redis.
+      - "6379:6379"
+    volumes:
+      # Lưu trữ dữ liệu của Redis.
+      - redis_data:/data
+
+  # 3. Zipkin: Dùng để theo dõi và gỡ lỗi các request đi qua nhiều microservices.
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      # Cổng 9411 cho giao diện web của Zipkin.
+      - "9411:9411"
+
+  # 4. Seq: Công cụ quản lý log tập trung.
+  seq:
+    image: datalust/seq:latest
+    container_name: seq
+    environment:
+      # Bắt buộc phải chấp nhận điều khoản sử dụng.
+      - ACCEPT_EULA=Y
+    ports:
+      # Cổng 8080 cho giao diện web của Seq (ánh xạ ra cổng 80 bên trong).
+      - "8080:80"
+      # Cổng 5341 để các ứng dụng gửi log tới.
+      - "5341:5341"
+
+# Định nghĩa các "volumes" để lưu trữ dữ liệu bền vững.
+volumes:
+  rabbitmq_data:
+  rabbitmq_log:
+  redis_data:

@@ -1,0 +1,12 @@
+server:
+  port: 8083
+spring:
+  application:
+    name: "payment-service"
+
+eureka:
+  client:
+    fetchRegistry: true
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/

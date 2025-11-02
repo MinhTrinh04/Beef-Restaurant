@@ -1,0 +1,12 @@
+package com.eshop.MenuService.Repository;
+
+import com.eshop.MenuService.Model.MenuCategory;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+@Repository
+public interface MenuCategoryRepository extends JpaRepository<MenuCategory,Integer> {
+    Optional<MenuCategory> findById(Integer id);
+}
