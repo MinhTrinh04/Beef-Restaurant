@@ -46,14 +46,14 @@ public class OrderStatusChangedToAwaitingStockValidationIntegrationEventV2Handle
                 Optional<MenuItem> menuItemOptional = menuItemRepository.findById(item.getProductId());
                 if (menuItemOptional.isPresent()) {
                     MenuItem menuItem = menuItemOptional.get();
+                    log.info("✅ Updating stock for MenuItem ID: {}. Old stock: {}, Old reserved stock: {} ",
+                            menuItem.getId(), menuItem.getAvailableStock(), menuItem.getReservedStock());
                     // Giảm tồn kho
                     menuItem.Removestock(item.getUnits());
-                    log.info("✅ Updating stock for MenuItem ID: {}. Old stock: {}, New stock: {}",
-                            menuItem.getId(), menuItemOptional.get().getAvailableStock(), menuItem.getAvailableStock());
                     // Tạm giữ
                     menuItem.setReservedStock(menuItem.getReservedStock() + item.getUnits());
-                    log.info("✅ Updating reserved stock for MenuItem ID: {}. Old stock: {}, New stock: {}",
-                            menuItem.getId(), menuItemOptional.get().getReservedStock(), menuItem.getReservedStock());
+                    log.info("✅ Updating stock for MenuItem ID: {}.  New stock: {}, New reserved stock: {}",
+                            menuItem.getId(), menuItem.getAvailableStock(), menuItem.getReservedStock());
                     menuItemRepository.save(menuItem);
                 }
             });

@@ -49,6 +49,13 @@ public class MenuRabbitMQConfig {
     }
 
     @Bean
+    public Binding bindingOrderStatusChangedToCancelled(TopicExchange eventBusExchange, Queue menuServiceQueue) {
+        return BindingBuilder.bind(menuServiceQueue)
+                .to(eventBusExchange)
+                .with(ORDER_STATUS_CHANGE_TO_CANCELLED_INTEGRATION_EVENT);
+    }
+
+    @Bean
     public MessageConverter jsonMessageConverter() {
         Jackson2JsonMessageConverter converter = new Jackson2JsonMessageConverter();
 

@@ -29,32 +29,25 @@ public class OrderTimeoutJob {
     @Value("${app.payment.timeout-minutes}")
     private long paymentTimeoutMinutes;
 
-    @Scheduled(fixedRate = 30000)
+    @Scheduled(fixedRate = 1200000)
     @Transactional
     public void cancelPendingOrders() {
-        log.info("JOB: Bắt đầu quét các đơn hàng (status={}) quá hạn...", ORDER_STATUS_VALIDATED);
-
         LocalDateTime timeoutThreshold = LocalDateTime.now().minusMinutes(paymentTimeoutMinutes);
-
         List<Order> stuckOrders = orderRepository.findByOrderStatusAndUpdatedAtBefore(
                 ORDER_STATUS_VALIDATED,
                 timeoutThreshold
         );
 
         if (stuckOrders.isEmpty()) {
-            log.info("JOB: Không tìm thấy đơn hàng nào quá hạn.");
+            log.info("JOB: No overdue orders found.");
             return;
         }
 
-        log.warn("JOB: Tìm thấy {} đơn hàng quá hạn. Bắt đầu hủy...", stuckOrders.size());
-
+        log.warn("JOB: Found {} overdue orders. Starting cancellation...", stuckOrders.size());
         for (Order order : stuckOrders) {
-
-            // 3. Cập nhật trạng thái
             order.setOrderStatus("Cancelled");
             orderRepository.save(order);
-            log.info("JOB: Đã hủy đơn hàng do hết hạn thanh toán: {}", order.getOrderId());
-
+            log.info("JOB: Cancelled order due to payment timeout: {}", order.getOrderId());
 
             List<OrderStockItem> stockItems = order.getOrderItems().stream()
                     .map(item -> new OrderStockItem(item.getProductId(), item.getProductName(), item.getUnits(), item.getPictureUrl()))
@@ -63,11 +56,9 @@ public class OrderTimeoutJob {
             eventBus.publish(new OrderStatusChangedToCancelledIntegrationEvent(
                     order.getOrderId(),
                     order.getBuyerId(),
-                    "Hết thời gian thanh toán",
+                    "TimeOut",
                     stockItems
             ));
         }
-
-        log.info("JOB: Hoàn tất quét.");
     }
 }
