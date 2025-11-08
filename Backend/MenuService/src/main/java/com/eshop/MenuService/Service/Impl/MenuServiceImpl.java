@@ -5,16 +5,18 @@ import com.eshop.MenuService.DTO.StockValidationItem;
 import com.eshop.MenuService.Exception.MenuItemAlreadyExistsException;
 import com.eshop.MenuService.Exception.ResourceNotFoundException;
 import com.eshop.MenuService.Exception.StockValidationException;
-import com.eshop.MenuService.Repository.MenuCategoryRepository;
-import com.eshop.MenuService.Repository.MenuItemRepository;
+import com.eshop.MenuService.IntegrationEvents.Events.ConfirmedOrderStockItemV2;
 import com.eshop.MenuService.Mapper.MenuItemsMapper;
 import com.eshop.MenuService.Model.MenuItem;
+import com.eshop.MenuService.Repository.MenuCategoryRepository;
+import com.eshop.MenuService.Repository.MenuItemRepository;
 import com.eshop.MenuService.Service.IMenuService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -99,14 +101,38 @@ public class MenuServiceImpl implements IMenuService {
     }
 
     @Override
+    @Transactional(rollbackFor = StockValidationException.class)
     public void validateStockAvailability(List<StockValidationItem> items) {
-        for (StockValidationItem item : items) {
-            MenuItem menuItem = menuItemRepository.findById(item.getMenuItemId())
-                    .orElseThrow(() -> new ResourceNotFoundException("MenuItem", "id", item.getMenuItemId().toString()));
+        List<ConfirmedOrderStockItemV2> confirmedOrderStockItems = new ArrayList<>();
+        boolean isStockSufficient = true;
 
-            if (menuItem.getAvailableStock() < item.getUnits()) {
-                throw new StockValidationException("Not enough stock for item: " + menuItem.getName());
+        for (StockValidationItem orderStockItem : items) {
+            MenuItem menuItemOptional = menuItemRepository.findById(orderStockItem.getMenuItemId()).orElseThrow(() -> new ResourceNotFoundException("MenuItem", "ProductId", orderStockItem.getMenuItemId().toString()));
+
+            boolean hasStock = menuItemOptional.getAvailableStock() > orderStockItem.getUnits();
+            if (!hasStock) {
+                isStockSufficient = false;
+                throw new StockValidationException("Not enough stock for item: " + orderStockItem.getMenuItemId());
             }
+            confirmedOrderStockItems.add(new ConfirmedOrderStockItemV2(orderStockItem.getMenuItemId(), orderStockItem.getUnits()));
+        }
+
+        if (isStockSufficient) {
+            confirmedOrderStockItems.forEach(item -> {
+                Optional<MenuItem> menuItemOptional = menuItemRepository.findById(item.getProductId());
+                if (menuItemOptional.isPresent()) {
+                    MenuItem menuItem = menuItemOptional.get();
+                    log.info("✅ Updating stock for MenuItem ID: {}. Old stock: {}, Old reserved stock: {} ",
+                            menuItem.getId(), menuItem.getAvailableStock(), menuItem.getReservedStock());
+                    // Giảm tồn kho
+                    menuItem.Removestock(item.getUnits());
+                    // Tạm giữ
+                    menuItem.setReservedStock(menuItem.getReservedStock() + item.getUnits());
+                    log.info("✅ Updating stock for MenuItem ID: {}.  New stock: {}, New reserved stock: {}",
+                            menuItem.getId(), menuItem.getAvailableStock(), menuItem.getReservedStock());
+                    menuItemRepository.save(menuItem);
+                }
+            });
         }
     }
 }
