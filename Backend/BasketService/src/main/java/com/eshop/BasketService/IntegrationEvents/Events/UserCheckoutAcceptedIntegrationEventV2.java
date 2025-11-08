@@ -10,6 +10,7 @@ import java.util.UUID;
 @Getter
 @AllArgsConstructor
 public class UserCheckoutAcceptedIntegrationEventV2 extends IntegrationEvent {
+    private UUID orderId;
     private final String userId;
     private final String userEmail;
     private final String city;
