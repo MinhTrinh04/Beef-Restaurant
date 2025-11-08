@@ -43,27 +43,27 @@ participant "Menu" as Menu
 participant "Payment" as Payment
 
     -> Basket: POST /api/v2/basket/checkout
+        Basket -> Menu: OpenFeign (Pre-check stock)
+            activate Menu
+                Menu -> Menu: Reservation Pattern (giảm stock/ khoá số lượng)
+            deactivate Menu
+        alt Hết hàng
+        Menu --> Basket: 400 Bad Request -> Break
+        end
+        activate Basket
+        Basket -> Basket: Init OrderId
+
         Basket -> MQ: PUB(UserCheckoutAcceptedIntegrationEvent)
+        deactivate Basket
         MQ --> OPE: SUB(UserCheckoutAcceptedIntegrationEvent)
         activate OPE
-            OPE -> DB: ORDER_STATUS_SUBMITTED
+            OPE -> DB: ORDER_STATUS_VALIDATED
         deactivate OPE
 
-    Basket -> Menu: OpenFeign (Pre-check stock)
-        activate Menu
-            Menu -> Menu: Reservation Pattern (giảm stock/ khoá số lượng)
-        deactivate Menu
-    alt Hết hàng
-    Menu --> Basket: 400 Bad Request -> Break
-    end
 
-alt Sản phẩm tồn kho
-    Menu -> MQ: PUB(OrderStockConfirmed)
-    MQ --> OPE: SUB(OrderStockConfirmed)
-    activate OPE
-        OPE -> DB: ORDER_STATUS_VALIDATED
 
-    deactivate OPE
+
+
         Basket -> Payment: OpenFeign(api/v1/payment/create-url)
 
 
@@ -96,18 +96,7 @@ alt Sản phẩm tồn kho
         deactivate Menu
     end
 
-else #Pink Sản phẩm ko tồn kho
-    Menu -> MQ: PUB(OrderStockRejected)
-    MQ --> OPE: SUB(OrderStockRejected)
-    activate OPE
-        OPE -> DB: ORDER_STATUS_CANCELLED
-        note over DB: Chuyển status mới tương ứng với event
 
-        OPE -> MQ: PUB(OrderStatusChangedToCancelledIntegrationEvent)
-    deactivate OPE
 
-    note over MQ: Hiện tại đang để tạm trùng tên event phải khởi tạo event mới
-
-end
 
 @enduml
