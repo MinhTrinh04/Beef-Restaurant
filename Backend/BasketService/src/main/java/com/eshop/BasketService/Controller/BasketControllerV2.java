@@ -1,6 +1,7 @@
 package com.eshop.BasketService.Controller;
 
 import com.eshop.BasketService.Constants.BasketConstants;
+import com.eshop.BasketService.DTO.PaymentUrlResponseDto;
 import com.eshop.BasketService.DTO.ResponseDto;
 import com.eshop.BasketService.Model.Basket;
 import com.eshop.BasketService.Model.BasketCheckout;
@@ -23,9 +24,9 @@ public class BasketControllerV2 {
     private final IIdentityService identityService;
 
     @PostMapping("/checkout")
-    public ResponseEntity<ResponseDto> checkout(@RequestBody BasketCheckout basketCheckout,@RequestHeader(value = "X-Request-Id", required = false) String requestId) {
+    public ResponseEntity<PaymentUrlResponseDto> checkout(@RequestBody BasketCheckout basketCheckout,@RequestHeader(value = "X-Request-Id", required = false) String requestId) {
         String buyerId = identityService.getUserIdentity();
-        basketService.checkoutV2(buyerId, basketCheckout, requestId);
-        return  ResponseEntity.ok(new ResponseDto(BasketConstants.STATUS_200, BasketConstants.MESSAGE_200));
+        ResponseEntity<PaymentUrlResponseDto> response = basketService.checkoutV2(buyerId, basketCheckout, requestId);
+        return response;
     }
 }

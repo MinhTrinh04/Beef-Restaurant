@@ -14,8 +14,7 @@ CREATE TABLE orders
     buyer_email     VARCHAR(200),
     total_amount    DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
     created_at      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    payment_url     VARCHAR(1024)
+    updated_at      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 -- Create Order Items table

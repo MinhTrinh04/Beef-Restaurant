@@ -150,7 +150,8 @@ public class BasketService implements IBasketService {
                     basketCheckout.getState(),
                     basketCheckout.getCountry(),
                     eventRequestId,
-                    basket
+                    basket,
+                    totalAmount
             );
 
             try {
