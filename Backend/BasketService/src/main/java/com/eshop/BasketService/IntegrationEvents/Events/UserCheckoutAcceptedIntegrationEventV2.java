@@ -5,11 +5,13 @@ import com.eshop.buildingblocks.EventBus.Events.IntegrationEvent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Getter
 @AllArgsConstructor
 public class UserCheckoutAcceptedIntegrationEventV2 extends IntegrationEvent {
+    private UUID orderId;
     private final String userId;
     private final String userEmail;
     private final String city;
@@ -18,4 +20,5 @@ public class UserCheckoutAcceptedIntegrationEventV2 extends IntegrationEvent {
     private final String country;
     private final UUID requestId;
     private final Basket basket;
+    private final BigDecimal totalAmount;
 }

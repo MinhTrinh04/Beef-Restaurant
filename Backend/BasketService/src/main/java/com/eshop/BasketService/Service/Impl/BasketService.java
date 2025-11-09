@@ -1,5 +1,7 @@
 package com.eshop.BasketService.Service.Impl;
 
+import com.eshop.BasketService.DTO.CreatePaymentUrlRequestDto;
+import com.eshop.BasketService.DTO.PaymentUrlResponseDto;
 import com.eshop.BasketService.DTO.StockValidationItem;
 import com.eshop.BasketService.Exception.BasketNotFoundException;
 import com.eshop.BasketService.Exception.StockValidationException;
@@ -9,14 +11,17 @@ import com.eshop.BasketService.Model.Basket;
 import com.eshop.BasketService.Repository.BasketRepository;
 import com.eshop.BasketService.Service.IBasketService;
 import com.eshop.BasketService.Service.client.MenuServiceClient;
+import com.eshop.BasketService.Service.client.PaymentServiceClient;
 import com.eshop.buildingblocks.EventBus.Abstractions.IEventBus;
 import feign.FeignException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.eshop.BasketService.Model.BasketCheckout;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -28,6 +33,7 @@ public class BasketService implements IBasketService {
     private final BasketRepository basketRepository;
     private final IEventBus eventBus;
     private final MenuServiceClient menuServiceClient;
+    private final PaymentServiceClient paymentServiceClient;
 
     @Override
     public Basket getBasketById(String id) {
@@ -89,24 +95,20 @@ public class BasketService implements IBasketService {
     }
 
     @Override
-    public void checkoutV2(String buyerId, BasketCheckout basketCheckout, String requestId) {
+    public ResponseEntity<PaymentUrlResponseDto> checkoutV2(String buyerId, BasketCheckout basketCheckout, String requestId) {
         Basket basket = basketRepository.findById(buyerId)
                 .orElseThrow(() -> new BasketNotFoundException("Basket", "buyerId" , buyerId));
-        log.info("BƯỚC 2: Đã tìm thấy giỏ hàng. Tổng số items: {}. Chuẩn bị map sang List<StockValidationItem>.", basket.getItems().size());
+        log.info("Basket founded with total items: {}.", basket.getItems().size());
+
+        UUID orderId = UUID.randomUUID();
         // Tạo request cho Pre-check
         List<StockValidationItem> validationRequest = basket.getItems().stream()
                 .map(item -> {
-                    log.info("...Đang map item: ProductId=[{}], Units=[{}]", item.getProductId(), item.getUnits());
-
-                    if (item.getUnits() == null) {
-                        log.warn("CẢNH BÁO: Item với ProductId [{}] có 'units' BỊ NULL trong Redis!", item.getProductId());
-                    }
-
+                    log.info("...Mapping: ProductId=[{}], Units=[{}]", item.getProductId(), item.getUnits());
                     return new StockValidationItem(item.getProductId(), item.getUnits());
                 })
                 .collect(Collectors.toList());
 
-        // Gọi Feign Client (Pre-check đồng bộ)
         try {
             menuServiceClient.validateStock(validationRequest);
         } catch (FeignException.BadRequest e) {
@@ -115,32 +117,51 @@ public class BasketService implements IBasketService {
             throw new RuntimeException("Menu service is unavailable: " + e.getMessage());
         }
 
-        UUID eventRequestId;
-        try {
-            eventRequestId = UUID.fromString(requestId);
-        } catch (IllegalArgumentException | NullPointerException e) {
-            log.warn("Invalid or missing X-Request-Id. Generating new ID.");
-            eventRequestId = UUID.randomUUID();
-        }
+        BigDecimal totalAmount = basket.getItems().stream()
+                .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getUnits())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        // Nếu Pre-check thành công, dùng event mới để ko ảnh hướng tới luồng cũ
-        UserCheckoutAcceptedIntegrationEventV2 event = new UserCheckoutAcceptedIntegrationEventV2(
-                buyerId,
-                basketCheckout.getUserEmail(),
-                basketCheckout.getCity(),
-                basketCheckout.getStreet(),
-                basketCheckout.getState(),
-                basketCheckout.getCountry(),
-                eventRequestId,
-                basket
+        CreatePaymentUrlRequestDto paymentRequest = new CreatePaymentUrlRequestDto(
+                orderId,
+                totalAmount,
+                null,
+                "vn"
         );
 
-        try {
-            eventBus.publish(event);
-            log.info("✅ Publishing UserCheckoutAcceptedIntegrationEventV2 for buyerId {}", buyerId);
-        } catch (Exception e) {
-            log.error("❌ Error publishing UserCheckoutAcceptedIntegrationEventV2 for buyerId {}", buyerId);
-            throw new RuntimeException("Failed to publish checkout event: " + e.getMessage());
+        ResponseEntity<PaymentUrlResponseDto> paymentResponse = paymentServiceClient.createPaymentUrl(paymentRequest);
+
+        if (paymentResponse.getStatusCode().is2xxSuccessful() &&
+                paymentResponse.getBody() != null &&
+                "00".equals(paymentResponse.getBody().getCode())) {
+            log.info("Payment URL received and saved for order: {}", orderId);
+            UUID eventRequestId;
+            try {
+                eventRequestId = UUID.fromString(requestId);
+            } catch (IllegalArgumentException | NullPointerException e) {
+                log.warn("Invalid or missing X-Request-Id. Generating new ID.");
+                eventRequestId = UUID.randomUUID();
+            }
+            UserCheckoutAcceptedIntegrationEventV2 event = new UserCheckoutAcceptedIntegrationEventV2(
+                    orderId,
+                    buyerId,
+                    basketCheckout.getUserEmail(),
+                    basketCheckout.getCity(),
+                    basketCheckout.getStreet(),
+                    basketCheckout.getState(),
+                    basketCheckout.getCountry(),
+                    eventRequestId,
+                    basket,
+                    totalAmount
+            );
+
+            try {
+                eventBus.publish(event);
+                log.info("✅ Publishing UserCheckoutAcceptedIntegrationEventV2 for buyerId {}", buyerId);
+            } catch (Exception e) {
+                log.error("❌ Error publishing UserCheckoutAcceptedIntegrationEventV2 for buyerId {}", buyerId);
+                throw new RuntimeException("Failed to publish checkout event: " + e.getMessage());
+            }
         }
+        return paymentResponse;
     }
 }

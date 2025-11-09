@@ -178,8 +178,9 @@ public class OrderingServiceImpl implements IOrderingService {
         log.info("Creating order from checkout for user: {}", event.getUserId());
 
         Order order = new Order();
+        order.setOrderId(event.getOrderId());
         order.setOrderDate(LocalDateTime.now());
-        order.setOrderStatus(OrderingConstants.ORDER_STATUS_SUBMITTED);
+        order.setOrderStatus(OrderingConstants.ORDER_STATUS_VALIDATED);
 
         order.setAddressStreet(event.getStreet());
         order.setAddressCity(event.getCity());
@@ -203,17 +204,8 @@ public class OrderingServiceImpl implements IOrderingService {
                 })
                 .collect(Collectors.toList());
         order.setOrderItems(orderItems);
-
-        // Calculate total amount - Xem xét lại cần lưu khi nào
-        BigDecimal totalAmount = orderItems.stream()
-                .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getUnits())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        order.setTotalAmount(totalAmount);
-
-        Order savedOrder = orderRepository.save(order);
-
-        // Start processing
-        processOrderSubmissionV2(savedOrder.getOrderId());
+        order.setTotalAmount(event.getTotalAmount());
+        orderRepository.save(order);
     }
 
     @Override
@@ -245,7 +237,7 @@ public class OrderingServiceImpl implements IOrderingService {
                     responseBody != null &&
                     "00".equals(responseBody.getCode())) {
 
-                order.setPaymentUrl(responseBody.getPaymentUrl());
+//                order.setPaymentUrl(responseBody.getPaymentUrl());
                 log.info("Payment URL received and saved for order: {}", order.getOrderId());
             } else {
                 // Ném lỗi nếu PaymentService trả về lỗi

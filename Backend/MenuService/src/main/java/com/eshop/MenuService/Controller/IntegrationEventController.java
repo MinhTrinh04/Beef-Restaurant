@@ -16,7 +16,6 @@ public class IntegrationEventController {
     private final OrderStatusChangedToPaidIntegrationEventHandler paidEventHandler;
     private final OrderStatusChangedToPaidIntegrationEventV2Handler paidEventV2Handler;
     private final OrderStatusChangedToAwaitingStockValidationIntegrationEventHandler awaitingStockEventHandler;
-    private final OrderStatusChangedToAwaitingStockValidationIntegrationEventV2Handler awaitingStockEventV2Handler;
     private final OrderStatusChangedToCancelledIntegrationEventHandler cancelledEventHandler;
 
     @RabbitHandler
@@ -32,11 +31,6 @@ public class IntegrationEventController {
     @RabbitHandler
     public void handleOrderStatusChangedToAwaitingStockValidation(OrderStatusChangedToAwaitingStockValidationIntegrationEvent event) {
         awaitingStockEventHandler.handle(event);
-    }
-
-    @RabbitHandler
-    public void handleOrderStatusChangedToAwaitingStockValidationV2(OrderStatusChangedToAwaitingStockValidationIntegrationEventV2 event) {
-        awaitingStockEventV2Handler.handle(event);
     }
 
     @RabbitHandler

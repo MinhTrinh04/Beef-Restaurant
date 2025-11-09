@@ -39,7 +39,7 @@ spring:
 
 app:
   payment:
-    timeout-minutes: 1
+    timeout-minutes: 15
 
 logging:
     level:

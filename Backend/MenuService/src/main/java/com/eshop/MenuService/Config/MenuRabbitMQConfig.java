@@ -42,13 +42,6 @@ public class MenuRabbitMQConfig {
     }
 
     @Bean
-    public Binding bindingOrderStatusChangedToAwaitingStockValidationV2(TopicExchange eventBusExchange, Queue menuServiceQueue) {
-        return BindingBuilder.bind(menuServiceQueue)
-                .to(eventBusExchange)
-                .with(ORDER_STATUS_CHANGE_TO_AWAITING_STOCK_VALIDATION_INTEGRATION_EVENT_V2);
-    }
-
-    @Bean
     public Binding bindingOrderStatusChangedToCancelled(TopicExchange eventBusExchange, Queue menuServiceQueue) {
         return BindingBuilder.bind(menuServiceQueue)
                 .to(eventBusExchange)

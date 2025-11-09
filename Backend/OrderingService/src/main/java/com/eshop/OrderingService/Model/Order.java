@@ -19,11 +19,6 @@ import java.util.UUID;
 public class Order {
 
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
     @Column(name = "order_id", updatable = false, nullable = false, columnDefinition = "UUID")
     private UUID orderId;
 
@@ -69,8 +64,6 @@ public class Order {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
     //
-    @Column(name = "payment_url", length = 1024)
-    private String paymentUrl;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderItem> orderItems;
@@ -84,17 +77,4 @@ public class Order {
         }
     }
 
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
-
-    public BigDecimal GetTotal() {
-        if (orderItems == null || orderItems.isEmpty()) {
-            return BigDecimal.ZERO;
-        }
-        return orderItems.stream()
-                .map(item -> item.getUnitPrice().multiply(new BigDecimal(item.getUnits())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
 }
