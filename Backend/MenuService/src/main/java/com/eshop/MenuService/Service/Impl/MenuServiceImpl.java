@@ -109,7 +109,7 @@ public class MenuServiceImpl implements IMenuService {
         for (StockValidationItem orderStockItem : items) {
             MenuItem menuItemOptional = menuItemRepository.findById(orderStockItem.getMenuItemId()).orElseThrow(() -> new ResourceNotFoundException("MenuItem", "ProductId", orderStockItem.getMenuItemId().toString()));
 
-            boolean hasStock = menuItemOptional.getAvailableStock() > orderStockItem.getUnits();
+            boolean hasStock = menuItemOptional.getAvailableStock() >= orderStockItem.getUnits();
             if (!hasStock) {
                 isStockSufficient = false;
                 throw new StockValidationException("Not enough stock for item: " + orderStockItem.getMenuItemId());

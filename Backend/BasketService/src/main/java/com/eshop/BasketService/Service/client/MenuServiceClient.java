@@ -11,6 +11,6 @@ import java.util.List;
 @FeignClient(name = "menu-service")
 public interface MenuServiceClient {
 
-    @PostMapping("/api/v2/menu/validate-stock")
+    @PostMapping("/api/v1/menu/validate-stock")
     ResponseEntity<Void> validateStock(@RequestBody List<StockValidationItem> items);
 }

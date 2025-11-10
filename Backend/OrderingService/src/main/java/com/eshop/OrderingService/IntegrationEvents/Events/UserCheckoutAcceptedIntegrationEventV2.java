@@ -17,7 +17,6 @@ public class UserCheckoutAcceptedIntegrationEventV2 extends IntegrationEvent {
     private final String street;
     private final String state;
     private final String country;
-    private final UUID requestId;
     private final Basket basket;
     private final BigDecimal totalAmount;
 }

@@ -16,8 +16,6 @@ public interface IBasketService {
     //Delete
     boolean deleteBasket (String id);
 
-    void checkout(String id, BasketCheckout basket, String requestId);
-
     //Checkout V2
     ResponseEntity<PaymentUrlResponseDto> checkoutV2(String id, BasketCheckout basketCheckout, String requestId);
 }

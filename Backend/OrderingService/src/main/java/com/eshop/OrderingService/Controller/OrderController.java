@@ -22,21 +22,6 @@ public class OrderController {
 
     private final IOrderingService orderingService;
 
-//    @PostMapping
-//    public ResponseEntity<ResponseDto<OrderDto>> createOrder(@Valid @RequestBody CreateOrderRequestDto request) {
-//        log.info("Creating new order for user: {}", request.getUserId());
-//
-//        try {
-//            OrderDto order = orderingService.createOrder(request);
-//            return ResponseEntity.status(HttpStatus.CREATED)
-//                    .body(ResponseDto.success("Order created successfully", order));
-//        } catch (Exception e) {
-//            log.error("Failed to create order: {}", e.getMessage(), e);
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body(ResponseDto.error("Failed to create order: " + e.getMessage()));
-//        }
-//    }
-
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDto<OrderDto>> getOrderById(@PathVariable Long id) {
         log.info("Getting order by ID: {}", id);
@@ -109,17 +94,4 @@ public class OrderController {
         }
     }
 
-    @PutMapping("/{orderId}/ship")
-    public ResponseEntity<ResponseDto<Boolean>> shipOrder(@PathVariable UUID orderId) {
-        log.info("Shipping order: {}", orderId);
-
-        try {
-            boolean shipped = orderingService.shipOrder(orderId);
-            return ResponseEntity.ok(ResponseDto.success("Order shipped successfully", shipped));
-        } catch (Exception e) {
-            log.error("Failed to ship order {}: {}", orderId, e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ResponseDto.error("Failed to ship order: " + e.getMessage()));
-        }
-    }
 }
