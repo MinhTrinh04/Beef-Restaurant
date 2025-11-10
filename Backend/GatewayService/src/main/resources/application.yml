@@ -13,28 +13,29 @@ spring:
           predicates:
             - Path=/api/menu/**
           filters:
-            - RewritePath=/api/menu/(?<segment>.*), /${segment}
+            - RewritePath=/api/menu/(?<segment>.*), /api/v1/menu/${segment}
 
         - id: ordering_service_route
           uri: lb://ORDERING-SERVICE
           predicates:
             - Path=/api/orders/**
           filters:
-            - RewritePath=/api/orders/(?<segment>.*), /${segment}
+            - RewritePath=/api/orders/(?<segment>.*), /api/v1/orders/${segment}
 
         - id: basket_service_route
           uri: lb://BASKET-SERVICE
           predicates:
-            - Path=/api/basket/**
+            - Path=/api/basket,/api/basket/**
           filters:
-            - RewritePath=/api/basket/(?<segment>.*), /${segment}
+            - RewritePath=/api/basket, /api/v1/basket
+            - RewritePath=/api/basket/(?<segment>.*), /api/v1/basket/${segment}
 
         - id: payment_service_route
           uri: lb://PAYMENT-SERVICE
           predicates:
             - Path=/api/payment/**
           filters:
-            - RewritePath=/api/payment/(?<segment>.*), /${segment}
+            - RewritePath=/api/payment/(?<segment>.*), /api/v1/payment/${segment}
 
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v2/basket")
+@RequestMapping("/api/v1/basket")
 @RequiredArgsConstructor
 public class BasketControllerV2 {
     private final IBasketService basketService;
