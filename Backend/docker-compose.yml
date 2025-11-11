@@ -15,40 +15,49 @@ services:
       - rabbitmq_data:/var/lib/rabbitmq/
       - rabbitmq_log:/var/log/rabbitmq/
 
-  # 2. Redis: Cơ sở dữ liệu key-value trong bộ nhớ, dùng để lưu giỏ hàng.
   redis:
-    image: redis:alpine # Sử dụng image nhẹ của Redis.
+    image: redis:alpine
     container_name: redis
     ports:
-      # Cổng 6379 là cổng mặc định của Redis.
       - "6379:6379"
     volumes:
-      # Lưu trữ dữ liệu của Redis.
       - redis_data:/data
 
-  # 3. Zipkin: Dùng để theo dõi và gỡ lỗi các request đi qua nhiều microservices.
   zipkin:
     image: openzipkin/zipkin
     container_name: zipkin
     ports:
-      # Cổng 9411 cho giao diện web của Zipkin.
       - "9411:9411"
 
-  # 4. Seq: Công cụ quản lý log tập trung.
-  seq:
-    image: datalust/seq:latest
-    container_name: seq
+  postgres:
+    image: postgres:15
+    container_name: postgres
     environment:
-      # Bắt buộc phải chấp nhận điều khoản sử dụng.
-      - ACCEPT_EULA=Y
-    ports:
-      # Cổng 8080 cho giao diện web của Seq (ánh xạ ra cổng 80 bên trong).
-      - "8080:80"
-      # Cổng 5341 để các ứng dụng gửi log tới.
-      - "5341:5341"
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
-# Định nghĩa các "volumes" để lưu trữ dữ liệu bền vững.
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.0
+    container_name: keycloak
+    command: start-dev
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
+      KC_HOSTNAME: localhost
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "8180:8080"
+    depends_on:
+      - postgres
+
 volumes:
   rabbitmq_data:
   rabbitmq_log:
   redis_data:
+  postgres_data:
