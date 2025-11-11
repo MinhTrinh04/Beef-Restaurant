@@ -18,8 +18,9 @@ spring:
         - id: ordering_service_route
           uri: lb://ORDERING-SERVICE
           predicates:
-            - Path=/api/orders/**
+            - Path=/api/orders,/api/orders/**
           filters:
+            - RewritePath=/api/orders, /api/v1/orders
             - RewritePath=/api/orders/(?<segment>.*), /api/v1/orders/${segment}
 
         - id: basket_service_route
