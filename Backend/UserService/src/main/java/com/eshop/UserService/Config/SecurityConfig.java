@@ -20,14 +20,12 @@ import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity // Bật @PreAuthorize...
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        // Tạo bộ chuyển đổi JWT và gán Role Converter
-        // Điều này LẤY TỪ section_15
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new KeycloakRoleConverter());
 
@@ -39,7 +37,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
 
                 // 3. Cấu hình CORS (dùng bean bên dưới)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+//                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
                 // 4. Cấu hình ủy quyền (Authorization)
                 .authorizeHttpRequests(authorize -> authorize
