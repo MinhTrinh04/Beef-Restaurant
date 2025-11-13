@@ -29,10 +29,7 @@ public class UserController {
         return ResponseEntity.ok(profile);
     }
 
-    /**
-     * API 2: Cập nhật profile của người dùng đang đăng nhập (cho frontend).
-     * Dữ liệu gửi lên sẽ dựa trên các trường của ApplicationUser.cs
-     */
+
     @PutMapping("/me")
     public ResponseEntity<UserProfile> updateMyProfile(
             @AuthenticationPrincipal Jwt jwt,
@@ -62,11 +59,6 @@ public class UserController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy profile để cập nhật"));
     }
 
-    /**
-     * API 3: Lấy profile theo ID (cho các dịch vụ backend, ví dụ OrderingService).
-     * Yêu cầu người gọi phải có một Role đặc biệt, ví dụ 'INTERNAL_SERVICE'.
-     * Bạn phải cấu hình Role này trong Keycloak và gán nó cho Client Credentials của các service backend.
-     */
     @GetMapping("/{userId}")
     @PreAuthorize("hasRole('INTERNAL_SERVICE') or hasRole('ADMIN')") // Bảo mật bằng Method Security
     public ResponseEntity<UserProfile> getProfileByUserId(@PathVariable String userId) {
@@ -77,15 +69,7 @@ public class UserController {
     }
 
 
-    // --- Hàm nội bộ (private helper) ---
 
-    /**
-     * Tạo một UserProfile mới trong CSDL khi người dùng đăng nhập lần đầu.
-     * Nó sẽ điền các thông tin cơ bản từ token Keycloak.
-     * * QUAN TRỌNG: Nó cũng điền các giá trị "NOT_SET" cho các trường
-     * @NotBlank (tương đương [Required] trong)
-     * để tránh lỗi validation khi lưu.
-     */
     private UserProfile createNewProfile(Jwt jwt) {
         UserProfile newProfile = new UserProfile();
         newProfile.setBuyerId(jwt.getSubject()); // ID từ Keycloak
@@ -95,8 +79,6 @@ public class UserController {
         newProfile.setLastName(jwt.getClaimAsString("family_name"));
         // String email = jwt.getClaimAsString("email"); // Bạn có thể thêm trường email nếu muốn
 
-        // === Điền giá trị mặc định cho các trường @NotBlank ===
-        // (Dựa trên ApplicationUser.cs)
         newProfile.setStreet("NOT_SET");
         newProfile.setCity("NOT_SET");
         newProfile.setState("NOT_SET");

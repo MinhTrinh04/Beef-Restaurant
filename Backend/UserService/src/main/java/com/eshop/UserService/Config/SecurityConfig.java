@@ -30,33 +30,26 @@ public class SecurityConfig {
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new KeycloakRoleConverter());
 
         http
-                // 1. Cấu hình Session là STATELESS (quan trọng cho API)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // Cho phép hiển thị iframe (H2 console)
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
 
-                // 2. Tắt CSRF (phù hợp với API stateless)
-                .csrf(AbstractHttpConfigurer::disable)
-
-                // 3. Cấu hình CORS (dùng bean bên dưới)
-//                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-
-                // 4. Cấu hình ủy quyền (Authorization)
                 .authorizeHttpRequests(authorize -> authorize
-                        // Cho phép CORS Pre-flight
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        // Cho phép Health Checks (nếu bạn dùng Actuator)
                         .requestMatchers("/actuator/**").permitAll()
-                        // Tất cả API user đều phải xác thực
+                        .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/api/v1/users/**").authenticated()
-                        // Bất kỳ request nào khác cũng yêu cầu xác thực
                         .anyRequest().authenticated()
                 )
 
-                // 5. Cấu hình là Resource Server, dùng JWT
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
                 .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter)) // Áp dụng Role Converter
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter))
                 )
 
-                // 6. Cấu hình xử lý lỗi JSON 401 và 403 (LẤY TỪ section_15)
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                         .accessDeniedHandler(new CustomAccessDeniedHandler())
@@ -68,12 +61,10 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        // Cần thay đổi URL này cho môi trường PROD
-        config.setAllowedOrigins(Collections.singletonList("http://localhost:3000")); // Giả sử frontend của bạn ở port 3000
+        config.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
         config.setAllowedMethods(Collections.singletonList("*"));
         config.setAllowCredentials(true);
         config.setAllowedHeaders(Collections.singletonList("*"));
-        // Cần expose "Authorization" nếu bạn muốn frontend đọc được token
         config.setExposedHeaders(Collections.singletonList("Authorization"));
         config.setMaxAge(3600L);
 

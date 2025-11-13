@@ -1,38 +1,34 @@
 package com.eshop.UserService.Model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "user")
+@Table(name = "eshop_users")
 @Data
 @NoArgsConstructor
 public class UserProfile {
 
     @Id
-    @Column(name = "user_id")
+    @Column(name = "buyerId")
     private String buyerId;
 
-    @NotBlank
+    @Column(name = "name")
     private String name;
 
-    @NotBlank
+    @Column(name = "last_name")
     private String lastName;
 
-    @NotBlank
+    @Column(name = "street")
     private String street;
 
-    @NotBlank
+    @Column(name = "city")
     private String city;
 
-    @NotBlank
+    @Column(name = "state")
     private String state;
 
-    @NotBlank
+    @Column(name = "country")
     private String country;
 }
