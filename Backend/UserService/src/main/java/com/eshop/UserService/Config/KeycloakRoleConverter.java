@@ -11,11 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * Class này đọc claim 'realm_access' từ Keycloak JWT và
- * chuyển đổi danh sách 'roles' thành các đối tượng GrantedAuthority
- * mà Spring Security hiểu được (với tiền tố "ROLE_").
-  */
 public class KeycloakRoleConverter implements Converter<Jwt, Collection<GrantedAuthority>> {
 
     @Override
