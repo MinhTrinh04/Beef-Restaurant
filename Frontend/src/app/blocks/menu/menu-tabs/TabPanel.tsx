@@ -1,8 +1,11 @@
+'use client';
+
 import React, { memo } from 'react';
 import DishItem from "@/app/components/common/dish/DishItem";
 import { TabPanelProps } from '@/app/types/common.types';
 import { DishItem as DishItemType } from '@/app/types/common.types';
 import { cn } from "@/lib/utils";
+import { addDishToBasket } from "@/app/services/basket";
 
 const TabPanel: React.FC<TabPanelProps> = ({ index, activeTab, items, emptyMessage, id, ariaLabelledBy }) => (
     <div
@@ -19,6 +22,7 @@ const TabPanel: React.FC<TabPanelProps> = ({ index, activeTab, items, emptyMessa
                     title={dish.title}
                     price={dish.price}
                     description={dish.description}
+                    onAddToCart={() => addDishToBasket({ id: dish.id, title: dish.title, price: dish.price })}
                 />
             ))}
         </div>

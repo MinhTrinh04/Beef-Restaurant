@@ -1,8 +1,11 @@
+'use client';
+
 import React from "react";
 import BlockTitle from "@/app/components/common/block-title/block-title";
 import Link from "next/link";
 import DishItem from "@/app/components/common/dish/DishItem";
 import { WeekSpecialsProps, Alignment } from "@/app/types/common.types";
+import { addDishToBasket } from "@/app/services/basket";
 
 const MenuWeekSpecialsBlock = ({
 	subtitle,
@@ -41,12 +44,13 @@ const MenuWeekSpecialsBlock = ({
 				{/* Menu Block */}
 				<div className="week-specials__dishes">
 					{/* Dishes list  */}
-					{items.map((item) => (
+                    {items.map((item) => (
 						<DishItem
 							key={item.id}
 							title={item.title}
 							price={item.price}
-							description={item.description}
+                            description={item.description}
+                            onAddToCart={() => addDishToBasket({ id: item.id, title: item.title, price: item.price })}
 						/>
 					))}
 					{/* / Dishes list  */}

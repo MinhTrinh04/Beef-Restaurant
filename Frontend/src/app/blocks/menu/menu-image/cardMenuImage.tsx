@@ -1,8 +1,11 @@
+'use client';
+
 import BlockTitle from "@/app/components/common/block-title/block-title";
 import DishItem from "@/app/components/common/dish/DishItem";
 import { MenuCategory } from "@/app/types/common.types";
 import Image from "next/image";
 import React from "react";
+import { addDishToBasket } from "@/app/services/basket";
 
 const CardMenuImage = ({
 	image,
@@ -36,12 +39,13 @@ const CardMenuImage = ({
 				/>
 				{/* Section title */}
 				{/* List Item dishes */}
-				{dishesList.map((item) => (
+                {dishesList.map((item) => (
 					<DishItem
 						key={item.id}
 						title={item.title}
 						price={item.price}
-						description={item.description}
+                        description={item.description}
+                        onAddToCart={() => addDishToBasket({ id: item.id, title: item.title, price: item.price })}
 					/>
 				))}
 				{/*/ List Item dishes */}
