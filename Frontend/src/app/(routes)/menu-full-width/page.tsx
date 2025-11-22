@@ -4,14 +4,18 @@ import { GalleryBasic as Gallery } from "@/app/blocks/gallery";
 import MenuImageBlock from "@/app/blocks/menu/menu-image/menuImage";
 import { SpecialOffersTwoBlock } from "@/app/blocks/special-offers";
 import HeroInnerBlock from "@/app/components/common/hero-inner/Hero-inner";
+import { getMenuCategories } from "@/app/services/menu";
 // Data
 import { HeroInnerMenuFullData } from "@/app/hooks/data";
 import { galleryData } from "@/app/hooks/data-gallery";
 import { badgesListData } from "@/app/hooks/data-brands";
 import { ctaTwoData } from "@/app/hooks/data-cta";
 import { specialOffersData } from "@/app/hooks/data-special-offers";
-import { categoryDishesData } from "@/app/hooks/data-dish";
-const PageMenu = () => {
+
+const PageMenu = async () => {
+    // Fetch real menu data from backend
+    const menuCategories = await getMenuCategories();
+
     return (
         <>
             {/* Hero Inner - Block */}
@@ -28,7 +32,14 @@ const PageMenu = () => {
             {/* / Special Offers - Block */}
 
             {/* Menu Image */}
-            <MenuImageBlock {...categoryDishesData} className="menu__container__full" />
+            <MenuImageBlock 
+                subtitle="Our Menu"
+                title="Delicious Dishes"
+                phrase="Explore our carefully crafted menu"
+                divider={true}
+                items={menuCategories}
+                className="menu__container__full"
+            />
             {/* / Menu Image */}
 
             {/* CtaTwo - Block */}
