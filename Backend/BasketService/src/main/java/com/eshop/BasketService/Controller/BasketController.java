@@ -21,9 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class BasketController {
     private final IBasketService basketService;
-    private final BasketRepository basketRepository;
     private final IIdentityService identityService;
-    private final IEventBus eventBus;
 
     @GetMapping
     public ResponseEntity<Basket> getBasketById() {
