@@ -1,18 +1,14 @@
 package com.eshop.UserService.Config;
 
-import com.eshop.buildingblocks.Security.Exception.CustomAccessDeniedHandler;
-import com.eshop.buildingblocks.Security.Exception.CustomAuthenticationEntryPoint;
-import com.eshop.buildingblocks.Security.SharedSecurityConfig;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.eshop.UserService.Exception.CustomAccessDeniedHandler;
+import com.eshop.UserService.Exception.CustomAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
@@ -20,36 +16,36 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@Import(SharedSecurityConfig.class)
 public class SecurityConfig {
-
-    @Autowired
-    private JwtAuthenticationConverter jwtAuthenticationConverter;
-    @Autowired
-    private CustomAuthenticationEntryPoint authenticationEntryPoint;
-    @Autowired
-    private CustomAccessDeniedHandler accessDeniedHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new KeycloakRoleConverter());
+
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
-                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(e -> e
-                        .authenticationEntryPoint(authenticationEntryPoint)
-                        .accessDeniedHandler(accessDeniedHandler)
+                // Cho phép hiển thị iframe (H2 console)
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
+
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/api/v1/users/**").authenticated()
+                        .anyRequest().authenticated()
                 )
+
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter))
                 )
 
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/actuator/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/basket/**").hasRole("USER")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/basket/**").hasRole("USER")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/basket/**").hasRole("USER")
-                        .anyRequest().authenticated()
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                        .accessDeniedHandler(new CustomAccessDeniedHandler())
                 );
 
         return http.build();
