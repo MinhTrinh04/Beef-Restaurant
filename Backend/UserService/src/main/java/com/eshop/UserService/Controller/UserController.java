@@ -12,6 +12,8 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/users")
 public class UserController {
@@ -23,12 +25,28 @@ public class UserController {
     public ResponseEntity<UserProfile> getMyProfile(@AuthenticationPrincipal Jwt jwt) {
         String userId = jwt.getSubject();
 
-        UserProfile profile = userProfileRepository.findById(userId)
-                .orElseGet(() -> createNewProfile(jwt)); // Tạo mới nếu chưa có
-
-        return ResponseEntity.ok(profile);
+        return userProfileRepository.findById(userId)
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Hồ sơ chưa tồn tại. Vui lòng tạo mới."));
     }
 
+    @PostMapping("/profile")
+    public ResponseEntity<UserProfile> createMyProfile(
+            @AuthenticationPrincipal Jwt jwt,
+            @Valid @RequestBody UserProfile newProfile) {
+
+        String userId = jwt.getSubject();
+
+        if (userProfileRepository.existsById(userId)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Hồ sơ người dùng đã tồn tại!");
+        }
+
+        newProfile.setBuyerId(userId);
+        if (newProfile.getName() == null) newProfile.setName(jwt.getClaimAsString("given_name"));
+        if (newProfile.getLastName() == null) newProfile.setLastName(jwt.getClaimAsString("family_name"));
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(userProfileRepository.save(newProfile));
+    }
 
     @PutMapping("/me")
     public ResponseEntity<UserProfile> updateMyProfile(
@@ -37,53 +55,39 @@ public class UserController {
 
         String userId = jwt.getSubject();
 
-        // Tìm profile hiện có
         return userProfileRepository.findById(userId)
                 .map(existingProfile -> {
-                    // Cập nhật các trường từ DTO (Data Transfer Object)
-                    // Đây là tất cả các trường từ ApplicationUser.cs
                     existingProfile.setName(updatedProfile.getName());
                     existingProfile.setLastName(updatedProfile.getLastName());
-
-                    // Cập nhật địa chỉ
                     existingProfile.setStreet(updatedProfile.getStreet());
                     existingProfile.setCity(updatedProfile.getCity());
                     existingProfile.setState(updatedProfile.getState());
                     existingProfile.setCountry(updatedProfile.getCountry());
 
-                    // Lưu lại vào CSDL
-                    UserProfile savedProfile = userProfileRepository.save(existingProfile);
-                    return ResponseEntity.ok(savedProfile);
+                    return ResponseEntity.ok(userProfileRepository.save(existingProfile));
                 })
-                // Nếu không tìm thấy profile (trường hợp hiếm), trả về 404
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy profile để cập nhật"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy hồ sơ để cập nhật"));
+    }
+
+
+    @GetMapping
+    public ResponseEntity<List<UserProfile>> getAllUsers() {
+        return ResponseEntity.ok(userProfileRepository.findAll());
     }
 
     @GetMapping("/{userId}")
-    @PreAuthorize("hasRole('INTERNAL_SERVICE') or hasRole('ADMIN')") // Bảo mật bằng Method Security
-    public ResponseEntity<UserProfile> getProfileByUserId(@PathVariable String userId) {
-
+    public ResponseEntity<UserProfile> getUserById(@PathVariable String userId) {
         return userProfileRepository.findById(userId)
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy UserProfile cho ID: " + userId));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found: " + userId));
     }
 
-
-
-    private UserProfile createNewProfile(Jwt jwt) {
-        UserProfile newProfile = new UserProfile();
-        newProfile.setBuyerId(jwt.getSubject()); // ID từ Keycloak
-
-        // Lấy các thông tin cơ bản từ token Keycloak (nếu có)
-        newProfile.setName(jwt.getClaimAsString("given_name"));
-        newProfile.setLastName(jwt.getClaimAsString("family_name"));
-        // String email = jwt.getClaimAsString("email"); // Bạn có thể thêm trường email nếu muốn
-
-        newProfile.setStreet("NOT_SET");
-        newProfile.setCity("NOT_SET");
-        newProfile.setState("NOT_SET");
-        newProfile.setCountry("NOT_SET");
-
-        return userProfileRepository.save(newProfile);
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable String userId) {
+        if (!userProfileRepository.existsById(userId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        }
+        userProfileRepository.deleteById(userId);
+        return ResponseEntity.noContent().build();
     }
 }
