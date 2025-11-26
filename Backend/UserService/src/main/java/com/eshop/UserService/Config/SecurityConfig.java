@@ -29,14 +29,14 @@ public class SecurityConfig {
                 // Cho phép hiển thị iframe (H2 console)
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
 
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers("/api/v1/users/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/users/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/users/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .oauth2ResourceServer(oauth2 -> oauth2
