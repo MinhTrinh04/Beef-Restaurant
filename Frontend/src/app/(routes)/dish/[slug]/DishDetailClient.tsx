@@ -1,26 +1,24 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { addDishToBasket } from '@/app/services/basket';
-import { MenuItemDto } from '@/app/types/menu.types';
+import React from "react";
+import { addDishToBasket } from "@/app/services/basket";
+import { MenuItemDto } from "@/app/types/menu.types";
 
 export default function DishDetailClient({ item }: { item: MenuItemDto }) {
     const handleAdd = () => {
-        addDishToBasket({ id: item.id, title: item.name, price: String(item.price) });
+        addDishToBasket({
+            id: item.id,
+            title: item.name,
+            price: String(item.price),
+            image: item.image,
+        });
     };
 
     return (
         <div className="mt-6">
-            <button
-                type="button"
-                className="btn__solid"
-                onClick={handleAdd}
-                aria-label={`Add ${item.name} to cart`}
-            >
+            <button type="button" className="btn__solid" onClick={handleAdd} aria-label={`Add ${item.name} to cart`}>
                 Add to cart
             </button>
         </div>
     );
 }
-
-
