@@ -37,6 +37,12 @@ spring:
         password: guest
         virtual-host: /
 
+    security:
+      oauth2:
+        resourceserver:
+          jwt:
+            issuer-uri: http://localhost:8180/realms/master
+
 app:
   payment:
     timeout-minutes: 15
