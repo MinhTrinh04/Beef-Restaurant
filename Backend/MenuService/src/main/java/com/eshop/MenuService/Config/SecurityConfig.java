@@ -35,7 +35,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/menu/**").permitAll()
 
                         // Sửa Menu (POST, PUT, DELETE): Chỉ ADMIN mới được làm
-                        .requestMatchers(HttpMethod.POST, "/api/v1/menu/**").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.POST, "/api/v1/menu/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/menu/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/menu/**").hasRole("ADMIN")
 

@@ -25,14 +25,6 @@ public class OrderDto {
     private String addressCity;
     private String addressState;
     private String addressCountry;
-    private String addressZipCode;
-
-    // Payment fields
-    private String cardNumber;
-    private String cardHolderName;
-    private LocalDateTime cardExpiration;
-    private String cardSecurityNumber;
-    private Integer cardTypeId;
 
     // Buyer information
     private String buyerName;
