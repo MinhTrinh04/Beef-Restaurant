@@ -27,12 +27,6 @@ public class MenuRabbitMQConfig {
                 .with(ORDER_STATUS_CHANGE_TO_PAID_INTEGRATION_EVENT);
     }
 
-    @Bean
-    public Binding bindingOrderStatusChangedToAwaitingStockValidation(TopicExchange eventBusExchange, Queue menuServiceQueue) {
-        return BindingBuilder.bind(menuServiceQueue)
-                .to(eventBusExchange)
-                .with(ORDER_STATUS_CHANGE_TO_AWAITING_STOCK_VALIDATION_INTEGRATION_EVENT);
-    }
 
     @Bean
     public Binding bindingOrderStatusChangedToPaidV2(TopicExchange eventBusExchange, Queue menuServiceQueue) {

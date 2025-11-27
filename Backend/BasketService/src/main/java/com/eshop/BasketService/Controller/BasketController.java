@@ -1,6 +1,7 @@
 package com.eshop.BasketService.Controller;
 
 import com.eshop.BasketService.Constants.BasketConstants;
+import com.eshop.BasketService.DTO.PaymentUrlResponseDto;
 import com.eshop.BasketService.DTO.ResponseDto;
 import com.eshop.BasketService.Model.Basket;
 import com.eshop.BasketService.Model.BasketCheckout;
@@ -20,9 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class BasketController {
     private final IBasketService basketService;
-    private final BasketRepository basketRepository;
     private final IIdentityService identityService;
-    private final IEventBus eventBus;
 
     @GetMapping
     public ResponseEntity<Basket> getBasketById() {
@@ -55,9 +54,9 @@ public class BasketController {
     }
 
     @PostMapping("/checkout")
-    public ResponseEntity<ResponseDto> checkout(@RequestBody BasketCheckout basketCheckout,@RequestHeader(value = "X-Request-Id", required = false) String requestId) {
+    public ResponseEntity<PaymentUrlResponseDto> checkout(@RequestBody BasketCheckout basketCheckout, @RequestHeader(value = "X-Request-Id", required = false) String requestId) {
         String buyerId = identityService.getUserIdentity();
-        basketService.checkout(buyerId, basketCheckout, requestId);
-        return  ResponseEntity.ok(new ResponseDto(BasketConstants.STATUS_200, BasketConstants.MESSAGE_200));
+        ResponseEntity<PaymentUrlResponseDto> response = basketService.checkoutV2(buyerId, basketCheckout, requestId);
+        return response;
     }
 }

@@ -16,39 +16,15 @@ import static com.eshop.OrderingService.Constants.OrderingConstants.QUEUE_NAME;
 @RabbitListener(queues = QUEUE_NAME)
 public class IntegrationEventController {
 
-    private final UserCheckoutAcceptedIntegrationEventHandler userCheckoutAcceptedHandler;
     private final UserCheckoutAcceptedIntegrationEventV2Handler userCheckoutAcceptedV2Handler;
-    private final OrderStockConfirmedIntegrationEventHandler orderStockConfirmedHandler;
-    private final OrderStockRejectedIntegrationEventHandler orderStockRejectedHandler;
     private final OrderPaymentSucceededIntegrationEventHandler orderPaymentSucceededHandler;
     private final OrderPaymentFailedIntegrationEventHandler orderPaymentFailedHandler;
-
-    @RabbitHandler
-    public void handleUserCheckoutAccepted(UserCheckoutAcceptedIntegrationEvent event) {
-        log.info("📨 Received UserCheckoutAcceptedIntegrationEvent from queue: {}",
-                QUEUE_NAME);
-        userCheckoutAcceptedHandler.handle(event);
-    }
 
     @RabbitHandler
     public void handleUserCheckoutAcceptedV2(UserCheckoutAcceptedIntegrationEventV2 event) {
         log.info("📨 Received UserCheckoutAcceptedIntegrationEventV2 from queue: {}",
                 QUEUE_NAME);
         userCheckoutAcceptedV2Handler.handle(event);
-    }
-
-    @RabbitHandler
-    public void handleOrderStockConfirmed(OrderStockConfirmedIntegrationEvent event) {
-        log.info("📨 Received OrderStockConfirmedIntegrationEvent from queue: {}",
-                QUEUE_NAME);
-        orderStockConfirmedHandler.handle(event);
-    }
-
-    @RabbitListener
-    public void handleOrderStockRejected(OrderStockRejectedIntegrationEvent event) {
-        log.info("📨 Received OrderStockRejectedIntegrationEvent from queue: {}",
-                QUEUE_NAME);
-        orderStockRejectedHandler.handle(event);
     }
 
     @RabbitHandler

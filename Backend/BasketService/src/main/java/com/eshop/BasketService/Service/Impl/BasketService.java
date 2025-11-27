@@ -5,7 +5,6 @@ import com.eshop.BasketService.DTO.PaymentUrlResponseDto;
 import com.eshop.BasketService.DTO.StockValidationItem;
 import com.eshop.BasketService.Exception.BasketNotFoundException;
 import com.eshop.BasketService.Exception.StockValidationException;
-import com.eshop.BasketService.IntegrationEvents.Events.UserCheckoutAcceptedIntegrationEvent;
 import com.eshop.BasketService.IntegrationEvents.Events.UserCheckoutAcceptedIntegrationEventV2;
 import com.eshop.BasketService.Model.Basket;
 import com.eshop.BasketService.Repository.BasketRepository;
@@ -62,39 +61,6 @@ public class BasketService implements IBasketService {
     }
 
     @Override
-    public void checkout(String buyerId, BasketCheckout basketCheckout, String requestId) {
-        Basket basket = basketRepository.findById(buyerId)
-                .orElseThrow(() -> new BasketNotFoundException("Basket", "buyerId" , buyerId));
-
-        UUID eventRequestId;
-        try {
-            eventRequestId = UUID.fromString(requestId);
-        } catch (IllegalArgumentException | NullPointerException e) {
-            log.warn("Invalid or missing X-Request-Id. Generating new ID.");
-            eventRequestId = UUID.randomUUID();
-        }
-
-        UserCheckoutAcceptedIntegrationEvent eventMessage = new UserCheckoutAcceptedIntegrationEvent(
-                buyerId,
-                basketCheckout.getUserEmail(),
-                basketCheckout.getCity(),
-                basketCheckout.getStreet(),
-                basketCheckout.getState(),
-                basketCheckout.getCountry(),
-                eventRequestId,
-                basket
-        );
-
-        try {
-            eventBus.publish(eventMessage);
-            log.info("✅ Publishing UserCheckoutAcceptedIntegrationEvent for buyerId {}", buyerId);
-        } catch (Exception e) {
-            log.error("❌ Error publishing UserCheckoutAcceptedIntegrationEvent for buyerId {}", buyerId);
-            throw new RuntimeException("Error publishing checkout event", e);
-        }
-    }
-
-    @Override
     public ResponseEntity<PaymentUrlResponseDto> checkoutV2(String buyerId, BasketCheckout basketCheckout, String requestId) {
         Basket basket = basketRepository.findById(buyerId)
                 .orElseThrow(() -> new BasketNotFoundException("Basket", "buyerId" , buyerId));
@@ -134,13 +100,7 @@ public class BasketService implements IBasketService {
                 paymentResponse.getBody() != null &&
                 "00".equals(paymentResponse.getBody().getCode())) {
             log.info("Payment URL received and saved for order: {}", orderId);
-            UUID eventRequestId;
-            try {
-                eventRequestId = UUID.fromString(requestId);
-            } catch (IllegalArgumentException | NullPointerException e) {
-                log.warn("Invalid or missing X-Request-Id. Generating new ID.");
-                eventRequestId = UUID.randomUUID();
-            }
+
             UserCheckoutAcceptedIntegrationEventV2 event = new UserCheckoutAcceptedIntegrationEventV2(
                     orderId,
                     buyerId,
@@ -149,7 +109,6 @@ public class BasketService implements IBasketService {
                     basketCheckout.getStreet(),
                     basketCheckout.getState(),
                     basketCheckout.getCountry(),
-                    eventRequestId,
                     basket,
                     totalAmount
             );

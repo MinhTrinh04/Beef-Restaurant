@@ -4,6 +4,12 @@ spring:
   application:
     name: "payment-service"
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8180/realms/master
+
 eureka:
   client:
     fetchRegistry: true
