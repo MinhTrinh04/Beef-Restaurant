@@ -1,11 +1,11 @@
 server:
-  port: 8080
+  port: 8085
 spring:
   application:
-    name: "menu-service"
+    name: "user-service"
 
   datasource:
-    url: jdbc:h2:mem:testdb
+    url: jdbc:h2:mem:userdb
     username: sa
     password: ''
     driver-class-name: org.h2.Driver
@@ -14,9 +14,6 @@ spring:
     console:
       enabled: true
       path: /h2-console
-
-  jpa:
-    show-sql: true
 
   security:
     oauth2:
@@ -30,9 +27,3 @@ eureka:
     registerWithEureka: true
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*" # Mở endpoint 'beans' và 'health'
