@@ -133,10 +133,10 @@ public class VNPayService {
 
 
             String orderIdStr = request.getParameter("vnp_TxnRef");
-            UUID orderId = null;
+            Long orderId = null;
             try {
-                orderId = UUID.fromString(orderIdStr);
-            } catch (IllegalArgumentException e) {
+                orderId = Long.parseLong(orderIdStr);
+            } catch (NumberFormatException e) {
                 log.error("VNPay callback failed: Invalid OrderId format. Received: {}", orderIdStr);
                 return new VNPayCallbackResponseDto("02", "Order Not Found"); // Mã 02: Đơn hàng không tồn tại
             }
@@ -152,7 +152,8 @@ public class VNPayService {
                 return new VNPayCallbackResponseDto("00", "Confirm Success"); // Mã 00: Thành công
             } else {
                 log.warn("❌ VNPay payment failed or cancelled for OrderId: {}. ResponseCode: {}, TransactionStatus: {}", orderId, vnp_ResponseCode, vnp_TransactionStatus);
-                OrderPaymentFailedIntegrationEvent failedEvent = new OrderPaymentFailedIntegrationEvent(orderId);
+                String reason = String.format("Payment failed. ResponseCode: %s, TransactionStatus: %s", vnp_ResponseCode, vnp_TransactionStatus);
+                OrderPaymentFailedIntegrationEvent failedEvent = new OrderPaymentFailedIntegrationEvent(orderId, reason);
                 eventBus.publish(failedEvent);
                 return new VNPayCallbackResponseDto("99", "Payment Failed");
             }

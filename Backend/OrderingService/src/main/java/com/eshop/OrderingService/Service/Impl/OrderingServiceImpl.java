@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,7 +38,7 @@ public class OrderingServiceImpl implements IOrderingService {
     }
 
     @Override
-    public OrderDto getOrderByOrderId(UUID orderId) {
+    public OrderDto getOrderByOrderId(Long orderId) {
         Order order = orderRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order", "orderId", orderId.toString()));
         return orderMapper.toDto(order);
@@ -63,12 +62,10 @@ public class OrderingServiceImpl implements IOrderingService {
 
     @Override
     @Transactional
-    public UUID createOrderFromBasket(CreateOrderFromBasketRequestDto request) {
+    public Long createOrderFromBasket(CreateOrderFromBasketRequestDto request) {
         log.info("Creating order from basket for user: {}", request.getUserId());
 
-        UUID orderId = UUID.randomUUID();
         Order order = new Order();
-        order.setOrderId(orderId);
         order.setOrderDate(LocalDateTime.now());
         order.setOrderStatus(OrderingConstants.ORDER_STATUS_VALIDATED);
 
@@ -96,7 +93,8 @@ public class OrderingServiceImpl implements IOrderingService {
         order.setOrderItems(orderItems);
         order.setTotalAmount(request.getTotalAmount());
         
-        orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+        Long orderId = savedOrder.getOrderId();
         
         log.info("Order created successfully with ID: {} for user: {}", orderId, request.getUserId());
         return orderId;
@@ -104,7 +102,7 @@ public class OrderingServiceImpl implements IOrderingService {
 
     @Override
     @Transactional
-    public boolean cancelOrder(UUID orderId, String reason) {
+    public boolean cancelOrder(Long orderId, String reason) {
         log.info("Cancelling order: {} with reason: {}", orderId, reason);
 
         Order order = orderRepository.findByOrderId(orderId)
@@ -172,7 +170,7 @@ public class OrderingServiceImpl implements IOrderingService {
 
     @Override
     @Transactional
-    public void updateOrderStatusToPaidV2(UUID orderId) {
+    public void updateOrderStatusToPaidV2(Long orderId) {
         log.info("Updating order status to Paid: {}", orderId);
 
         Order order = orderRepository.findByOrderId(orderId)

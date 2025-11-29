@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -108,9 +107,9 @@ public class BasketService implements IBasketService {
                 totalAmount
         );
 
-        UUID orderId;
+        Long orderId;
         try {
-            ResponseEntity<UUID> orderResponse = orderingServiceClient.createOrderFromBasket(createOrderRequest);
+            ResponseEntity<Long> orderResponse = orderingServiceClient.createOrderFromBasket(createOrderRequest);
             if (orderResponse.getStatusCode().is2xxSuccessful() && orderResponse.getBody() != null) {
                 orderId = orderResponse.getBody();
                 log.info("✅ Order created successfully with ID: {} for buyerId: {}", orderId, buyerId);

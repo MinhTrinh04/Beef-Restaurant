@@ -7,12 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.UUID;
-
 @FeignClient(name = "ordering-service", configuration = FeignClientConfig.class)
 public interface OrderingServiceClient {
 
     @PostMapping("/api/v1/orders/create-from-basket")
-    ResponseEntity<UUID> createOrderFromBasket(@RequestBody CreateOrderFromBasketRequestDto request);
+    ResponseEntity<Long> createOrderFromBasket(@RequestBody CreateOrderFromBasketRequestDto request);
 }
 

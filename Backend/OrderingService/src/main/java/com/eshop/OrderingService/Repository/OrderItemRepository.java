@@ -7,16 +7,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.UUID;
 
 @Repository
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 
-    // XÓA BỎ PHƯƠNG THỨC NÀY ĐI
-    // List<OrderItem> findByOrderId(UUID orderId);
-
     @Query("SELECT oi FROM OrderItem oi WHERE oi.order.orderId = :orderId")
-    List<OrderItem> findByOrderOrderId(@Param("orderId") UUID orderId);
+    List<OrderItem> findByOrderOrderId(@Param("orderId") Long orderId);
 
     @Query("SELECT oi FROM OrderItem oi WHERE oi.productId = :productId")
     List<OrderItem> findByProductId(@Param("productId") Integer productId);

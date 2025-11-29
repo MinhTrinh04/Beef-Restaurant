@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -13,7 +12,7 @@ import java.util.UUID;
 public class OrderItemDto {
 
     private Long id;
-    private UUID orderId;
+    private Long orderId;
     private Integer productId;
     private String productName;
     private BigDecimal unitPrice;
