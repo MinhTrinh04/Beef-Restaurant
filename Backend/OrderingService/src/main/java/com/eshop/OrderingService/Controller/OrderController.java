@@ -1,5 +1,6 @@
 package com.eshop.OrderingService.Controller;
 
+import com.eshop.OrderingService.DTO.CreateOrderFromBasketRequestDto;
 import com.eshop.OrderingService.DTO.OrderDto;
 import com.eshop.OrderingService.DTO.ResponseDto;
 import com.eshop.OrderingService.Service.IOrderingService;
@@ -42,6 +43,13 @@ public class OrderController {
         }
 
         return ResponseEntity.ok(ResponseDto.success(order));
+    }
+
+    @PostMapping("/create-from-basket")
+    public ResponseEntity<UUID> createOrderFromBasket(@RequestBody CreateOrderFromBasketRequestDto request) {
+        log.info("Creating order from basket for user: {}", request.getUserId());
+        UUID orderId = orderingService.createOrderFromBasket(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderId);
     }
 
     @PutMapping("/{orderId}/cancel")

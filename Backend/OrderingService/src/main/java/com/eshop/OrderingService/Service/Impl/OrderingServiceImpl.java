@@ -1,6 +1,7 @@
 package com.eshop.OrderingService.Service.Impl;
 
 import com.eshop.OrderingService.Constants.OrderingConstants;
+import com.eshop.OrderingService.DTO.CreateOrderFromBasketRequestDto;
 import com.eshop.OrderingService.DTO.OrderDto;
 import com.eshop.OrderingService.Exception.InvalidOrderStatusException;
 import com.eshop.OrderingService.Exception.OrderNotFoundException;
@@ -58,6 +59,47 @@ public class OrderingServiceImpl implements IOrderingService {
         return orders.stream()
                 .map(orderMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public UUID createOrderFromBasket(CreateOrderFromBasketRequestDto request) {
+        log.info("Creating order from basket for user: {}", request.getUserId());
+
+        UUID orderId = UUID.randomUUID();
+        Order order = new Order();
+        order.setOrderId(orderId);
+        order.setOrderDate(LocalDateTime.now());
+        order.setOrderStatus(OrderingConstants.ORDER_STATUS_VALIDATED);
+
+        order.setAddressStreet(request.getStreet());
+        order.setAddressCity(request.getCity());
+        order.setAddressState(request.getState());
+        order.setAddressCountry(request.getCountry());
+
+        order.setBuyerId(request.getUserId());
+        order.setBuyerEmail(request.getUserEmail());
+
+        // Create order items from request
+        List<OrderItem> orderItems = request.getOrderItems().stream()
+                .map(itemDto -> {
+                    OrderItem orderItem = new OrderItem();
+                    orderItem.setOrder(order);
+                    orderItem.setProductId(itemDto.getProductId());
+                    orderItem.setProductName(itemDto.getProductName());
+                    orderItem.setUnitPrice(itemDto.getUnitPrice());
+                    orderItem.setUnits(itemDto.getUnits());
+                    orderItem.setPictureUrl(itemDto.getPictureUrl());
+                    return orderItem;
+                })
+                .collect(Collectors.toList());
+        order.setOrderItems(orderItems);
+        order.setTotalAmount(request.getTotalAmount());
+        
+        orderRepository.save(order);
+        
+        log.info("Order created successfully with ID: {} for user: {}", orderId, request.getUserId());
+        return orderId;
     }
 
     @Override

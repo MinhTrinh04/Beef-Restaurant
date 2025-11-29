@@ -1,5 +1,6 @@
 package com.eshop.OrderingService.Service;
 
+import com.eshop.OrderingService.DTO.CreateOrderFromBasketRequestDto;
 import com.eshop.OrderingService.DTO.OrderDto;
 import com.eshop.OrderingService.IntegrationEvents.Events.UserCheckoutAcceptedIntegrationEventV2;
 
@@ -9,7 +10,7 @@ import java.util.UUID;
 public interface IOrderingService {
 
     // Order Management
-//    OrderDto createOrder(CreateOrderRequestDto request);
+    UUID createOrderFromBasket(CreateOrderFromBasketRequestDto request);
 
     OrderDto getOrderById(Long id);
 

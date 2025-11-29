@@ -1,24 +1,25 @@
 package com.eshop.BasketService.Service.Impl;
 
+import com.eshop.BasketService.DTO.CreateOrderFromBasketRequestDto;
 import com.eshop.BasketService.DTO.CreatePaymentUrlRequestDto;
+import com.eshop.BasketService.DTO.OrderItemRequestDto;
 import com.eshop.BasketService.DTO.PaymentUrlResponseDto;
 import com.eshop.BasketService.DTO.StockValidationItem;
 import com.eshop.BasketService.Exception.BasketNotFoundException;
 import com.eshop.BasketService.Exception.StockValidationException;
-import com.eshop.BasketService.IntegrationEvents.Events.UserCheckoutAcceptedIntegrationEventV2;
 import com.eshop.BasketService.Model.Basket;
+import com.eshop.BasketService.Model.BasketCheckout;
 import com.eshop.BasketService.Repository.BasketRepository;
 import com.eshop.BasketService.Service.IBasketService;
 import com.eshop.BasketService.Service.client.MenuServiceClient;
+import com.eshop.BasketService.Service.client.OrderingServiceClient;
 import com.eshop.BasketService.Service.client.PaymentServiceClient;
-import com.eshop.buildingblocks.EventBus.Abstractions.IEventBus;
 import feign.FeignException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.eshop.BasketService.Model.BasketCheckout;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -30,8 +31,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class BasketService implements IBasketService {
     private final BasketRepository basketRepository;
-    private final IEventBus eventBus;
     private final MenuServiceClient menuServiceClient;
+    private final OrderingServiceClient orderingServiceClient;
     private final PaymentServiceClient paymentServiceClient;
 
     @Override
@@ -66,8 +67,6 @@ public class BasketService implements IBasketService {
                 .orElseThrow(() -> new BasketNotFoundException("Basket", "buyerId" , buyerId));
         log.info("Basket founded with total items: {}.", basket.getItems().size());
 
-        UUID orderId = UUID.randomUUID();
-        // Tạo request cho Pre-check
         List<StockValidationItem> validationRequest = basket.getItems().stream()
                 .map(item -> {
                     log.info("...Mapping: ProductId=[{}], Units=[{}]", item.getProductId(), item.getUnits());
@@ -77,6 +76,7 @@ public class BasketService implements IBasketService {
 
         try {
             menuServiceClient.validateStock(validationRequest);
+            log.info("Stock validation passed for buyerId: {}", buyerId);
         } catch (FeignException.BadRequest e) {
             throw new StockValidationException("Stock validation failed: " + e.getMessage());
         } catch (Exception e) {
@@ -86,6 +86,41 @@ public class BasketService implements IBasketService {
         BigDecimal totalAmount = basket.getItems().stream()
                 .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getUnits())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        CreateOrderFromBasketRequestDto createOrderRequest = new CreateOrderFromBasketRequestDto(
+                buyerId,
+                basketCheckout.getUserEmail(),
+                basketCheckout.getCity(),
+                basketCheckout.getStreet(),
+                basketCheckout.getState(),
+                basketCheckout.getCountry(),
+                basket.getItems().stream()
+                        .map(item -> {
+                            OrderItemRequestDto dto = new OrderItemRequestDto();
+                            dto.setProductId(item.getProductId());
+                            dto.setProductName(item.getProductName());
+                            dto.setUnitPrice(item.getUnitPrice());
+                            dto.setUnits(item.getUnits());
+                            dto.setPictureUrl(item.getPictureUrl());
+                            return dto;
+                        })
+                        .collect(Collectors.toList()),
+                totalAmount
+        );
+
+        UUID orderId;
+        try {
+            ResponseEntity<UUID> orderResponse = orderingServiceClient.createOrderFromBasket(createOrderRequest);
+            if (orderResponse.getStatusCode().is2xxSuccessful() && orderResponse.getBody() != null) {
+                orderId = orderResponse.getBody();
+                log.info("✅ Order created successfully with ID: {} for buyerId: {}", orderId, buyerId);
+            } else {
+                throw new RuntimeException("Failed to create order: " + orderResponse.getStatusCode());
+            }
+        } catch (Exception e) {
+            log.error("❌ Error creating order for buyerId: {}", buyerId, e);
+            throw new RuntimeException("Failed to create order: " + e.getMessage());
+        }
 
         CreatePaymentUrlRequestDto paymentRequest = new CreatePaymentUrlRequestDto(
                 orderId,
@@ -99,28 +134,11 @@ public class BasketService implements IBasketService {
         if (paymentResponse.getStatusCode().is2xxSuccessful() &&
                 paymentResponse.getBody() != null &&
                 "00".equals(paymentResponse.getBody().getCode())) {
-            log.info("Payment URL received and saved for order: {}", orderId);
-
-            UserCheckoutAcceptedIntegrationEventV2 event = new UserCheckoutAcceptedIntegrationEventV2(
-                    orderId,
-                    buyerId,
-                    basketCheckout.getUserEmail(),
-                    basketCheckout.getCity(),
-                    basketCheckout.getStreet(),
-                    basketCheckout.getState(),
-                    basketCheckout.getCountry(),
-                    basket,
-                    totalAmount
-            );
-
-            try {
-                eventBus.publish(event);
-                log.info("✅ Publishing UserCheckoutAcceptedIntegrationEventV2 for buyerId {}", buyerId);
-            } catch (Exception e) {
-                log.error("❌ Error publishing UserCheckoutAcceptedIntegrationEventV2 for buyerId {}", buyerId);
-                throw new RuntimeException("Failed to publish checkout event: " + e.getMessage());
-            }
+            log.info("Payment URL created successfully for order: {}", orderId);
+        } else {
+            log.warn("Payment URL creation returned non-success status for order: {}", orderId);
         }
+
         return paymentResponse;
     }
 }
