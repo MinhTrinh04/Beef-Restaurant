@@ -10,6 +10,14 @@ spring:
         jwt:
           issuer-uri: http://localhost:8180/realms/master
 
+payos:
+  client-id: "YOUR_CLIENT_ID"
+  api-key: "YOUR_API_KEY"
+  checksum-key: "YOUR_CHECKSUM_KEY"
+
+  return-url: "http://localhost:3000/payment-success"
+  cancel-url: "http://localhost:3000/payment-cancel"
+
 eureka:
   client:
     fetchRegistry: true
