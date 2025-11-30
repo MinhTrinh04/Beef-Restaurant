@@ -1,7 +1,7 @@
 import { MenuItemDto } from "@/app/types/menu.types";
 import { MenuCategory } from "@/app/types/common.types";
 
-const baseURL = process.env.NEXT_PUBLIC_API_BASE || "";
+const baseURL = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:9000";
 
 /**
  * Format price to display format

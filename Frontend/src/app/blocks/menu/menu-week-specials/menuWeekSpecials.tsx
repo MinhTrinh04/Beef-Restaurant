@@ -5,7 +5,7 @@ import BlockTitle from "@/app/components/common/block-title/block-title";
 import Link from "next/link";
 import DishItem from "@/app/components/common/dish/DishItem";
 import { WeekSpecialsProps, Alignment } from "@/app/types/common.types";
-import { addDishToBasket } from "@/app/services/basket";
+import { useBasket } from "@/app/contexts/BasketContext";
 
 const MenuWeekSpecialsBlock = ({
 	subtitle,
@@ -18,6 +18,8 @@ const MenuWeekSpecialsBlock = ({
 	buttonText,
 	emptyMessage = "No week specials available at the moment.",
 }: WeekSpecialsProps) => {
+	const { addDish } = useBasket();
+
 	// Improved data validation check
 	if (!items || items.length === 0) {
 		return (
@@ -50,7 +52,7 @@ const MenuWeekSpecialsBlock = ({
 							title={item.title}
 							price={item.price}
                             description={item.description}
-                            onAddToCart={() => addDishToBasket({ id: item.id, title: item.title, price: item.price })}
+                            onAddToCart={() => addDish({ id: item.id, title: item.title, price: item.price })}
 						/>
 					))}
 					{/* / Dishes list  */}

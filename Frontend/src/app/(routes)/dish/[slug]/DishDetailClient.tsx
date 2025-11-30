@@ -1,12 +1,14 @@
 "use client";
 
 import React from "react";
-import { addDishToBasket } from "@/app/services/basket";
+import { useBasket } from "@/app/contexts/BasketContext";
 import { MenuItemDto } from "@/app/types/menu.types";
 
 export default function DishDetailClient({ item }: { item: MenuItemDto }) {
+    const { addDish } = useBasket();
+
     const handleAdd = () => {
-        addDishToBasket({
+        addDish({
             id: item.id,
             title: item.name,
             price: String(item.price),

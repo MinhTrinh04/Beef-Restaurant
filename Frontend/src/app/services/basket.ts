@@ -49,10 +49,11 @@ export interface BasketCheckout {
  * Get basket from backend
  * Returns empty basket if not found (backend throws exception if basket doesn't exist)
  */
-export async function getBasket(): Promise<Basket> {
+export async function getBasket(token?: string): Promise<Basket> {
     try {
+        const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
         // Use gateway route: /api/basket/** (gateway rewrites to /api/v1/basket/**)
-        const { data } = await http.get<Basket>("/api/basket");
+        const { data } = await http.get<Basket>("/api/basket", config);
         return data ?? { items: [] };
     } catch (error: any) {
         const status = error.response?.status;

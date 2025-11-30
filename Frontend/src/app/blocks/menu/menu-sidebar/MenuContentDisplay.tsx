@@ -3,7 +3,7 @@ import React from "react";
 import Image from "next/image";
 import BlockTitle from "@/app/components/common/block-title/block-title";
 import DishItem from "@/app/components/common/dish/DishItem";
-import { addDishToBasket } from "@/app/services/basket";
+import { useBasket } from "@/app/contexts/BasketContext";
 
 import {
 	MenuContentDisplayProps,
@@ -15,6 +15,8 @@ const MenuContentDisplay: React.FC<MenuContentDisplayProps> = ({
 	categories,
 	emptyMessage,
 }) => {
+	const { addDish } = useBasket();
+
 	if (!categories || categories.length === 0) {
 		return <p>{emptyMessage || "No menu items to display."}</p>;
 	}
@@ -37,7 +39,7 @@ const MenuContentDisplay: React.FC<MenuContentDisplayProps> = ({
                                         title={dish.title}
                                         price={dish.price}
                                         description={dish.description}
-                                        onAddToCart={() => addDishToBasket({ id: dish.id, title: dish.title, price: dish.price })}
+                                        onAddToCart={() => addDish({ id: dish.id, title: dish.title, price: dish.price })}
                                     />
                                 )
                             )}

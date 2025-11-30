@@ -5,7 +5,7 @@ import DishItem from "@/app/components/common/dish/DishItem";
 import { MenuCategory } from "@/app/types/common.types";
 import Image from "next/image";
 import React from "react";
-import { addDishToBasket } from "@/app/services/basket";
+import { useBasket } from "@/app/contexts/BasketContext";
 
 const CardMenuImage = ({
 	image,
@@ -15,6 +15,8 @@ const CardMenuImage = ({
 	phrase,
 	dishesList,
 }: MenuCategory) => {
+	const { addDish } = useBasket();
+
 	return (
 		<div className="menu__category">
 			{/* Category image */}
@@ -45,7 +47,7 @@ const CardMenuImage = ({
 						title={item.title}
 						price={item.price}
                         description={item.description}
-                        onAddToCart={() => addDishToBasket({ id: item.id, title: item.title, price: item.price })}
+                        onAddToCart={() => addDish({ id: item.id, title: item.title, price: item.price })}
 					/>
 				))}
 				{/*/ List Item dishes */}
