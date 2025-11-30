@@ -1,0 +1,100 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+skinparam shadowing false
+skinparam responseMessageBelowArrow false
+skinparam DefaultFontColor #222
+skinparam TitleFontSize 25
+skinparam NoteBorderColor #teal
+skinparam NoteBackgroundColor #powderblue
+skinparam NoteFontColor 444
+skinparam DatabaseBorderColor #teal
+skinparam DatabaseBackgroundColor #bisque
+skinparam sequence {
+ParticipantBorderThickness 1
+ParticipantBorderColor #teal
+ParticipantBackgroundColor #teal
+ParticipantFontColor #white
+ParticipantFontSize 14
+ParticipantFontStyle bold
+LifeLineBorderColor #teal
+LifeLineBackgroundColor #aliceblue
+ArrowColor #teal
+ActorBorderColor #teal
+GroupBorderThickness 1
+GroupBorderColor #teal
+GroupHeaderFontColor #white
+GroupBackgroundColor #teal
+GroupFontColor #teal
+ReferenceBorderThickness 1
+ReferenceBorderColor #teal
+ReferenceBackgroundColor #aliceblue
+ReferenceHeaderBackgroundColor #white
+ReferenceFontColor #teal
+}
+autonumber
+
+title Luồng xử lý Đơn hàng
+
+participant "Basket" as Basket
+participant "Rabbit" as MQ
+participant "Ordering" as OPE
+database "Order DB" as DB
+participant "Menu" as Menu
+participant "Payment" as Payment
+
+    -> Basket: POST /api/v2/basket/checkout
+        Basket -> Menu: OpenFeign (Pre-check stock)
+            activate Menu
+                Menu -> Menu: Reservation Pattern (giảm stock/ khoá số lượng)
+            deactivate Menu
+        alt Hết hàng
+        Menu --> Basket: 400 Bad Request -> Break
+        end
+        activate Basket
+
+        Basket -> OPE: OpenFeign /api/v1/orders/create-from-basket
+        deactivate Basket
+        activate OPE
+            OPE -> DB: ORDER_STATUS_VALIDATED
+        deactivate OPE
+
+
+
+
+
+        Basket -> Payment: OpenFeign api/v1/payment/create-url
+
+
+    alt Thanh toán thành công
+        Payment -> MQ: PUB(OrderPaymentSucceededIntegrationEvent)
+        MQ --> OPE: SUB(OrderPaymentSucceededIntegrationEvent)
+        activate OPE
+            OPE -> DB: ORDER_STATUS_PAID
+            OPE -> MQ: PUB(OrderStatusChangedToPaidIntegrationEvent)
+            OPE -> MQ: PUB(OrderStatusChangedToSubmittedIntegrationEvent)
+        deactivate OPE
+            MQ --> Basket: SUB(OrderStatusChangedToSubmittedIntegrationEvent)
+        Basket -> Basket: RemoveBasket()
+        MQ --> Menu: SUB(OrderStatusChangedToPaidIntegrationEvent)
+        activate Menu
+            Menu -> Menu: RemoveStock()
+        deactivate Menu
+
+
+    else #Pink Thanh toán ko thành công/ Huỷ
+    Payment -> MQ: PUB(OrderPaymentFailedIntegrationEvent)
+    MQ--> OPE: SUB(OrderPaymentFailedIntegrationEvent)
+    activate OPE
+        OPE -> DB: ORDER_STATUS_CANCELLED
+        OPE -> MQ: PUB(OrderStatusChangedToCancelledIntegrationEvent)
+    deactivate OPE
+        MQ--> Menu: SUB(OrderStatusChangedToCancelledIntegrationEvent)
+        activate Menu
+            Menu -> Menu: Stock += Reservation
+        deactivate Menu
+    end
+
+
+
+
+@enduml

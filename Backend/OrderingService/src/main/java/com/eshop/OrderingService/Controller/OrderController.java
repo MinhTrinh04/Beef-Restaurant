@@ -1,5 +1,6 @@
 package com.eshop.OrderingService.Controller;
 
+import com.eshop.OrderingService.DTO.CreateOrderFromBasketRequestDto;
 import com.eshop.OrderingService.DTO.OrderDto;
 import com.eshop.OrderingService.DTO.ResponseDto;
 import com.eshop.OrderingService.Service.IOrderingService;
@@ -12,7 +13,6 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/orders")
@@ -30,7 +30,7 @@ public class OrderController {
 
     @GetMapping("/my-orders/{orderId}")
     public ResponseEntity<ResponseDto<OrderDto>> getMyOrderDetail(
-            @PathVariable UUID orderId,
+            @PathVariable Long orderId,
             @AuthenticationPrincipal Jwt jwt) {
 
         OrderDto order = orderingService.getOrderByOrderId(orderId);
@@ -44,8 +44,15 @@ public class OrderController {
         return ResponseEntity.ok(ResponseDto.success(order));
     }
 
+    @PostMapping("/create-from-basket")
+    public ResponseEntity<Long> createOrderFromBasket(@RequestBody CreateOrderFromBasketRequestDto request) {
+        log.info("Creating order from basket for user: {}", request.getUserId());
+        Long orderId = orderingService.createOrderFromBasket(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderId);
+    }
+
     @PutMapping("/{orderId}/cancel")
-    public ResponseEntity<ResponseDto<Boolean>> cancelOrder(@PathVariable UUID orderId,
+    public ResponseEntity<ResponseDto<Boolean>> cancelOrder(@PathVariable Long orderId,
                                                             @RequestParam(required = false) String reason,
                                                             @AuthenticationPrincipal Jwt jwt) {
         log.info("Cancelling order: {} with reason: {}", orderId, reason);

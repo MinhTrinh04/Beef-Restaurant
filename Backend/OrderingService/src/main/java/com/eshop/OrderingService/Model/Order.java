@@ -4,12 +4,10 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "orders")
@@ -19,8 +17,9 @@ import java.util.UUID;
 public class Order {
 
     @Id
-    @Column(name = "order_id", updatable = false, nullable = false, columnDefinition = "UUID")
-    private UUID orderId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "order_id", updatable = false, nullable = false)
+    private Long orderId;
 
     @Column(name = "order_date", nullable = false)
     private LocalDateTime orderDate;
