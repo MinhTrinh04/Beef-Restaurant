@@ -31,6 +31,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/v1/payment/vnpay-return").permitAll()
+                        .requestMatchers("/api/v1/payment/payos-webhook").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/payment/create-url").hasRole("USER")
                         .anyRequest().authenticated()
                 )

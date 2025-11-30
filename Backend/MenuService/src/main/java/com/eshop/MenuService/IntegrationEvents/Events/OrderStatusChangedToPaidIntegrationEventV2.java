@@ -9,6 +9,6 @@ import java.util.UUID;
 @Getter
 @AllArgsConstructor
 public class OrderStatusChangedToPaidIntegrationEventV2 extends IntegrationEvent {
-    private UUID orderId;
+    private Long orderId;
     private List<OrderStockItem> orderStockItems;
 }

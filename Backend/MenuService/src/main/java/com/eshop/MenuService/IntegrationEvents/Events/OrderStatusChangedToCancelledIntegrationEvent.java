@@ -11,7 +11,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class OrderStatusChangedToCancelledIntegrationEvent extends IntegrationEvent {
 
-    private final UUID orderId;
+    private final Long orderId;
     private final String userId;
     private final String orderStatus;
     private final String reason;

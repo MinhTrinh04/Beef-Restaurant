@@ -9,12 +9,11 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    Optional<Order> findByOrderId(UUID orderId);
+    Optional<Order> findByOrderId(Long orderId);
 
     List<Order> findByBuyerId(String userId);
 
@@ -28,5 +27,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT o FROM Order o WHERE o.orderStatus = :status ORDER BY o.orderDate DESC")
     List<Order> findByOrderStatusOrderByOrderDateDesc(@Param("status") String status);
 
-    boolean existsByOrderId(UUID orderId);
+    boolean existsByOrderId(Long orderId);
 }
