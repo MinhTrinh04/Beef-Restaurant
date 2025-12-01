@@ -1,9 +1,10 @@
 import { AboutClassic } from "@/app/blocks/about";
+import Link from "next/link";
 import BadgesList from "@/app/blocks/badges/BadgesList";
 import Cta from "@/app/blocks/cta/variants/ctaOne/ctaOne";
 import { SpecialOffersTwoBlock } from "@/app/blocks/special-offers";
 import { TeamOneBlock as TeamBlock } from "@/app/blocks/team";
-import WeekSpecials from "@/app/blocks/menu/menu-week-specials/menuWeekSpecials";
+
 import { HeroClassicSliderBlock } from "@/app/blocks/hero";
 import { MasonryGallery } from "@/app/blocks/gallery";
 import {ServicesList} from "@/app/blocks/services/";
@@ -13,7 +14,7 @@ import { badgesListData } from "@/app/hooks/data-brands";
 import { sliderHeroData } from "@/app/hooks/data-hero";
 import { aboutData } from "@/app/hooks/data-about";
 import { specialOffersData } from "@/app/hooks/data-special-offers";
-import { menuWeekData } from "@/app/hooks/data-dish";
+
 import { ServiceCardListData } from "@/app/hooks/data-services";
 import { ctaData } from "@/app/hooks/data-cta";
 import { galleryData } from "@/app/hooks/data-gallery";
@@ -39,9 +40,13 @@ const PageHomeClassic = () => {
 			<BadgesList {...badgesListData} />
 			{/* / Badges - Block */}
 
-			{/* Week Specials - Block */}
-			<WeekSpecials {...menuWeekData} />
-			{/* / Week Specials - Block */}
+			{/* Menu Button */}
+			<div style={{ display: 'flex', justifyContent: 'center', margin: '50px 0' }}>
+				<Link href="/menu" className="btn btn__default">
+					View Full Menu
+				</Link>
+			</div>
+			{/* / Menu Button */}
 
 			{/* Illustrations Card - List - Block */}
 			<ServicesList {...ServiceCardListData} />
