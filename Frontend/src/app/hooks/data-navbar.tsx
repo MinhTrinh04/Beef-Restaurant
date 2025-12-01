@@ -12,30 +12,8 @@ export const itemsNavbar = [
 	},
 	{
 		id: 3,
-		title: "Pages",
-		link: "/",
-		children: [
-			{
-				id: 31,
-				title: "About Us",
-				link: "/about-us",
-			},
-			{
-				id: 32,
-				title: "Chefs",
-				link: "/chefs",
-			},
-			{
-				id: 33,
-				title: "History",
-				link: "/history",
-			},
-			{
-				id: 34,
-				title: "Services",
-				link: "/services",
-			},
-		],
+		title: "About Us",
+		link: "/about-us",
 	},
 	{
 		id: 6,

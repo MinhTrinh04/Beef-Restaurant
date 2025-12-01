@@ -91,3 +91,29 @@ export const confirmationPageData: StatusPageProps = {
     buttonLink: "/",
     buttonText: "Back to Homepage",
 };
+
+export const paymentSuccessPageData: StatusPageProps = {
+    backgroundImageSrc: "/bg/bg-cta.jpg",
+    backgroundImageAlt: "Decorative background with a pleasant texture",
+    imageSrc: "",
+    imageAlt: "Illustration for payment success",
+    imageWidth: 500,
+    imageHeight: 283,
+    heading: "Payment Successful!",
+    text: "Thank you for your payment. Your order has been confirmed.",
+    buttonLink: "/menu",
+    buttonText: "Order More",
+};
+
+export const paymentCancelPageData: StatusPageProps = {
+    backgroundImageSrc: "/bg/bg-cta.jpg",
+    backgroundImageAlt: "Decorative background with a pleasant texture",
+    imageSrc: "",
+    imageAlt: "Illustration for payment cancellation",
+    imageWidth: 500,
+    imageHeight: 283,
+    heading: "Payment Cancelled",
+    text: "Your payment has been cancelled. No charges were made.",
+    buttonLink: "/checkout",
+    buttonText: "Try Again",
+};
