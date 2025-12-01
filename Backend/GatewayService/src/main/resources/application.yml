@@ -7,55 +7,9 @@ spring:
 
   cloud:
     gateway:
-      server:
-        webflux:
-          routes:
-          - id: user-service
-            uri: lb://USER-SERVICE
-            predicates:
-              - Path=/api/users/**
-            filters:
-              - RewritePath=/api/users, /api/v1/users
-              - RewritePath=/api/users/(?<segment>.*), /api/v1/users/${segment}
-
-          - id: menu_service_route
-            uri: lb://MENU-SERVICE
-            predicates:
-              - Path=/api/menu/**
-            filters:
-              - RewritePath=/api/menu/(?<segment>.*), /api/v1/menu/${segment}
-
-          - id: ordering_service_route
-            uri: lb://ORDERING-SERVICE
-            predicates:
-              - Path=/api/admin/orders, /api/admin/orders/** ,/api/orders, /api/orders/**
-            filters:
-              - RewritePath=/api/admin/orders, /api/v1/admin/orders
-              - RewritePath=/api/admin/orders/(?<segment>.*), /api/v1/admin/orders/${segment}
-              - RewritePath=/api/orders, /api/v1/orders
-              - RewritePath=/api/orders/(?<segment>.*), /api/v1/orders/${segment}
-
-          - id: basket_service_route
-            uri: lb://BASKET-SERVICE
-            predicates:
-              - Path=/api/basket,/api/basket/**
-            filters:
-              - RewritePath=/api/basket, /api/v1/basket
-              - RewritePath=/api/basket/(?<segment>.*), /api/v1/basket/${segment}
-
-          - id: payment_service_route
-            uri: lb://PAYMENT-SERVICE
-            predicates:
-              - Path=/api/payment/**
-            filters:
-              - RewritePath=/api/payment/(?<segment>.*), /api/v1/payment/${segment}
-
-        default-filters:
-        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
-
-        globalcors:
-          cors-configurations:
-            '[/**]':
+      globalcors:
+        cors-configurations:
+          '[/**]':
             allowedOrigins:
               - "http://localhost:3000"
             allowedMethods:
@@ -66,6 +20,50 @@ spring:
               - OPTIONS
             allowedHeaders: "*"
             allowCredentials: true
+      
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+
+      routes:
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - RewritePath=/api/users, /api/v1/users
+            - RewritePath=/api/users/(?<segment>.*), /api/v1/users/${segment}
+
+        - id: menu_service_route
+          uri: lb://MENU-SERVICE
+          predicates:
+            - Path=/api/menu/**
+          filters:
+            - RewritePath=/api/menu/(?<segment>.*), /api/v1/menu/${segment}
+
+        - id: ordering_service_route
+          uri: lb://ORDERING-SERVICE
+          predicates:
+            - Path=/api/admin/orders, /api/admin/orders/** ,/api/orders, /api/orders/**
+          filters:
+            - RewritePath=/api/admin/orders, /api/v1/admin/orders
+            - RewritePath=/api/admin/orders/(?<segment>.*), /api/v1/admin/orders/${segment}
+            - RewritePath=/api/orders, /api/v1/orders
+            - RewritePath=/api/orders/(?<segment>.*), /api/v1/orders/${segment}
+
+        - id: basket_service_route
+          uri: lb://BASKET-SERVICE
+          predicates:
+            - Path=/api/basket,/api/basket/**
+          filters:
+            - RewritePath=/api/basket, /api/v1/basket
+            - RewritePath=/api/basket/(?<segment>.*), /api/v1/basket/${segment}
+
+        - id: payment_service_route
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/api/payment/**
+          filters:
+            - RewritePath=/api/payment/(?<segment>.*), /api/v1/payment/${segment}
 
 eureka:
   client:

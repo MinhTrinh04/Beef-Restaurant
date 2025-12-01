@@ -3,6 +3,7 @@ import React from "react";
 import Image from "next/image";
 import BlockTitle from "@/app/components/common/block-title/block-title";
 import DishItem from "@/app/components/common/dish/DishItem";
+import { useBasket } from "@/app/contexts/BasketContext";
 
 import {
 	MenuContentDisplayProps,
@@ -14,6 +15,8 @@ const MenuContentDisplay: React.FC<MenuContentDisplayProps> = ({
 	categories,
 	emptyMessage,
 }) => {
+	const { addDish } = useBasket();
+
 	if (!categories || categories.length === 0) {
 		return <p>{emptyMessage || "No menu items to display."}</p>;
 	}
@@ -29,16 +32,17 @@ const MenuContentDisplay: React.FC<MenuContentDisplayProps> = ({
 								phrase={categoryItem.phrase}
 								divider={true}
 							/>
-							{categoryItem.dishesList.map(
-								(dish: DishItemType, dishIndex: number) => (
-									<DishItem
-										key={dish.id ?? `dish-${categoryIndex}-${dishIndex}`}
-										title={dish.title}
-										price={dish.price}
-										description={dish.description}
-									/>
-								)
-							)}
+                            {categoryItem.dishesList.map(
+                                (dish: DishItemType, dishIndex: number) => (
+                                    <DishItem
+                                        key={dish.id ?? `dish-${categoryIndex}-${dishIndex}`}
+                                        title={dish.title}
+                                        price={dish.price}
+                                        description={dish.description}
+                                        onAddToCart={() => addDish({ id: dish.id, title: dish.title, price: dish.price })}
+                                    />
+                                )
+                            )}
 						</div>
 						<div className="menu__category-image">
 							<Image

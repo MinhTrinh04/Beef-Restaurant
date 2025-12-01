@@ -6,6 +6,7 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
+*.stackdump
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
@@ -77,7 +78,7 @@ web_modules/
 .env.development.local
 .env.test.local
 .env.production.local
-.env.local
+# .env.local
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -86,6 +87,10 @@ web_modules/
 # Next.js build output
 .next
 out
+
+# Vercel / Turborepo
+.vercel
+.turbo
 
 # Nuxt.js build / generate output
 .nuxt
@@ -127,6 +132,62 @@ dist
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
+
+# Editors/IDEs
+.idea/
+.vscode/
+*.iml
+.project
+.classpath
+.settings/
+
+# OS junk
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Swap/lock files
+*.swp
+*.swo
+~$*
+*.lock
+
+# Java / Spring / Maven / Gradle
+target/
+build/
+.gradle/
+gradle/
+**/build/
+**/target/
+*.class
+*.jar
+*.war
+*.ear
+hs_err_pid*
+replay_pid*
+.factorypath
+
+# JaCoCo / test coverage (Java)
+jacoco.exec
+**/site/jacoco/
+**/jacoco-report/
+
+# IntelliJ annotation processors
+.apt_generated/
+.annotation-processors/
+
+# Eclipse
+.metadata/
+.recommenders/
+bin/
+
+# Mac dir metadata
+.Spotlight-V100
+.Trashes
+
+# Local env overrides
+.env.local
+.env.*.local
 
 # yarn v2
 .yarn/cache

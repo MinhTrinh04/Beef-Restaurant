@@ -1,5 +1,4 @@
-import { FaFacebookF, FaXTwitter, FaInstagram } from "react-icons/fa6";
-
+// Use string identifiers instead of React components for serialization
 export const teamBlockData = {
 	subtitle: "Team of Restaurant",
 	title: "Meet Our Professionals",
@@ -20,17 +19,17 @@ export const teamBlockData = {
 				{
 					href: "http://www.facebook.com",
 					ariaLabel: "Facebook",
-					icon: FaFacebookF,
+					icon: "FaFacebookF",
 				},
 				{
 					href: "http://www.twitter.com",
 					ariaLabel: "Twitter",
-					icon: FaXTwitter,
+					icon: "FaXTwitter",
 				},
 				{
 					href: "http://www.instagram.com",
 					ariaLabel: "Instagram",
-					icon: FaInstagram,
+					icon: "FaInstagram",
 				},
 			],
 		},
@@ -43,17 +42,17 @@ export const teamBlockData = {
 				{
 					href: "http://www.facebook.com",
 					ariaLabel: "Facebook",
-					icon: FaFacebookF,
+					icon: "FaFacebookF",
 				},
 				{
 					href: "http://www.twitter.com",
 					ariaLabel: "Twitter",
-					icon: FaXTwitter,
+					icon: "FaXTwitter",
 				},
 				{
 					href: "http://www.instagram.com",
 					ariaLabel: "Instagram",
-					icon: FaInstagram,
+					icon: "FaInstagram",
 				},
 			],
 		},
@@ -66,17 +65,17 @@ export const teamBlockData = {
 				{
 					href: "http://www.facebook.com",
 					ariaLabel: "Facebook",
-					icon: FaFacebookF,
+					icon: "FaFacebookF",
 				},
 				{
 					href: "http://www.twitter.com",
 					ariaLabel: "Twitter",
-					icon: FaXTwitter,
+					icon: "FaXTwitter",
 				},
 				{
 					href: "http://www.instagram.com",
 					ariaLabel: "Instagram",
-					icon: FaInstagram,
+					icon: "FaInstagram",
 				},
 			],
 		},
@@ -89,17 +88,17 @@ export const teamBlockData = {
 				{
 					href: "http://www.facebook.com",
 					ariaLabel: "Facebook",
-					icon: FaFacebookF,
+					icon: "FaFacebookF",
 				},
 				{
 					href: "http://www.twitter.com",
 					ariaLabel: "Twitter",
-					icon: FaXTwitter,
+					icon: "FaXTwitter",
 				},
 				{
 					href: "http://www.instagram.com",
 					ariaLabel: "Instagram",
-					icon: FaInstagram,
+					icon: "FaInstagram",
 				},
 			],
 		},
@@ -112,17 +111,17 @@ export const teamBlockData = {
 				{
 					href: "http://www.facebook.com",
 					ariaLabel: "Facebook",
-					icon: FaFacebookF,
+					icon: "FaFacebookF",
 				},
 				{
 					href: "http://www.twitter.com",
 					ariaLabel: "Twitter",
-					icon: FaXTwitter,
+					icon: "FaXTwitter",
 				},
 				{
 					href: "http://www.instagram.com",
 					ariaLabel: "Instagram",
-					icon: FaInstagram,
+					icon: "FaInstagram",
 				},
 			],
 		},
@@ -135,17 +134,17 @@ export const teamBlockData = {
 				{
 					href: "http://www.facebook.com",
 					ariaLabel: "Facebook",
-					icon: FaFacebookF,
+					icon: "FaFacebookF",
 				},
 				{
 					href: "http://www.twitter.com",
 					ariaLabel: "Twitter",
-					icon: FaXTwitter,
+					icon: "FaXTwitter",
 				},
 				{
 					href: "http://www.instagram.com",
 					ariaLabel: "Instagram",
-					icon: FaInstagram,
+					icon: "FaInstagram",
 				},
 			],
 		},
