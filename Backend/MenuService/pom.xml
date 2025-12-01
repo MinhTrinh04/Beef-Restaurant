@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.eshop</groupId>
-	<artifactId>MenuService</artifactId>
+	<artifactId>menu-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>MenuService</name>
 	<description>Demo project for Spring Boot</description>
@@ -148,6 +148,16 @@
 					</excludes>
 				</configuration>
 			</plugin>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.4.2</version>
+                <configuration>
+                    <to>
+                        <image>minh28012004/${project.artifactId}:latest</image>
+                    </to>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 

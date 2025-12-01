@@ -8,7 +8,7 @@
         <version>3.5.6</version>
         <relativePath/> </parent>
     <groupId>com.eshop</groupId>
-    <artifactId>BasketService</artifactId>
+    <artifactId>basket-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>BasketService</name>
     <description>BasketService for eShop</description>
@@ -118,6 +118,16 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.4.2</version>
+                <configuration>
+                    <to>
+                        <image>minh28012004/${project.artifactId}:latest</image>
+                    </to>
                 </configuration>
             </plugin>
         </plugins>
