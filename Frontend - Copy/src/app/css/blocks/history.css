@@ -1,0 +1,136 @@
+/*==========================
+    History / 
+===========================*/
+.history {
+	/* Define variables for easier theming and maintenance */
+	--history-marker-border: theme(colors.primary);
+	--history-marker-text: theme(colors.primary);
+	--history-marker-bg: theme(colors.surface-dark);
+	--history-year-text: theme(colors.border);
+
+	@apply flex flex-col items-center justify-center pt-16 md:pt-20 xl:pt-24 relative overflow-hidden;
+
+	/* Decorative background elements */
+	&:after {
+		@apply absolute top-0 right-0 bottom-0 hidden lg:block md:w-[120px] xl:w-[260px] bg-contain bg-no-repeat bg-right;
+		content: "";
+		background-image: url("/other/right.png");
+	}
+	&:before {
+		@apply absolute top-0 left-0 bottom-0 hidden lg:block md:w-[120px] xl:w-[260px] bg-contain bg-no-repeat bg-left;
+		content: "";
+		background-image: url("/other/left.png");
+	}
+
+	&__container {
+		@apply container px-4 lg:px-0 mx-auto;
+		.section-title {
+			@apply max-w-[800px] text-center mx-auto mb-8;
+			p {
+				@apply max-w-[600px] mx-auto;
+				&:last-of-type {
+					@apply mb-0;
+				}
+			}
+		}
+	}
+
+	/* Timeline content wrapper */
+	&__content {
+		@apply w-full md:w-11/12 lg:w-10/12 mx-auto flex items-start justify-start flex-col relative px-4 sm:px-6 md:px-0;
+		/* Decorative start/end points for the timeline line */
+		&:after {
+			@apply absolute top-0 right-1 w-[48px] h-[12px] md:-top-[18px] md:-right-[28px] md:w-[57px] md:h-[18px] bg-contain bg-no-repeat bg-center z-20;
+			content: "";
+			background-image: url("/other/start-point.png");
+		}
+		&:before {
+			@apply hidden sm:block absolute top-0 left-0 md:-top-[18px] md:-left-[28px] w-[48px] h-[12px] md:w-[57px] md:h-[18px] bg-contain bg-repeat-y bg-top z-20;
+			content: "";
+			background-image: url("/other/start-point.png");
+		}
+	}
+
+	/* Timeline list container */
+	&__list {
+		@apply w-full mx-auto flex items-start justify-start flex-col relative z-10 py-4 lg:py-8;
+		/* Vertical timeline lines */
+		&:after {
+			@apply absolute top-0 right-0 bottom-0 w-[1px] h-full bg-contain bg-repeat-y bg-top;
+			content: "";
+			background-image: url("/other/border-list.png");
+		}
+		&:before {
+			@apply hidden sm:block absolute top-0 left-[-1px] bottom-0 w-[1px] h-full bg-contain bg-repeat-y bg-top z-10;
+			content: "";
+			background-image: url("/other/border-list.png");
+		}
+	}
+
+	/* Individual timeline item */
+	&__item {
+		@apply grid grid-cols-12 gap-6 pl-0 sm:px-8 lg:px-16 py-8 relative;
+
+		&-image {
+			@apply hidden relative col-span-4 order-1 sm:flex flex-wrap items-center justify-center;
+		}
+
+		&-content {
+			@apply relative col-span-12 sm:col-span-8 pr-9 sm:pr-0 lg:py-4 xl:py-16 lg:pl-6 xl:pl-12 order-2 text-right;
+		}
+
+		&-year {
+			/* Using !important potentially to override base heading styles, review if necessary */
+			@apply !text-title-4 lg:!text-title-3 font-josefin-sans font-medium mb-4 relative;
+			color: var(--history-year-text); /* Use CSS variable */
+
+			/* Timeline marker */
+			&:after {
+				@apply absolute top-[2px] w-[20px] h-[20px] lg:w-[30px] lg:h-[30px] border-2 border-solid rounded-full flex flex-wrap items-center justify-center font-bold z-30;
+				/* Positioning for odd items (default) */
+				@apply -right-[2.80rem] sm:-right-[2.60rem] lg:-right-[4.80rem];
+				/* Style using CSS variables */
+				border-color: var(--history-marker-border);
+				color: var(--history-marker-text);
+				background-color: var(--history-marker-bg);
+				/* Font Awesome icon */
+				content: "\f111"; /* Font Awesome circle icon */
+				font-family: "Font Awesome 5 Free"; /* Ensure Font Awesome is loaded */
+				font-size: 12px;
+				line-height: 12px;
+				@screen lg {
+					font-size: 20px;
+					line-height: 20px;
+				}
+			}
+		}
+
+		&-description {
+			@apply text-body text-text-base;
+		}
+
+		&-title {
+			/* Using !important potentially to override base heading styles, review if necessary */
+			@apply !text-title-4 sm:!text-title-3 lg:!text-title-2 relative mb-6;
+		}
+
+		/* Alternating layout for even items on medium screens and up */
+		@screen sm {
+			&:nth-child(even) {
+				.history__item-image {
+					@apply !order-2; /* Move image to the right */
+				}
+				.history__item-content {
+					@apply !order-1 pl-0 text-left lg:pl-0; /* Move content to the left, align text left */
+				}
+				.history__item-year {
+					&:after {
+						/* Adjust marker position for even items */
+						@apply -left-[2.65rem] lg:-left-[4.85rem] right-auto; /* Use right-auto to override default */
+					}
+				}
+			}
+		}
+	}
+}
+

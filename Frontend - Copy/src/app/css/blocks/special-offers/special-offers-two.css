@@ -1,0 +1,172 @@
+/*==================================================
+	Special Offers Two - Slider
+===================================================*/
+.special-offers-two {
+	&__container {
+		@apply container mx-auto py-14 md:py-16 xl:py-28;
+		animation: fadeIn 0.8s ease-out;
+	}
+	.block-title {
+		@apply max-w-[600px] text-center mx-auto before:hidden mb-12;
+		animation: slideInUp 0.6s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
+	}
+	&__slider {
+		@apply block relative w-full h-fit !pb-16 md:!pb-24;
+		.swiper-button-prev{
+			@apply !bottom-1 !top-auto border-primary border-solid border-2 !left-[calc(50%-44px)] lg:!left-[calc(50%-70px)] !right-auto;
+		}
+		.swiper-button-next{
+			@apply !bottom-1 !top-auto border-primary border-solid border-2 !right-2 !left-[calc(50%+10px)];
+		}
+
+		&__item {
+			@apply grid grid-cols-1  md:grid-cols-2 lg:grid-cols-6 gap-4 md:gap-6 xl:gap-8 md:px-6 xl:px-0  relative w-full ;
+			opacity: 0;
+			transform: translateY(20px);
+			transition: all 0.6s cubic-bezier(0.215, 0.61, 0.355, 1);
+		}
+		&__image {
+			@apply col-span-1 md:col-span-2 lg:col-span-3 min-h-[320px]  md:max-h-full p-0 xl:p-6 overflow-hidden relative;
+			img {
+				@apply object-cover object-center w-full h-full rounded;
+				transform: scale(1.05);
+				transition: transform 0.8s cubic-bezier(0.215, 0.61, 0.355, 1);
+				box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+			}
+		}
+		&__info {
+			@apply col-span-1 md:col-span-2 lg:col-span-3 items-start z-20 w-full h-fit flex flex-col justify-center px-4 py-6 sm:p-8  bg-surface-dark/40 md:rounded-lg relative;
+			backdrop-filter: blur(8px);
+			transform: translateX(30px);
+			opacity: 0;
+			transition: all 0.6s cubic-bezier(0.215, 0.61, 0.355, 1);
+
+			&::before,
+			&::after {
+				content: "";
+				z-index: 10;
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				border: 1px solid theme("colors.primary");
+				border-radius: 8px;
+				transform: scale(0.2);
+				transition: all 0.5s cubic-bezier(0.215, 0.61, 0.355, 1);
+				opacity: 0;
+			}
+			&::before {
+				transform-origin: left top;
+				border-right: 0;
+				border-bottom: 0;
+			}
+			&::after {
+				transform-origin: right bottom;
+				border-top: 0;
+				border-left: 0;
+			}
+
+			&:hover::before,
+			&:hover::after {
+				transform: scale(1);
+				opacity: 0.3;
+			}
+		}
+		.tag {
+			@apply text-primary font-sorts-mill-goudy italic;
+			transform: translateY(20px);
+			opacity: 0;
+			transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1) 0.2s;
+		}
+		.btn {
+			transform: translateY(20px);
+			opacity: 0;
+			transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1) 0.4s;
+
+			&:hover {
+				transform: translateY(-2px);
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+			}
+
+			@media (max-width: 767px) {
+				margin-top: 24px !important;
+			}
+			@media (max-width: 640px) {
+				margin-top: 0 !important;
+			}
+		}
+		&__title {
+			@apply !text-title-4 md:!text-title-3 font-barlow-condensed border-b border-solid border-primary w-full flex flex-wrap items-center justify-between !pb-6 !mb-6 capitalize;
+			transform: translateY(20px);
+			opacity: 0;
+			transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1) 0.1s;
+			span {
+				@apply text-primary;
+				transition: color 0.3s ease;
+
+				&:hover {
+					color: theme('colors.primary');
+				}
+			}
+		}
+		&__primary {
+			@apply text-subtitle-2 font-sorts-mill-goudy italic text-text-muted;
+			transform: translateY(20px);
+			opacity: 0;
+			transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1) 0.3s;
+		}
+		&__secondary {
+			@apply hidden sm:flex text-body text-text-muted;
+			transform: translateY(20px);
+			opacity: 0;
+			transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1) 0.4s;
+		}
+
+		/* Active slide animations */
+		.swiper-slide-active {
+			.special-offers-two__slider__item {
+				opacity: 1;
+				transform: translateY(0);
+			}
+
+			.special-offers-two__slider__image img {
+				transform: scale(1);
+			}
+
+			.special-offers-two__slider__info {
+				transform: translateX(0);
+				opacity: 1;
+			}
+
+			.tag,
+			.btn,
+			.special-offers-two__slider__title,
+			.special-offers-two__slider__primary,
+			.special-offers-two__slider__secondary {
+				transform: translateY(0);
+				opacity: 1;
+			}
+		}
+	}
+}
+
+@keyframes slideInUp {
+	from {
+		opacity: 0;
+		transform: translateY(30px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}

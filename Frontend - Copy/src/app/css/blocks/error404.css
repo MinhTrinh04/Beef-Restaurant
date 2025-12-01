@@ -1,0 +1,48 @@
+/* ===================================
+    404
+====================================== */
+.content-404 {
+    /* Use min-height for flexibility, remove fixed height */
+    @apply relative z-0 w-full min-h-[80vh] bg-surface-dark overflow-hidden flex items-center justify-center;
+    /* Removed pb-12, padding handled by container */
+
+    &__background {
+        @apply absolute top-0 bottom-0 left-0 right-0 z-0 block w-full h-full;
+        img {
+            @apply object-cover object-center w-full h-full opacity-25;
+        }
+    }
+
+    &__container {
+        /* Simplified padding, ensure enough vertical space */
+        @apply relative z-20 flex flex-col items-center justify-center w-full h-full overflow-hidden mx-auto px-4 py-16 sm:py-20 md:py-32;
+        /* Removed specific pt values, using general py */
+    }
+
+    &__content {
+        /* Remove max-h for flexibility, add gap for spacing */
+        @apply flex flex-col items-center justify-center w-full px-4 sm:px-8 pt-16 text-center gap-4 md:gap-6 z-50;
+        /* Removed h-full as container handles centering */
+
+        /* Add specific styles for text elements for better control and readability */
+        h2 {
+            @apply !text-title-3 sm:!text-title-2 lg:!text-display-2 xl:!text-display-1 text-text-base mt-4; /* Example text style */
+        }
+
+        p {
+            @apply text-body text-text-base max-w-md; /* Example text style */
+        }
+
+        /* Ensure button has adequate spacing */
+        .btn {
+            @apply mt-4 md:mt-6; /* Add margin-top for spacing */
+        }
+    }
+
+    &__title {
+        @apply w-full flex flex-wrap items-center justify-center text-center;
+        img {
+            @apply max-h-[200px] sm:max-h-[280px] lg:max-h-[380px] xl:max-h-[480px] w-auto;
+        }
+    }
+}

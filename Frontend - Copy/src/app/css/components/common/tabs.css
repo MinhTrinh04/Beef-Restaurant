@@ -1,0 +1,51 @@
+/* ===================================
+    Tab´s
+====================================== */
+.tabs {
+    @apply flex flex-nowrap items-center justify-start md:justify-center mt-0 mb-6 sm:mb-10 mx-auto w-full md:w-fit sm:p-2 md:rounded-full md:border-2 border-solid border-coarseWool-400 gap-2 bg-surface-dark overflow-x-auto md:overflow-visible;
+
+    &__link {
+        @apply px-2 py-2 not-italic font-normal transition-all duration-300 ease-in-out text-button font-barlow-condensed !text-coarseWool-100 bg-coarseWool-700 md:bg-transparent rounded-full min-w-[120px] w-fit sm:w-fit inline-block capitalize m-0 relative text-center;
+        letter-spacing: 2px;
+        text-decoration: none;
+        &:hover{
+            @apply cursor-pointer bg-coarseWool-600;
+        }
+        &::after {
+            @apply hidden absolute z-10 -bottom-[18px] left-[calc(50%-7px)] w-[14px] h-[14px] transform rotate-45 bg-surface-dark border-b-2 border-r-2 border-coarseWool-400 content-[''];
+        }
+        &.active{
+            @apply cursor-pointer bg-calico-500 !text-coarseWool-900 ;
+            &::after {
+                @apply hidden md:block;
+            }
+        }
+        
+    }
+}
+
+.tabs-content{
+    @apply w-full md:px-4 lg:px-16 xl:px-6 pb-10 overflow-hidden transition-all duration-1000 ease-in-out;
+    &__item {
+        @apply hidden w-full;
+        animation: fadeEffect 0.6s ease;
+
+        .menu__category-dishes .section-title__title{
+            @apply !text-title-1;
+        }
+    }
+    &__item.active {
+        @apply block transition-all duration-1000 ease-in-out;
+    }
+}
+
+@keyframes fadeEffect {
+   from {
+      opacity: 0;
+      margin-left: 30px;
+   }
+   to {
+      opacity: 1;
+      margin-left: 0;
+   }
+}

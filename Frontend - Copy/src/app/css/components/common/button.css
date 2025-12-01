@@ -1,0 +1,95 @@
+/* ===================================
+    Button's
+====================================== */
+.btn__default{
+    @apply  not-italic font-normal transition-all duration-300 ease-in-out border border-solid rounded-full text-button font-josefin-sans text-primary border-primary;
+    padding: 14px 45px 12px 45px;
+    letter-spacing: .5px;
+    &:hover{
+        @apply cursor-pointer bg-primary text-surface-dark;
+    }
+    &:focus {
+        @apply outline-none ring-2 ring-primary;
+    }
+    &:disabled {
+        @apply opacity-50 cursor-not-allowed;
+    }
+    &:active {
+        @apply cursor-pointer bg-primary text-surface-dark;
+    }
+} 
+
+.btn__solid{
+    @apply px-8 pt-[12px] pb-[10px] not-italic font-normal transition duration-300 ease-in-out border-2 border-solid rounded-full text-button font-josefin-sans text-surface-dark border-primary bg-primary;
+    &:hover{
+        @apply bg-transparent cursor-pointer border-primary text-primary;
+    }
+    &:focus {
+        @apply outline-none ring-2 ring-primary;
+    }
+    &:disabled {
+        @apply opacity-50 cursor-not-allowed;
+    }
+    &:active {
+        @apply bg-transparent cursor-pointer border-primary text-primary;
+    }
+}
+
+
+.btn-to-top{
+    @apply p-4 border-2 border-solid rounded-full text-primary border-primary fixed 
+    bottom-16 right-4 opacity-30 hover:opacity-100 cursor-pointer transition-all duration-300 ease-in-out z-50;
+}
+
+.btn__link{
+	@apply px-4 py-1 not-italic font-normal transition duration-300 ease-in-out !text-base md:!text-button font-josefin-sans text-primary !border-transparent bg-transparent border-b !border-b-primary w-fit inline-block capitalize rounded-none mt-8 relative z-50;
+  	letter-spacing: 2px;
+  	text-decoration: none;
+	&:before,
+	&:after{
+		content: '';
+    	display: block;
+    	position: absolute;
+    	height: 1px;
+    	width: 0;
+
+	}
+	&:before{
+		transition: width 0s ease,background .4s ease;
+		left: 0;
+		right: 0;
+    	bottom: -8px;
+	}
+	&:after{
+		right: 2.2%;
+    	bottom: -8px;
+    	background: theme('colors.primary');
+		transition: width .4s ease;
+	}
+	
+	&:hover{
+		@apply bg-transparent cursor-pointer !border-b-primary text-primary;
+		&:before{
+			left:5%;
+			width: 90%;
+			background: #b2876f;
+    		transition: width .4s ease;
+		}
+		&:after{
+			left:5%;
+			width: 90%;
+    		background: 0 0;
+			transition: all 0s ease;
+		}
+	}
+
+    &:focus {
+        @apply outline-none ring-0 !text-primary;
+    }
+    &:disabled {
+        @apply opacity-50 cursor-not-allowed !text-primary;
+    }
+    &:active {
+        @apply bg-transparent cursor-pointer !border-b-primary text-primary;
+    }
+}

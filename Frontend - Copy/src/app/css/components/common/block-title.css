@@ -1,0 +1,79 @@
+/*==========================
+    Block Title 
+===========================*/
+.block-title {
+    @apply pb-4 mb-0 max-w-[660px] relative mx-auto w-full;
+    position: relative;
+    
+    &__subtitle {
+        @apply !text-primary text-subtitle-2 sm:text-subtitle-1 w-full font-sorts-mill-goudy font-normal !mb-1 italic;
+        letter-spacing: 0.3px;
+    }
+
+    &__title {
+        @apply text-text-base !text-title-3 sm:!text-title-2 md:!text-title-1 mb-5 w-full font-barlow-condensed font-normal capitalize;
+        letter-spacing: 0.5px;
+        line-height: 1.2;
+        position: relative;
+    }
+
+    &__center {
+        @apply text-center mx-auto;
+        
+        &::after {
+            left: 50%;
+            transform: translateX(-50%) scaleX(1);
+        }
+
+        &:hover::after {
+            transform: translateX(-50%) scaleX(1.5);
+        }
+    }
+    &__left {
+        @apply text-left;
+        
+        &::after {
+            left: 0;
+            transform: translateX(0) scaleX(1);
+        }
+
+        &:hover::after {
+            transform: translateX(0) scaleX(1.5);
+        }
+    }
+    &__right {
+        @apply text-right;
+        
+        &::after {
+            right: 0;
+            transform: translateX(0) scaleX(1);
+        }
+
+        &:hover::after {
+            transform: translateX(0) scaleX(1.5);
+        }
+    }
+
+}
+
+/* Responsive adjustments */
+@screen md {
+    .section-title {
+        &::after {
+            width: 80px;
+        }
+
+        &__title {
+            letter-spacing: 0.7px;
+        }
+    }
+}
+
+@screen lg {
+    .section-title {
+        &::after {
+            width: 100px;
+        }
+    }
+}
+

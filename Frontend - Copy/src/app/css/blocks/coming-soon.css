@@ -1,0 +1,46 @@
+/* ===================================
+    Coming soon
+====================================== */
+.coming-soon {
+	@apply relative bg-background;
+	&__wrapper {
+		@apply flex items-center justify-center;
+		height: 100vh;
+	}
+	&__container {
+		@apply grid grid-cols-12 gap-0 h-full;
+	}
+	&__image {
+		@apply col-span-12 md:col-span-4 lg:col-span-6 h-full relative overflow-hidden hidden md:flex;
+		img {
+			@apply w-full h-full object-cover object-center;
+		}
+	}
+	&__content {
+		@apply col-span-12 md:col-span-8 lg:col-span-6 h-full flex flex-col items-center justify-center px-4 py-8 sm:p-8 md:px-8 lg:px-8 bg-coarseWool-700 m-8;
+		.content {
+			@apply flex flex-col items-center justify-center rounded-xl  h-full px-4 sm:p-8;
+		}
+		.logo {
+			@apply mb-16 w-[280px] flex flex-wrap items-center justify-center;
+		}
+	}
+	&__title {
+		@apply !text-title-3 sm:!text-title-2 md:!text-title-1 font-normal !uppercase font-barlow-condensed mb-6;
+	}
+	&__text {
+		@apply text-base xl:text-xl !text-center mb-6;
+	}
+	&__form {
+		@apply flex flex-wrap items-center justify-center w-full gap-4 pt-9;
+		.form__body {
+			@apply sm:!w-[68%] md:!w-[70%] xl:!w-[74%] mb-4 inline-flex flex-wrap sm:mb-0;
+			.coming-soon-input {
+				@apply mb-0;
+			}
+		}
+		.form__footer.form_field {
+			@apply !w-[94px] inline-flex flex-wrap;
+		}
+	}
+}

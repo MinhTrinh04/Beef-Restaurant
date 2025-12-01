@@ -1,0 +1,69 @@
+/*==================================================
+    Form
+==================================================*/
+.form {
+	@apply relative w-full flex flex-wrap items-center justify-center pb-8;
+	&__body {
+		@apply w-full flex flex-wrap items-center justify-center;
+	}
+	&__footer {
+		@apply w-full flex flex-wrap items-center justify-center;
+	}
+	&_row {
+		@apply grid grid-cols-12 gap-6 w-full;
+	}
+	&_field {
+		@apply w-full flex flex-col items-start justify-start;
+		input,
+		textarea {
+			@apply w-full bg-transparent border mb-6 border-text-muted focus:outline-none focus:border-border text-text-muted font-josefin-sans text-base capitalize rounded-lg;
+			letter-spacing: 0.25px;
+			padding: 18px 0px 17px 18px;
+		}
+        textarea {
+            @apply min-h-[128px];
+        }
+		label {
+			@apply hidden;
+		}
+		&__name {
+			@apply col-span-12 lg:col-span-9;
+		}
+		&__phone {
+			@apply col-span-12 lg:col-span-3;
+		}
+		&__email {
+			@apply col-span-12 lg:col-span-6;
+		}
+		&__person {
+			@apply col-span-12 lg:col-span-2;
+		}
+		&__date {
+			@apply col-span-12 lg:col-span-2;
+			input {
+				@apply normal-case;
+			}
+		}
+		&__hours {
+			@apply col-span-12 lg:col-span-2;
+		}
+		&__message {
+			@apply col-span-12;
+		}
+		button {
+			@apply !px-8 !pt-[12px] !pb-[10px] not-italic font-normal transition duration-300 ease-in-out border-2 border-solid rounded-full text-button font-josefin-sans text-primary border-primary;
+			&:hover {
+				@apply cursor-pointer bg-primary text-surface-dark;
+			}
+			&:focus {
+				@apply outline-none ring-2 ring-primary;
+			}
+			&:disabled {
+				@apply opacity-50 cursor-not-allowed;
+			}
+			&:active {
+				@apply cursor-pointer bg-primary text-surface-dark;
+			}
+		}
+	}
+}

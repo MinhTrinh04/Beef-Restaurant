@@ -1,0 +1,233 @@
+/*==========================
+    Menu Page 
+===========================*/
+.menu {
+	@apply flex flex-col items-center justify-center pt-16 md:pt-20 xl:pt-24  relative overflow-hidden;
+	&:after {
+		@apply absolute top-0 right-0 hidden lg:block w-[140px] h-auto bottom-0 bg-contain bg-repeat-y bg-right;
+		content: "";
+		background-image: url("/other/right.png");
+	}
+	&:before {
+		@apply absolute top-0 hidden lg:block left-0 w-[140px] h-auto bottom-0 bg-contain bg-repeat-y bg-right;
+		content: "";
+		background-image: url("/other/left.png");
+	}
+	&__container {
+		@apply container px-4 lg:px-0 mx-auto;
+		.section-title {
+			@apply max-w-[800px] text-center mx-auto mb-8;
+			p {
+				@apply max-w-[600px] mx-auto;
+				&:last-of-type {
+					@apply mb-0;
+				}
+			}
+		}
+	}
+	&__container__full {
+		@apply w-full mx-auto;
+	}
+}
+
+/*==========================
+    Menu tabs
+===========================*/
+
+.menu-tabs .menu{
+	&:after,
+	&:before {
+		@apply !bg-cover !bg-no-repeat;
+	}
+}
+
+
+/*==========================
+    Menu dish
+===========================*/
+.dish {
+	@apply flex flex-col justify-start items-start w-full mb-4;
+	&__content {
+		@apply flex flex-wrap justify-between items-center w-full border-b border-solid border-border pb-1 mb-1;
+	}
+	&__title {
+		@apply !text-title-5 font-barlow-condensed font-normal mb-0 capitalize;
+	}
+	&__price {
+		@apply text-title-5 font-barlow-condensed font-normal text-primary mb-0;
+	}
+	&__description {
+		@apply w-full text-text-muted font-sorts-mill-goudy italic text-sm mb-0;
+	}
+}
+
+/*==========================
+    Menu dishes list
+===========================*/
+.menu__dishes-list {
+	@apply flex flex-col items-start justify-start;
+}
+
+.menu__dishes-col {
+	@apply col-span-1;
+}
+
+/*==========================
+    Block Menu - two columns 
+===========================*/
+.menu-block {
+	@apply bg-center bg-cover relative bg-no-repeat overflow-hidden border-none;
+	background-image: url("/images/bg/bg-menu.jpg");
+	@screen md {
+		background-attachment: fixed;
+		background-position: center 100%;
+	}
+	&__container {
+		@apply container mx-auto py-16 md:py-20 xl:py-28 flex flex-col flex-wrap justify-start items-center relative z-20;
+	}
+	&__overlayer {
+		@apply absolute top-0 bottom-0 left-0 right-0 z-10 w-full h-full bg-surface-dark opacity-90;
+	}
+
+	&__dishes {
+		@apply grid grid-cols-1 md:grid-cols-2 gap-x-0 md:gap-x-6 lg:gap-x-10 xl:gap-x-16 w-full px-0 md:px-4 xl:px-20 xl:pt-4 md:pb-10;
+	}
+	.btn {
+		@apply mt-6 md:mt-0;
+	}
+}
+
+/*==========================
+    Block Menu - category 
+===========================*/
+.menu__category {
+	@apply grid grid-cols-12 gap-0 w-full lg:w-9/12 px-0 md:px-4 xl:pt-0 mx-auto relative z-50 h-auto;
+	&-image {
+		@apply col-span-12 md:col-span-4 lg:col-span-6 h-full relative overflow-hidden max-h-[320px] md:max-h-full order-1;
+		img {
+			@apply w-full h-full object-cover object-center;
+			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+		}
+	}
+	&-dishes {
+		@apply col-span-12 md:col-span-8 lg:col-span-6 py-12 md:py-16 lg:py-20 xl:py-24 px-0 md:pl-8 md:pr-0 lg:pl-16 xl:pl-24 h-full flex flex-col items-center justify-center order-2;
+		.block-title {
+			@apply px-[0.75rem] mb-0 w-full col-span-2;
+		}
+		.dish {
+			@apply col-span-1;
+			&:last-of-type {
+				@apply mb-0;
+			}
+		}
+	}
+	&:nth-child(even) {
+		.menu__category-image {
+			@apply md:order-2;
+		}
+		.menu__category-dishes {
+			@apply md:order-1 md:pr-8 lg:pr-16 md:pl-0 xl:pr-24;
+
+		}
+	}
+	&:hover{
+		.menu__category-image img {
+			@apply scale-110;
+		}
+	}
+}
+
+.menu__container__full {
+	.section-title {
+		@apply !mb-4 !px-6 !mx-auto;
+	}
+	.menu__category {
+		@apply w-full px-0;
+		&-dishes {
+			@apply col-span-12 md:col-span-8 lg:col-span-6 !px-4 sm:!px-8 md:!px-16 lg:!px-20 xl:!px-28;
+			.section-title {
+				@apply mb-16 !px-0 !mx-0 !w-full;
+			}
+		}
+		&-image {
+			@apply col-span-12 md:col-span-4 lg:col-span-6;
+		}
+	}
+}
+
+/*==========================
+   Menu / Sidebar 
+===========================*/
+.menu{
+	&.menu-sidebar{
+		@apply overflow-visible !pt-8 lg:!pt-20;
+	}
+}
+.navmenu {
+	&__container {
+		@apply container mx-auto !px-6 sm:px-4 grid grid-cols-12 gap-4 lg:gap-6 pt-0 pb-8 md:pb-16;
+	}
+	&-sidebar {
+		@apply col-span-12 md:col-span-4 lg:col-span-3 relative text-white block;
+		@media (max-width: 767px) {
+			width: 100%;
+			position: sticky;
+			top: 0;
+			left: 0;
+			right: 0;
+			z-index: 1000;
+			.navmenu-sidebar__list{
+				border-radius: 0;
+			}
+
+		}
+		&__list {
+			@apply flex flex-row md:flex-col justify-center p-0 m-0 w-full gap-9 md:gap-4 max-h-fit px-6 py-8 bg-background rounded-xl;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+			position: sticky;
+			    top: 6rem;
+		}
+		&__link {
+			@apply text-text-base flex flex-wrap items-center justify-start !text-base lg:!text-lg;
+			img {
+				@apply w-4 h-4 mr-0 md:mr-4 opacity-20;
+			}
+			span{
+				@apply hidden md:block;
+			}
+			&.active {
+				@apply text-primary;
+				img {
+					@apply opacity-100;
+				}
+			}
+		}
+	}
+	&-content {
+		@apply col-span-12 md:col-span-8 lg:col-span-9 rounded-xl text-text-base p-0;
+		.menu__category {
+			@apply p-0 m-0 w-full gap-4 lg:gap-6 pb-6;
+			&-image {
+				@apply col-span-12 h-full rounded-xl max-h-[340px] !min-h-[340px] overflow-hidden order-2;
+			}
+			&-dishes {
+				@apply col-span-12 !px-4 lg:!px-8 pt-8 lg:pt-12 pb-6 bg-background rounded-xl grid grid-cols-2 gap-4;
+				.section-title {
+					@apply col-span-2 mb-0 pb-0 text-center;
+					&__title {
+						@apply uppercase !text-title-3 lg:!text-title-2 font-semibold;
+					}
+					p {
+						@apply text-text-base max-w-[530px] mx-auto;
+					}
+				}
+				.dish__title {
+					@apply text-text-base;
+				}
+				.dish {
+					@apply bg-surface-dark p-6 rounded-xl col-span-2 lg:col-span-1 mb-0;
+				}
+			}
+		}
+	}
+}

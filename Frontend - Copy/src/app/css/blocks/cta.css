@@ -1,0 +1,89 @@
+/*==========================
+    CTA Block 
+===========================*/
+.cta {
+	@apply bg-center bg-cover relative bg-no-repeat overflow-hidden;
+	background-image: url("/bg/bg-cta.jpg");
+	@screen md {
+		background-attachment: fixed;
+		background-position: center 100%;
+	}
+	&__overlayer {
+		@apply absolute top-0 bottom-0 left-0 right-0 z-10 w-full h-full bg-surface-dark opacity-75;
+	}
+	&__container {
+		@apply container mx-auto py-14 md:py-20 xl:py-28 flex flex-col flex-wrap justify-start items-center relative z-20;
+	}
+	&__content {
+		@apply md:w-10/12 lg:w-8/12 xl:w-7/12 flex flex-col flex-wrap justify-start items-start gap-4;
+	}
+	&__header {
+		@apply w-full flex flex-wrap justify-center items-center;
+		h2 {
+			@apply !text-title-2 sm:!text-title-1 font-barlow-condensed font-normal text-text-base mb-4 capitalize text-center;
+		}
+	}
+	&__body {
+		@apply border-t border-b border-primary border-solid relative flex flex-wrap items-center justify-center text-center py-8 md:py-12 px-6 md:px-10 xl:px-16;
+		p {
+			@apply text-lead font-josefin-sans;
+			&:last-of-type {
+				@apply mb-0;
+			}
+		}
+	}
+	&__footer {
+		@apply w-full flex flex-wrap justify-center items-center pt-6 pb-4;
+	}
+}
+
+/* ------ style 2 ------ */
+.cta-2 {
+	@apply bg-center bg-cover relative bg-no-repeat overflow-hidden;
+	background-image: url("/bg/bg-cta-2.jpg");
+	@screen md {
+		background-attachment: fixed;
+		background-position: center 100%;
+	}
+	&__overlayer {
+		@apply absolute top-0 bottom-0 left-0 right-0 z-10 w-full h-full bg-surface-dark opacity-75;
+	}
+	&__container {
+		@apply container mx-auto py-10 md:py-20 xl:py-28 flex flex-col flex-wrap justify-center items-center relative z-20;
+	}
+
+	&__content {
+		@apply md:w-10/12 lg:w-8/12 xl:w-7/12 flex flex-col flex-wrap justify-center items-start gap-4;
+		.divider {
+			@apply mb-4;
+		}
+	}
+	&.cta-2__right {
+		.cta-2__container {
+			@apply sm:!items-end;
+		}
+	}
+	&.cta-2__left {
+		.cta-2__container {
+			@apply sm:!items-start;
+		}
+	}
+	&__header {
+		@apply w-full flex flex-wrap justify-center items-center;
+		h2 {
+			@apply !text-title-2 sm:!text-title-1 font-barlow-condensed font-normal text-text-base mb-4 capitalize text-center;
+		}
+	}
+	&__body {
+		@apply relative flex flex-wrap items-center justify-center text-center pt-4 px-6 md:px-10 xl:px-16;
+		p {
+			@apply text-lead font-josefin-sans;
+			&:last-of-type {
+				@apply mb-0;
+			}
+		}
+	}
+	&__footer {
+		@apply w-full flex flex-wrap justify-center items-center pt-6 pb-4;
+	}
+}

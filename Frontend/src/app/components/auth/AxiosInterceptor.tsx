@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { http } from "@/lib/http";
 
 export default function AxiosInterceptor({ children }: { children: React.ReactNode }) {
@@ -20,8 +20,19 @@ export default function AxiosInterceptor({ children }: { children: React.ReactNo
       }
     );
 
+    const responseInterceptor = http.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        if (error.response && error.response.status === 401) {
+          await signOut({ callbackUrl: "/" });
+        }
+        return Promise.reject(error);
+      }
+    );
+
     return () => {
       http.interceptors.request.eject(requestInterceptor);
+      http.interceptors.response.eject(responseInterceptor);
     };
   }, [session]);
 

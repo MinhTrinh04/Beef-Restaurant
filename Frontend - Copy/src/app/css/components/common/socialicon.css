@@ -1,0 +1,13 @@
+/* ===================================
+    Social Icons
+====================================== */
+.social_icons {
+    @apply flex flex-wrap items-center justify-start gap-4;
+
+   li {
+        @apply text-base text-primary;
+        &__link:hover {
+            @apply text-secondary;
+        }
+    }
+}

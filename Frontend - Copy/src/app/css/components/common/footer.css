@@ -1,0 +1,83 @@
+/*====================
+    Footer Area 
+======================*/
+.footer{
+    @apply flex flex-wrap flex-col items-start justify-start bg-background pt-4;
+    &__button{
+        @apply flex flex-wrap flex-row items-center justify-between px-4 sm:px-8 py-6 bg-surface-dark w-full;
+    }
+    &__copyright{
+        @apply w-full xl:w-6/12;
+        p{
+            @apply text-center xl:text-left text-body text-text-base !mb-0;
+            br{
+                @apply inline sm:hidden;
+            }
+        }
+    }
+    &__legal{
+        @apply w-full xl:w-6/12;
+        ul{
+            @apply flex flex-wrap flex-row items-center justify-center xl:justify-end m-0 p-0 pt-6 xl:pt-0;
+            li{
+                @apply text-body text-text-base;
+                &:not(:last-child){
+                    @apply mr-1;
+                }
+                &:after{
+                    @apply text-body text-text-muted;
+                    content: "/";
+                    margin: 0 4px;
+                }
+                &:last-child{
+                    &:after{
+                        @apply hidden;
+                    }
+                }
+                a{
+                    @apply text-body text-text-base;
+                    &:hover{
+                        @apply text-primary;
+                    }
+                }
+            }
+        }
+    }
+
+    &__container{
+        @apply container mx-auto px-4 py-10 md:py-12 xl:py-14 flex justify-center;
+    }
+    &__content{
+        @apply flex flex-wrap flex-row items-start justify-between max-w-[680px];
+    }
+    &__logo{
+        @apply flex flex-wrap flex-row items-center justify-center w-full mb-8;
+        a{
+            @apply flex w-fit;
+        }
+        img{
+            @apply !w-[200px] !max-w-[200px] !min-w-[200px] md:!w-[250px] md:!max-w-[250px] md:!min-w-[250px] h-auto;
+        }
+    }
+    &__info{
+        @apply flex flex-wrap flex-row items-start justify-center w-full gap-4 sm:gap-9 mb-0 sm:mb-6;
+    }
+    &__address{
+        @apply w-full sm:w-5/12 text-center sm:text-right;
+        p{
+            @apply mb-0;
+        } 
+    }
+    &__info-contact{
+        @apply w-full sm:w-5/12 flex flex-col items-center sm:items-start justify-center sm:justify-start !text-text-base; 
+        a{
+            @apply text-body text-text-base text-center sm:text-left;
+            &:hover{
+                @apply text-primary;
+            }
+        }
+    }
+    &__social{
+        @apply flex flex-wrap flex-row items-start justify-center w-full mt-6;
+    }
+}

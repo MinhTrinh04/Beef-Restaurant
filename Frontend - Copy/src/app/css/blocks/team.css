@@ -1,0 +1,279 @@
+/*==========================
+	Card Team
+===========================*/
+.card-team {
+	@apply flex flex-col items-center justify-center w-full h-full relative max-h-[210px] sm:max-h-[310px] md:max-h-[360px] xl:max-h-[445px];
+	overflow: hidden;
+	transform-style: preserve-3d;
+	transition: transform 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+	&__image {
+		@apply w-full h-full overflow-hidden relative;
+		img {
+			@apply w-full h-full object-cover object-top mb-0;
+			transition: all 0.6s cubic-bezier(0.215, 0.61, 0.355, 1);
+			transform: scale(1.02);
+		}
+	}
+	&__info {
+		@apply opacity-0 flex flex-col items-center justify-center absolute inset-0 z-10 w-full h-full top-0 left-0 right-0 bottom-0 bg-calico-500 bg-opacity-75;
+		backdrop-filter: blur(3px);
+		transform: translateY(10px);
+		transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+		&:hover {
+			@apply opacity-100;
+			transform: translateY(0);
+		}
+	}
+	&__name {
+		@apply !text-coarseWool-900 !text-title-4 font-barlow-condensed font-normal tracking-tight mb-0;
+		transform: translateY(20px);
+		opacity: 0;
+		transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1) 0.1s;
+		letter-spacing: 0.5px;
+	}
+	&__position {
+		@apply !text-coarseWool-600 text-body font-sorts-mill-goudy italic !mb-4;
+		transform: translateY(20px);
+		opacity: 0;
+		transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1) 0.2s;
+		&:last-of-type {
+			@apply !mb-4;
+		}
+	}
+	.social_icons {
+		@apply gap-4;
+		transform: translateY(20px);
+		opacity: 0;
+		transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1) 0.3s;
+		li a {
+			@apply !text-coarseWool-800 hover:!text-calico-700 w-6 h-6 flex flex-wrap items-center justify-center;
+			transition: all 0.3s ease;
+			&:hover {
+				transform: translateY(-2px);
+			}
+		}
+	}
+	&:hover {
+		@apply cursor-pointer bg-surface-dark;
+		.card-team__image img {
+			transform: scale(1.1) translateY(-5px);
+		}
+		.card-team__info {
+			@apply opacity-100;
+			transform: translateY(0);
+		}
+		.card-team__name,
+		.card-team__position,
+		.social_icons {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+}
+
+/*==========================
+	Card Team 2
+===========================*/
+.card-team-2 {
+	@apply flex flex-col items-center justify-center w-full h-full relative p-3 border border-solid border-coarseWool-400;
+	transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+	transform-style: preserve-3d;
+	backface-visibility: hidden;
+	&:hover {
+		@apply cursor-pointer border border-solid border-calico-500;
+		transform: translateY(-8px);
+		box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+	}
+	&__container {
+		@apply container mx-auto relative;
+	}
+	&__image {
+		@apply w-full relative h-auto max-h-[420px];
+		overflow: hidden;
+		img {
+			@apply w-full h-full object-cover object-center mb-0;
+			transition: transform 0.6s cubic-bezier(0.215, 0.61, 0.355, 1);
+		}
+	}
+	&__overlayer {
+		@apply absolute inset-0;
+		background: linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0));
+		opacity: 0;
+		transition: opacity 0.4s ease;
+	}
+	&__info {
+		@apply relative flex flex-col items-center justify-center z-10 w-full bg-opacity-75 py-4 pb-2;
+		transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+	}
+	&__name {
+		@apply !text-coarseWool-100 !text-title-4 font-barlow-condensed font-normal tracking-tight mb-2;
+		letter-spacing: 0.5px;
+		transition: color 0.3s ease;
+		&:hover {
+			color: theme('colors.calico.500');
+		}
+	}
+	&__position {
+		@apply !text-calico-500 text-body font-sorts-mill-goudy italic mb-0;
+		letter-spacing: 0.3px;
+		transition: all 0.3s ease;
+	}
+	.social_icons {
+		@apply absolute bottom-0 left-0 right-0 flex flex-wrap items-center justify-center py-4 bg-coarseWool-100/40 m-2 rounded-lg;
+		transform: translateY(100%);
+		opacity: 0;
+		transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+		backdrop-filter: blur(5px);
+		li a {
+			@apply !text-coarseWool-900 hover:!text-calico-500 w-6 h-6 flex flex-wrap items-center justify-center mb-0 shadow-sm;
+			transition: all 0.3s ease;
+			&:hover {
+				transform: translateY(-2px) scale(1.1);
+			}
+		}
+	}
+	&:hover {
+		@apply bg-surface-dark;
+		.card-team__image img {
+			transform: scale(1.1);
+		}
+		.card-team-2__overlayer {
+			opacity: 1;
+		}
+		.social_icons {
+			transform: translateY(0);
+			opacity: 1;
+		}
+	}
+}
+
+/*==========================
+    Team Block 
+===========================*/
+.team-block {
+	@apply flex flex-col items-center justify-center pt-16 md:pt-20 xl:pt-28;
+	&__container {
+		@apply flex flex-col items-center justify-center;
+		animation: fadeIn 0.8s ease-out;
+		.section-title {
+			@apply max-w-[600px] text-center mx-auto mb-0;
+			p:last-of-type {
+				@apply mb-0;
+				line-height: 1.7;
+			}
+		}
+	}
+	&__grid {
+		@apply grid grid-cols-12 gap-0;
+		perspective: 1000px;
+	}
+	&__description {
+		@apply col-span-12 lg:col-span-6 p-8 pt-0 xl:p-20 lg:max-h-[360px] xl:max-h-[445px];
+		animation: slideInLeft 0.8s ease-out;
+	}
+	&__icon {
+		@apply inline-flex items-center justify-center px-4 py-5 border-b-2 border-calico-500 border-solid mb-6;
+		position: relative;
+		transition: transform 0.3s ease;
+		&::after {
+			content: '';
+			@apply absolute bottom-0 left-0 w-0 h-[2px] bg-calico-600;
+			transition: width 0.3s ease;
+		}
+		&:hover {
+			transform: translateY(-2px);
+			&::after {
+				width: 100%;
+			}
+		}
+		img {
+			@apply w-12 h-12;
+			transition: transform 0.3s ease;
+			&:hover {
+				transform: scale(1.1);
+			}
+		}
+	}
+	&__text {
+		p {
+			@apply text-subtitle-1 font-sorts-mill-goudy italic;
+			line-height: 1.8;
+			opacity: 0.9;
+			transition: opacity 0.3s ease;
+			&:hover {
+				opacity: 1;
+			}
+		}
+	}
+	.card-team {
+		@apply col-span-6 lg:col-span-3;
+		transform-style: preserve-3d;
+		perspective: 1000px;
+	}
+}
+
+/*==========================
+    Team Block 2
+===========================*/
+.team-block-2 {
+	@apply flex flex-col items-center justify-center pt-16 pb-16 md:py-20 xl:py-28 bg-surface-dark;
+	&__container {
+		@apply container mx-auto px-4 xl:px-0 flex flex-col items-center justify-center;
+		animation: fadeIn 0.8s ease-out;
+		.section-title {
+			@apply max-w-[600px] text-center mx-auto;
+			p:last-of-type {
+				@apply mb-0;
+				line-height: 1.7;
+			}
+		}
+	}
+	&__grid {
+		@apply grid grid-cols-12 gap-6;
+		perspective: 1000px;
+	}
+	.card-team-2 {
+		@apply !col-span-12 sm:!col-span-6 lg:!col-span-4;
+		animation: fadeInUp 0.6s cubic-bezier(0.215, 0.61, 0.355, 1);
+		animation-fill-mode: both;
+
+		&:nth-child(1) { animation-delay: 0.1s; }
+		&:nth-child(2) { animation-delay: 0.2s; }
+		&:nth-child(3) { animation-delay: 0.3s; }
+		&:nth-child(4) { animation-delay: 0.4s; }
+		&:nth-child(5) { animation-delay: 0.5s; }
+		&:nth-child(6) { animation-delay: 0.6s; }
+	}
+}
+
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes slideInLeft {
+	from {
+		opacity: 0;
+		transform: translateX(-30px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes fadeInUp {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}

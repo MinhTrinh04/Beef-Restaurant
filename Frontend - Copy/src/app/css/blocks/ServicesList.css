@@ -1,0 +1,295 @@
+/*==========================
+    Services - Ilustrations / Block 
+===========================*/
+.services-ilustrations {
+    @apply py-16 md:py-20 lg:py-24 xl:py-28;
+    
+    &__container {
+        @apply container mx-auto px-6 sm:px-4;
+    }
+
+    &__content {
+        @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-6;
+        perspective: 1000px;
+    }
+
+    &__card {
+        @apply pt-6 pb-10 lg:pt-12 lg:pb-16 px-4 bg-background  rounded-lg text-center flex flex-col justify-center items-center col-span-1 relative;
+        transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+        transform-style: preserve-3d;
+        backface-visibility: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+        &:hover {
+            @apply bg-surface-dark;
+            transform: translateY(-8px) rotateX(4deg);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+
+            .services-ilustrations__card-ilustration {
+                transform: translateY(-4px);
+                
+                img {
+                    @apply hidden;
+                    &.hover {
+                        @apply block;
+                        animation: fadeScale 0.4s ease-out forwards;
+                    }
+                }
+            }
+
+            .services-ilustrations__card-info {
+                h4 {
+                    color: theme('colors.primary');
+                }
+                p {
+                    opacity: 1;
+                }
+            }
+        }
+
+        &-ilustration {
+            @apply text-6xl text-text-base flex flex-col justify-center items-center gap-0 w-[120px] h-[120px] relative z-50;
+            transition: transform 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+            
+            img {
+                transition: transform 0.3s ease;
+                &.hover {
+                    @apply hidden;
+                }
+            }
+        }
+
+        &-info {
+            @apply text-text-base font-bold mt-6 flex flex-col justify-center items-center gap-4 relative z-50;
+            
+            h4 {
+                @apply !text-title-4 font-barlow-condensed text-text-base font-normal mb-0 capitalize;
+                transition: color 0.3s ease;
+                letter-spacing: 0.5px;
+            }
+
+            p {
+                @apply text-text-base text-center mb-0;
+                line-height: 1.6;
+                opacity: 0.85;
+                transition: opacity 0.3s ease;
+            }
+        }
+
+        &::before,
+        &::after {
+            content: "";
+            z-index: 10;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 1px solid theme("colors.primary");
+            border-radius: 8px;
+            transform: scale(0.2);
+            transition: all 0.5s cubic-bezier(0.215, 0.61, 0.355, 1);
+            opacity: 0;
+        }
+
+        &::before {
+            transform-origin: left top;
+            border-right: 0;
+            border-bottom: 0;
+        }
+
+        &::after {
+            transform-origin: right bottom;
+            border-top: 0;
+            border-left: 0;
+        }
+
+        &:hover::before,
+        &:hover::after {
+            transform: scale(1);
+            opacity: 0.3;
+        }
+    }
+}
+
+/*==========================
+    Services - Ilustrations / Block 
+===========================*/
+.services-ilustrations-2 {
+    @apply py-16 md:py-20 lg:py-24 xl:py-28;
+    
+    &__container {
+        @apply container mx-auto px-6 sm:px-4;
+    }
+
+    &__content {
+        @apply grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8;
+        perspective: 1000px;
+    }
+
+    &__card {
+        @apply pt-6 pb-10 lg:pt-12 lg:pb-16 px-4 bg-background border border-border rounded-lg text-center flex flex-col justify-center items-center col-span-1 relative;
+        transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+        transform-style: preserve-3d;
+        backface-visibility: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+        &:hover {
+            @apply bg-surface-dark;
+            transform: translateY(-8px) rotateX(4deg);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+
+            .services-ilustrations__card-ilustration {
+                transform: translateY(-4px);
+                
+                img {
+                    @apply hidden;
+                    &.hover {
+                        @apply block;
+                        animation: fadeScale 0.4s ease-out forwards;
+                    }
+                }
+            }
+
+            .services-ilustrations__card-info {
+                h4 {
+                    color: theme('colors.primary');
+                }
+                p {
+                    opacity: 1;
+                }
+            }
+        }
+
+        &-ilustration {
+            @apply text-6xl text-text-base flex flex-col justify-center items-center gap-0 w-[120px] h-[120px] relative z-50;
+            transition: transform 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+            
+            img {
+                transition: transform 0.3s ease;
+                &.hover {
+                    @apply hidden;
+                }
+            }
+        }
+
+        &-info {
+            @apply text-text-base font-bold mt-6 flex flex-col justify-center items-center gap-4 relative z-50;
+            
+            h4 {
+                @apply !text-title-4 font-barlow-condensed text-text-base font-normal mb-0 capitalize;
+                transition: color 0.3s ease;
+                letter-spacing: 0.5px;
+            }
+
+            p {
+                @apply text-text-base text-center mb-0;
+                line-height: 1.6;
+                opacity: 0.85;
+                transition: opacity 0.3s ease;
+            }
+        }
+
+        &::before,
+        &::after {
+            content: "";
+            z-index: 10;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 1px solid theme("colors.primary");
+            border-radius: 8px;
+            transform: scale(0.2);
+            transition: all 0.5s cubic-bezier(0.215, 0.61, 0.355, 1);
+            opacity: 0;
+        }
+
+        &::before {
+            transform-origin: left top;
+            border-right: 0;
+            border-bottom: 0;
+        }
+
+        &::after {
+            transform-origin: right bottom;
+            border-top: 0;
+            border-left: 0;
+        }
+
+        &:hover::before,
+        &:hover::after {
+            transform: scale(1);
+            opacity: 0.3;
+        }
+    }
+}
+
+/*==========================
+    Services - box
+===========================*/
+.services-box {
+    @apply px-0 md:px-2 lg:px-20 xl:px-32 py-6 lg:py-24 xl:py-28;
+    
+    .services-ilustrations__content {
+        @apply grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8;
+    }
+
+    .services-ilustrations__card-info {
+        @apply md:px-4 lg:px-8 xl:px-24;
+        
+        .btn {
+            @apply mt-6;
+            transition: all 0.3s ease;
+            
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            }
+        }
+    }
+}
+
+/*==========================
+    Services - icons
+===========================*/
+.services-icons {
+    .services-ilustrations__card {
+        @apply bg-transparent border-0;
+        box-shadow: none;
+
+        &:hover {
+            transform: none;
+            box-shadow: none;
+        }
+    }
+    .services-ilustrations__card-ilustration {
+        @apply !w-auto !h-auto text-center;
+
+        &:hover {
+            transform: scale(1.1);
+        }
+    }
+    .services-ilustrations__card-info {
+        h5 {
+            @apply text-text-base !font-normal text-center mb-0;
+            transition: color 0.3s ease;
+            
+            &:hover {
+                color: theme('colors.primary');
+            }
+        }
+    }
+}
+
+@keyframes fadeScale {
+    0% {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+} 

@@ -1,0 +1,25 @@
+/* ===================================
+    Confirmation
+====================================== */
+.confirmation{
+	@apply relative z-0 w-full lg:h-[668px] xl:h-[768px] lg:min-h-[668px] xl:min-h-[768px] bg-surface-dark overflow-hidden;
+	&__background {
+		@apply absolute top-0 bottom-0 left-0 right-0 z-0 block w-full h-full;
+		img {
+			@apply object-cover object-center w-full h-full opacity-25;
+		}
+	}
+	&__container {
+		@apply relative z-20 flex flex-col items-center justify-center w-full h-full pt-24 md:pt-24 lg:pt-32 xl:pt-40  pb-16;
+	}
+	&__content {
+		@apply flex flex-col items-center justify-center w-full h-full md:max-h-[480px] xl:max-h-[600px] px-8 text-center;
+		.btn{
+			@apply mt-6;
+		}
+	}
+	&__title {
+        @apply w-full flex flex-wrap items-center justify-center text-center sm:!text-[98px] md:!text-[110px] xl:!text-[120px] uppercase;
+	}
+
+}

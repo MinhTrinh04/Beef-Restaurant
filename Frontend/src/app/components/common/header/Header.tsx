@@ -2,9 +2,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import LogoLink from "@/app/components/common/logo/logoLink";
-import { LogoData, socialIconsData } from "@/app/hooks/data-general";
+import { LogoData } from "@/app/hooks/data-general";
 import { itemsNavbar } from "@/app/hooks/data-navbar";
-import SocialIcons from "@/app/components/common/social/SocialIcons";
+
 import MenuMobile from "@/app/components/common/menuMobile/menuMobile";
 import MenuToggleButton from "./MenuToggleButton";
 import { cn } from "@/lib/utils";
@@ -100,7 +100,7 @@ const Header: React.FC = () => {
 							<div className="header__social gap-4">
 								<BasketIndicator />
 								<LoginButton />
-								<SocialIcons socials={socialIconsData} />
+
 							</div>
 							<div className="header__mobile">
 								<MenuToggleButton

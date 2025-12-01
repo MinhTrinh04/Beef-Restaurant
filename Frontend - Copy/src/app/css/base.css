@@ -1,0 +1,127 @@
+/* ===================================
+    01. Google font
+====================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@100;300;400;500;600;700&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Mulish:wght@200;300;400;500;600;700;800;900;1000&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@100;200;300;400;500;600;700&display=swap');
+
+
+/* ===================================
+    02. Icons Fontawesome
+====================================== */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css');
+
+
+/* ===================================
+    02. Reset
+====================================== */
+html {font-size: 18px;}
+body {font-family: 'Roboto', sans-serif; -webkit-font-smoothing: antialiased; font-smoothing: antialiased; font-size:14px; color:#D1D2D4; font-weight: 400;line-height: 24px;}
+body, html {-moz-osx-font-smoothing: grayscale; position: relative;}
+a, a:active, a:focus {color: #D1D2D4; text-decoration: none;}
+a:hover, a:active{color: var(--base-color); text-decoration: none;}
+a:focus, a:active, button:focus, button:active,.btn.active.focus, .btn.active:focus, .btn.focus, .btn:active.focus, .btn:active:focus, .btn:focus {outline: none; box-shadow: none;}
+img {max-width:100%; height:auto;}
+video {background-size: cover; display: table-cell; vertical-align: middle; width: 100%;}
+input, textarea, select{border: 1px solid #d1d1d1; font-size: 14px;  padding: 8px 15px; width: 100%; margin: 0 0 20px 0; max-width: 100%; resize: none; color: inherit;}
+input[type="submit"] {width: auto}
+input[type="button"], input[type="text"], input[type="email"], input[type="search"], input[type="password"], textarea, input[type="submit"] {-webkit-appearance: none; outline: none;}
+input:focus, textarea:focus{border-color: #585858 !important; outline: none;}
+input[type="button"]:focus, input:focus, textarea:focus, select:focus, .form-control:focus, .btn.focus, .btn:focus{outline: none; box-shadow: none;}
+select::-ms-expand{display:none;}
+iframe {border: 0;}
+p {margin: 0 0 25px}
+b, strong {font-weight: 600;}
+.last-paragraph-no-margin p:last-of-type {margin-bottom:0}
+.alt-font strong {font-weight: 700}
+ul, ol, dl {list-style-position: outside; margin-bottom: 25px}
+
+*{transition-timing-function: ease-in-out; -ms-transition-timing-function: ease-in-out; -moz-transition-timing-function: ease-in-out; -webkit-transition-timing-function: ease-in-out; -o-transition-timing-function: ease-in-out; transition-duration: .2s; -ms-transition-duration: .2s; -moz-transition-duration: .2s; -webkit-transition-duration: .2s; -o-transition-duration: .2s;}
+*:hover{transition-timing-function: ease-in-out; -ms-transition-timing-function: ease-in-out; -moz-transition-timing-function: ease-in-out; -webkit-transition-timing-function: ease-in-out; -o-transition-timing-function: ease-in-out; transition-duration: .2s; -ms-transition-duration: .2s; -moz-transition-duration: .2s; -webkit-transition-duration: .2s; -o-transition-duration: .2s;}
+.no-transition *, .swiper-container *, .mfp-container *, .portfolio-wrapper *, .parallax, .rev-slider *, .header-searchbar *, .header-social-icon *, .dropdropdown-menu * {transition-timing-function: none; -moz-transition-timing-function: none; -webkit-transition-timing-function: none; -o-transition-timing-function: none; -ms-transition-timing-function: none; transition-duration: 0s; -moz-transition-duration: 0s; -webkit-transition-duration: 0s; -o-transition-duration: 0s; -ms-transition-duration: 0s;}
+::selection {color: #000; background:#dbdbdb;}
+::-moz-selection {color:#000; background:#dbdbdb;}
+::-webkit-input-placeholder {color: #6f6f6f; text-overflow: ellipsis;}
+::-moz-placeholder {color: #6f6f6f; text-overflow: ellipsis; opacity:1;} 
+:-ms-input-placeholder {color: #6f6f6f; text-overflow: ellipsis; opacity:1;}
+
+@media (prefers-reduced-motion:no-preference) {
+    :root {scroll-behavior: auto}
+}
+
+/* base color variable*/
+:root {--base-color: theme('colors.primary');}
+
+/* ===================================
+    02. Reset
+====================================== */
+
+body{
+    @apply !bg-surface-dark text-text-base text-body font-josefin-sans font-light;
+}
+
+/* ===================================
+    03. Typography
+====================================== */
+/* heading */
+h1, h2, h3, h4, h5, h6 {
+    @apply m-0 mb-6 !font-barlow-condensed tracking-tight;
+}
+h1, h2, h3 {
+    @apply tracking-tight;
+}
+h4, h5, h6 {
+    @apply tracking-normal;
+}
+
+h1 {@apply !text-title-1;}
+h2 {@apply !text-title-2;}
+h3 {@apply !text-title-3;}
+h4 {@apply !text-title-4;}
+h5 {@apply !text-title-5;}
+h6 {@apply !text-title-6;}
+
+p{
+    @apply text-body font-josefin-sans font-light tracking-tight !mb-6;
+    &:last-of-type{
+        @apply !mb-0;
+    }
+}
+
+/* ===================================
+    04. Overlayer
+====================================== */
+.overlayer-hero{
+    @apply absolute top-0 bottom-0 left-0 right-0 z-10 w-full h-full bg-surface-dark opacity-40 scale-105;
+}
+
+.overlayer{
+    @apply absolute inset-0 bg-surface-dark bg-opacity-80 top-0 left-0 right-0 bottom-0 w-full h-full scale-105;
+    index: 1;
+}
+.animated-element {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s, transform 0.5s;
+}
+
+
+/* ===================================
+    04. Delary
+====================================== */
+.delay-1s {
+  animation-delay: 1s;
+}
+
+.delay-2s {
+  animation-delay: 2s;
+}
+
+.delay-3s {
+  animation-delay: 3s;
+}
