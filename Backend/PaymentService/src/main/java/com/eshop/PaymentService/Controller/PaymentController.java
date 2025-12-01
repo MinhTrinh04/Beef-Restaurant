@@ -2,15 +2,11 @@ package com.eshop.PaymentService.Controller;
 
 import com.eshop.PaymentService.DTO.CreatePaymentUrlRequestDto;
 import com.eshop.PaymentService.DTO.PaymentUrlResponseDto;
-import com.eshop.PaymentService.DTO.VNPayCallbackResponseDto;
-import com.eshop.PaymentService.Service.VNPayService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.eshop.PaymentService.Service.PayOSService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.UnsupportedEncodingException;
 
 @RestController
 @RequestMapping("/api/v1/payment")
@@ -18,43 +14,42 @@ import java.io.UnsupportedEncodingException;
 @Slf4j
 public class PaymentController {
 
-    private final VNPayService vnPayService;
+    private final PayOSService payOSService;
 
+    // 1. API Tạo Link (Giữ nguyên signature để BasketService gọi)
     @PostMapping("/create-url")
     public ResponseEntity<PaymentUrlResponseDto> createPaymentUrl(
-            @RequestBody CreatePaymentUrlRequestDto requestDto,
-            HttpServletRequest httpServletRequest) {
+            @RequestBody CreatePaymentUrlRequestDto requestDto) {
 
-        log.info("Received request to create payment URL for OrderId: {}", requestDto.getOrderId());
-        if (requestDto.getOrderId() == null || requestDto.getAmount() == null || requestDto.getAmount().signum() <= 0) {
-            log.warn("Invalid request data for create payment URL.");
+        log.info("Received request to create PayOS URL for OrderId: {}", requestDto.getOrderId());
+
+        if (requestDto.getOrderId() == null || requestDto.getAmount() == null) {
             return ResponseEntity.badRequest().body(new PaymentUrlResponseDto("99", "Invalid request data", null));
         }
 
         try {
-            String paymentUrl = vnPayService.createPaymentUrl(requestDto, httpServletRequest);
-            log.info("Successfully created payment URL for OrderId: {}", requestDto.getOrderId());
+            String paymentUrl = payOSService.createPaymentUrl(requestDto);
             PaymentUrlResponseDto responseDto = new PaymentUrlResponseDto("00", "Success", paymentUrl);
             return ResponseEntity.ok(responseDto);
-        } catch (UnsupportedEncodingException e) {
-            log.error("Error creating payment URL for OrderId: {}", requestDto.getOrderId(), e);
-            PaymentUrlResponseDto responseDto = new PaymentUrlResponseDto("99", "Error creating payment URL", null);
 
-            return ResponseEntity.internalServerError().body(responseDto);
         } catch (Exception e) {
-            log.error("Unexpected error creating payment URL for OrderId: {}", requestDto.getOrderId(), e);
-            PaymentUrlResponseDto responseDto = new PaymentUrlResponseDto("99", "Unexpected error", null);
-            return ResponseEntity.internalServerError().body(responseDto);
+            log.error("Error creating PayOS URL for OrderId: {}", requestDto.getOrderId(), e);
+            return ResponseEntity.internalServerError()
+                    .body(new PaymentUrlResponseDto("99", "Error: " + e.getMessage(), null));
         }
     }
 
+    // 2. Webhook PayOS (Mở public để PayOS gọi vào)
+    @PostMapping("/payos-webhook")
+    public ResponseEntity<String> handlePayOSWebhook(@RequestBody Object webhookBody) {
+        log.info("Received PayOS Webhook Body: {}", webhookBody);
 
-    @GetMapping("/vnpay-return")
-    public ResponseEntity<VNPayCallbackResponseDto> handleVNPayCallback(HttpServletRequest request) {
-        log.info("Received VNPay callback request.");
-        VNPayCallbackResponseDto response = vnPayService.handleVNPayCallback(request);
-        log.info("Responding to VNPay callback with: {}", response);
-
-        return ResponseEntity.ok(response);
+        try {
+            payOSService.handleWebhook(webhookBody);
+            return ResponseEntity.ok("Webhook received");
+        } catch (Exception e) {
+            // Trả về 200 kể cả khi lỗi logic để PayOS không retry spam server mình
+            return ResponseEntity.ok("Webhook received but error: " + e.getMessage());
+        }
     }
 }

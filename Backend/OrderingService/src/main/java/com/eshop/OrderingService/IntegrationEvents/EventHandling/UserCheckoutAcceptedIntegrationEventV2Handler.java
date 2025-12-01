@@ -1,6 +1,5 @@
 package com.eshop.OrderingService.IntegrationEvents.EventHandling;
 
-import com.eshop.OrderingService.IntegrationEvents.Events.UserCheckoutAcceptedIntegrationEvent;
 import com.eshop.OrderingService.IntegrationEvents.Events.UserCheckoutAcceptedIntegrationEventV2;
 import com.eshop.OrderingService.Service.IOrderingService;
 import com.eshop.buildingblocks.EventBus.Abstractions.IIntegrationEventHandler;

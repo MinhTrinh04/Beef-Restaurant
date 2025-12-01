@@ -1,7 +1,9 @@
 package com.eshop.BasketService.Service;
 
+import com.eshop.BasketService.DTO.PaymentUrlResponseDto;
 import com.eshop.BasketService.Model.Basket;
 import com.eshop.BasketService.Model.BasketCheckout;
+import org.springframework.http.ResponseEntity;
 
 
 public interface IBasketService {
@@ -14,8 +16,6 @@ public interface IBasketService {
     //Delete
     boolean deleteBasket (String id);
 
-    void checkout(String id, BasketCheckout basket, String requestId);
-
     //Checkout V2
-    void checkoutV2(String id,BasketCheckout basketCheckout, String requestId);
+    ResponseEntity<PaymentUrlResponseDto> checkoutV2(String id, BasketCheckout basketCheckout, String requestId);
 }

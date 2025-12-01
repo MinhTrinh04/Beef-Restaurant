@@ -18,6 +18,12 @@ spring:
   jpa:
     show-sql: true
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8180/realms/master
+
 eureka:
   client:
     fetchRegistry: true

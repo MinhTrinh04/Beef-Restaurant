@@ -13,30 +13,13 @@ import static com.eshop.MenuService.Constants.MenuConstants.QUEUE_NAME;
 @RequiredArgsConstructor
 @RabbitListener(queues = QUEUE_NAME)
 public class IntegrationEventController {
-    private final OrderStatusChangedToPaidIntegrationEventHandler paidEventHandler;
     private final OrderStatusChangedToPaidIntegrationEventV2Handler paidEventV2Handler;
-    private final OrderStatusChangedToAwaitingStockValidationIntegrationEventHandler awaitingStockEventHandler;
-    private final OrderStatusChangedToAwaitingStockValidationIntegrationEventV2Handler awaitingStockEventV2Handler;
     private final OrderStatusChangedToCancelledIntegrationEventHandler cancelledEventHandler;
 
-    @RabbitHandler
-    public void handleOrderStatusChangedToPaid(OrderStatusChangedToPaidIntegrationEvent event) {
-        paidEventHandler.handle(event);
-    }
 
     @RabbitHandler
     public void handleOrderStatusChangedToPaidV2(OrderStatusChangedToPaidIntegrationEventV2 event) {
         paidEventV2Handler.handle(event);
-    }
-
-    @RabbitHandler
-    public void handleOrderStatusChangedToAwaitingStockValidation(OrderStatusChangedToAwaitingStockValidationIntegrationEvent event) {
-        awaitingStockEventHandler.handle(event);
-    }
-
-    @RabbitHandler
-    public void handleOrderStatusChangedToAwaitingStockValidationV2(OrderStatusChangedToAwaitingStockValidationIntegrationEventV2 event) {
-        awaitingStockEventV2Handler.handle(event);
     }
 
     @RabbitHandler

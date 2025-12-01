@@ -13,12 +13,6 @@ public class OrderingConstants {
     // Event Names
     public static final String USER_CHECKOUT_ACCEPTED_EVENT = "UserCheckoutAcceptedIntegrationEvent";
     public static final String USER_CHECKOUT_ACCEPTED_EVENT_V2 = "UserCheckoutAcceptedIntegrationEventV2";
-    public static final String ORDER_STATUS_CHANGED_TO_SUBMITTED_EVENT = "OrderStatusChangedToSubmittedIntegrationEvent";
-    public static final String ORDER_STATUS_CHANGED_TO_AWAITING_STOCK_VALIDATION_EVENT = "OrderStatusChangedToAwaitingStockValidationIntegrationEvent";
-    public static final String ORDER_STATUS_CHANGED_TO_VALIDATED_EVENT = "OrderStatusChangedToValidatedIntegrationEvent";
-    public static final String ORDER_STATUS_CHANGED_TO_PAID_EVENT = "OrderStatusChangedToPaidIntegrationEvent";
-    public static final String ORDER_STATUS_CHANGED_TO_SHIPPED_EVENT = "OrderStatusChangedToShippedIntegrationEvent";
-    public static final String ORDER_STATUS_CHANGED_TO_CANCELLED_EVENT = "OrderStatusChangedToCancelledIntegrationEvent";
     public static final String ORDER_STOCK_CONFIRMED_EVENT = "OrderStockConfirmedIntegrationEvent";
     public static final String ORDER_STOCK_REJECTED_EVENT = "OrderStockRejectedIntegrationEvent";
     public static final String ORDER_PAYMENT_SUCCEEDED_EVENT = "OrderPaymentSucceededIntegrationEvent";

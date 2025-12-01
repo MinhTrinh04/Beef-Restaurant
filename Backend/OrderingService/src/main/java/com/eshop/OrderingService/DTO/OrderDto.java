@@ -7,14 +7,13 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderDto {
 
-    private UUID orderId;
+    private Long orderId;
     private String userId;
     private LocalDateTime orderDate;
     private String orderStatus;
@@ -25,14 +24,6 @@ public class OrderDto {
     private String addressCity;
     private String addressState;
     private String addressCountry;
-    private String addressZipCode;
-
-    // Payment fields
-    private String cardNumber;
-    private String cardHolderName;
-    private LocalDateTime cardExpiration;
-    private String cardSecurityNumber;
-    private Integer cardTypeId;
 
     // Buyer information
     private String buyerName;

@@ -3,6 +3,7 @@ package com.eshop.MenuService.Controller;
 import com.eshop.MenuService.Constants.MenuConstants;
 import com.eshop.MenuService.DTO.MenuItemDto;
 import com.eshop.MenuService.DTO.ResponseDto;
+import com.eshop.MenuService.DTO.StockValidationItem;
 import com.eshop.MenuService.Service.IMenuService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -71,6 +72,12 @@ public class MenuController {
         } else {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseDto(MenuConstants.STATUS_417, MenuConstants.MESSAGE_417_DELETE));
         }
+    }
+
+    @PostMapping("/validate-stock")
+    public ResponseEntity<Void> validateStock(@RequestBody List<StockValidationItem> items) {
+        menuService.validateStockAvailability(items);
+        return ResponseEntity.ok().build();
     }
 
 }

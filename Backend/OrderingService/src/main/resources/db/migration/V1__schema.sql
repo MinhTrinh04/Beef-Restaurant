@@ -1,7 +1,7 @@
 -- Create Orders table
 CREATE TABLE orders
 (
-    order_id        UUID PRIMARY KEY,
+    order_id        BIGSERIAL PRIMARY KEY,
     buyer_id        VARCHAR(36)    NOT NULL,
     order_date      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     order_status    VARCHAR(50)    NOT NULL DEFAULT 'Submitted',
@@ -14,8 +14,7 @@ CREATE TABLE orders
     buyer_email     VARCHAR(200),
     total_amount    DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
     created_at      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    payment_url     VARCHAR(1024)
+    updated_at      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 -- Create Order Items table
@@ -27,6 +26,6 @@ CREATE TABLE order_items
     unit_price        DECIMAL(19, 2),
     units             INT,
     picture_url       VARCHAR(255),
-    order_id          UUID,
+    order_id          BIGINT,
     CONSTRAINT fk_order FOREIGN KEY (order_id) REFERENCES orders (order_id) ON DELETE CASCADE
 );

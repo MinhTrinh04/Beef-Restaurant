@@ -2,7 +2,6 @@ package com.eshop.MenuService.IntegrationEvents.EventHandling;
 
 import com.eshop.MenuService.Exception.ResourceNotFoundException;
 import com.eshop.MenuService.IntegrationEvents.Events.OrderStatusChangedToCancelledIntegrationEvent;
-import com.eshop.MenuService.IntegrationEvents.Events.OrderStatusChangedToPaidIntegrationEvent;
 import com.eshop.MenuService.IntegrationEvents.Events.OrderStockItem;
 import com.eshop.MenuService.Model.MenuItem;
 import com.eshop.MenuService.Repository.MenuItemRepository;
@@ -12,8 +11,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service
