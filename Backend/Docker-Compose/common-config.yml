@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  network-deploy-service:
+    networks:
+      - beef-net
+
+  microservice-base-config:
+    extends:
+      service: network-deploy-service
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI: http://keycloak:8180/realms/master
+
+  microservice-eureka-config:
+    extends:
+      service: microservice-base-config
+    environment:
+      # Override để service đăng ký với Eureka qua tên container
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/

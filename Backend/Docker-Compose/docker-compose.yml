@@ -1,0 +1,221 @@
+version: '3.8'
+
+services:
+
+  # ==========================================
+  # 1. INFRASTRUCTURE (DB, Broker, Auth, Logs)
+  # ==========================================
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq/
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keycloak"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.0
+    container_name: keycloak
+    command: start-dev
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
+      KC_HOSTNAME: localhost
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "8180:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
+
+  # ==========================================
+  # 2. MICROSERVICES
+  # ==========================================
+
+  discovery-service:
+    image: "minh28012004/discovery-service:latest"
+    container_name: discovery-service
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test: "curl --fail --silent localhost:8761/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+
+  gateway-service:
+    image: "minh28012004/gateway-service:latest"
+    container_name: gateway-service
+    ports:
+      - "9000:9000"
+    environment:
+      SPRING_APPLICATION_NAME: "gateway-service"
+      SPRING_CLOUD_GATEWAY_ROUTES_0_URI: lb://USER-SERVICE
+      SPRING_CLOUD_GATEWAY_ROUTES_1_URI: lb://MENU-SERVICE
+      SPRING_CLOUD_GATEWAY_ROUTES_2_URI: lb://ORDERING-SERVICE
+      SPRING_CLOUD_GATEWAY_ROUTES_3_URI: lb://BASKET-SERVICE
+      SPRING_CLOUD_GATEWAY_ROUTES_4_URI: lb://PAYMENT-SERVICE
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+    extends:
+      file: common-config.yml
+      service: microservice-eureka-config
+
+  user-service:
+    image: "minh28012004/user-service:latest"
+    container_name: user-service
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_APPLICATION_NAME: "user-service"
+      # Kết nối DB Postgres (dùng chung container với Keycloak hoặc tạo DB riêng)
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/keycloak
+      SPRING_DATASOURCE_USERNAME: keycloak
+      SPRING_DATASOURCE_PASSWORD: keycloak
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+    extends:
+      file: common-config.yml
+      service: microservice-eureka-config
+
+  menu-service:
+    image: "minh28012004/menu-service:latest"
+    container_name: menu-service
+    ports:
+      - "8080:8080" # Lưu ý: Cổng này có thể đụng độ với Keycloak nếu chạy host
+    environment:
+      SPRING_APPLICATION_NAME: "menu-service"
+      # Config H2 hoặc DB khác nếu cần override
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    extends:
+      file: common-config.yml
+      service: microservice-eureka-config
+
+  basket-service:
+    image: "minh28012004/basket-service:latest"
+    container_name: basket-service
+    ports:
+      - "8081:8081" # Lưu ý: Cổng này có thể đụng độ với Seq UI
+    environment:
+      SPRING_APPLICATION_NAME: "basket-service"
+      SPRING_DATA_REDIS_HOST: redis
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    extends:
+      file: common-config.yml
+      service: microservice-eureka-config
+
+  ordering-service:
+    image: "minh28012004/ordering-service:latest"
+    container_name: ordering-service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_APPLICATION_NAME: "ordering-service"
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    extends:
+      file: common-config.yml
+      service: microservice-eureka-config
+
+  payment-service:
+    image: "minh28012004/basket-service:latest"
+    container_name: payment-service
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_APPLICATION_NAME: "payment-service"
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+    extends:
+      file: common-config.yml
+      service: microservice-eureka-config
+
+networks:
+  beef-net:
+    driver: "bridge"
+
+volumes:
+  rabbitmq_data:
+  rabbitmq_log:
+  redis_data:
+  postgres_data:

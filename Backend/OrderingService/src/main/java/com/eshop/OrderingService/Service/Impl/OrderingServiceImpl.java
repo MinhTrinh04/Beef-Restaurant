@@ -30,6 +30,12 @@ public class OrderingServiceImpl implements IOrderingService {
     private final OrderMapper orderMapper;
     private final IEventBus eventBus;
 
+    private Long generateOrderId() {
+        String millis = String.valueOf(System.currentTimeMillis());
+        String last8 = millis.substring(Math.max(0, millis.length() - 8));
+        return Long.parseLong(last8);
+    }
+
     @Override
     public OrderDto getOrderById(Long id) {
         Order order = orderRepository.findById(id)
@@ -66,6 +72,7 @@ public class OrderingServiceImpl implements IOrderingService {
         log.info("Creating order from basket for user: {}", request.getUserId());
 
         Order order = new Order();
+        order.setOrderId(generateOrderId());
         order.setOrderDate(LocalDateTime.now());
         order.setOrderStatus(OrderingConstants.ORDER_STATUS_VALIDATED);
 
@@ -92,10 +99,10 @@ public class OrderingServiceImpl implements IOrderingService {
                 .collect(Collectors.toList());
         order.setOrderItems(orderItems);
         order.setTotalAmount(request.getTotalAmount());
-        
+
         Order savedOrder = orderRepository.save(order);
         Long orderId = savedOrder.getOrderId();
-        
+
         log.info("Order created successfully with ID: {} for user: {}", orderId, request.getUserId());
         return orderId;
     }
@@ -138,7 +145,8 @@ public class OrderingServiceImpl implements IOrderingService {
         log.info("Creating order from checkout for user: {}", event.getUserId());
 
         Order order = new Order();
-        order.setOrderId(event.getOrderId());
+        Long orderId = event.getOrderId() != null ? event.getOrderId() : generateOrderId();
+        order.setOrderId(orderId);
         order.setOrderDate(LocalDateTime.now());
         order.setOrderStatus(OrderingConstants.ORDER_STATUS_VALIDATED);
 
