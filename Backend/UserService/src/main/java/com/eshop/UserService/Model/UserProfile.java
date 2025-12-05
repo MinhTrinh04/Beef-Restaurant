@@ -14,6 +14,9 @@ public class UserProfile {
     @Column(name = "buyerId")
     private String buyerId;
 
+    @Column(name = "email", unique = true, nullable = false)
+    private String email;
+
     @Column(name = "name")
     private String name;
 
@@ -31,4 +34,7 @@ public class UserProfile {
 
     @Column(name = "country")
     private String country;
+
+    @Column(name = "keycloak_id", nullable = false)
+    private String keycloakId;
 }

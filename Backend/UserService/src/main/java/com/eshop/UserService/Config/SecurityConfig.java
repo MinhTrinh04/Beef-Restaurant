@@ -18,33 +18,36 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        @Bean
+        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new KeycloakRoleConverter());
+                JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+                jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new KeycloakRoleConverter());
 
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                http
+                                .csrf(AbstractHttpConfigurer::disable)
+                                .sessionManagement(session -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/actuator/**", "/h2-console/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/api/v1/users/me", "/api/v1/users/profile").authenticated()
-                        .requestMatchers("/api/v1/users/**").hasRole("ADMIN")
-                        .anyRequest().authenticated()
-                )
+                                .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers("/actuator/**", "/h2-console/**", "/swagger-ui/**",
+                                                                "/v3/api-docs/**")
+                                                .permitAll()
+                                                .requestMatchers("/api/v1/users/register", "/api/v1/users/login",
+                                                                "/api/v1/users/refresh")
+                                                .permitAll()
+                                                .requestMatchers("/api/v1/users/me", "/api/v1/users/logout")
+                                                .authenticated()
+                                                .anyRequest().authenticated())
 
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter))
-                )
+                                .oauth2ResourceServer(oauth2 -> oauth2
+                                                .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter)))
 
-                .exceptionHandling(exceptions -> exceptions
-                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-                        .accessDeniedHandler(new CustomAccessDeniedHandler())
-                );
-        http.headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
+                                .exceptionHandling(exceptions -> exceptions
+                                                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                                                .accessDeniedHandler(new CustomAccessDeniedHandler()));
+                http.headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
 
-        return http.build();
-    }
+                return http.build();
+        }
 }
