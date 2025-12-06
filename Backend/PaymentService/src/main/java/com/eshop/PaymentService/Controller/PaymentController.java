@@ -5,16 +5,21 @@ import com.eshop.PaymentService.DTO.PaymentUrlResponseDto;
 import com.eshop.PaymentService.Service.PayOSService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/api/v1/payment")
 @RequiredArgsConstructor
 @Slf4j
 public class PaymentController {
-
     private final PayOSService payOSService;
+    @Value("${payos.fe-cancel-url}")
+    private String feUrl;
 
     // 1. API Tạo Link (Giữ nguyên signature để BasketService gọi)
     @PostMapping("/create-url")
@@ -55,17 +60,18 @@ public class PaymentController {
 
     // 3. Cancel URL - Redirect từ PayOS khi user ấn Cancel
     @GetMapping("/cancel")
-    public ResponseEntity<String> handleCancelPayment(@RequestParam Long orderId) {
+    public ResponseEntity<Void> handleCancelPayment(@RequestParam(name = "orderCode") Long orderId) {
         log.info("❌ Payment CANCELLED by user for OrderId: {}", orderId);
 
         try {
             payOSService.handlePaymentCancelled(orderId);
-            // Redirect về frontend payment cancelled page hoặc order detail
-            return ResponseEntity.ok("Payment cancelled. OrderId: " + orderId);
+
+            return ResponseEntity.status(HttpStatus.FOUND)
+                    .location(URI.create(feUrl))
+                    .build();
         } catch (Exception e) {
             log.error("Error handling cancel payment for OrderId: {}: {}", orderId, e.getMessage(), e);
-            return ResponseEntity.internalServerError()
-                    .body("Error processing cancellation: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }

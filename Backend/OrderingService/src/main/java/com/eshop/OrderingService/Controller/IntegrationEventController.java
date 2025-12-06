@@ -19,6 +19,7 @@ public class IntegrationEventController {
     private final UserCheckoutAcceptedIntegrationEventV2Handler userCheckoutAcceptedV2Handler;
     private final OrderPaymentSucceededIntegrationEventHandler orderPaymentSucceededHandler;
     private final OrderPaymentFailedIntegrationEventHandler orderPaymentFailedHandler;
+    private final OrderPaymentCancelledIntegrationEventHandler orderPaymentCancelledHandler;
 
     @RabbitHandler
     public void handleUserCheckoutAcceptedV2(UserCheckoutAcceptedIntegrationEventV2 event) {
@@ -39,5 +40,11 @@ public class IntegrationEventController {
         log.info("📨 Received OrderPaymentFailedIntegrationEvent from queue: {}",
                 QUEUE_NAME);
         orderPaymentFailedHandler.handle(event);
+    }
+    @RabbitHandler
+    public void handleOrderPaymentCancelled(OrderPaymentCancelledIntegrationEvent event) {
+        log.info("📨 Received OrderPaymentCancelledIntegrationEvent from queue: {}",
+                QUEUE_NAME);
+        orderPaymentCancelledHandler.handle(event);
     }
 }
