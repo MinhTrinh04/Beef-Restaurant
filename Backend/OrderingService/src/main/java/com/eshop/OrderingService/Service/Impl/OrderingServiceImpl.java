@@ -135,6 +135,11 @@ public class OrderingServiceImpl implements IOrderingService {
                 reason,
                 stockItems));
 
+        // Publish basket cleared event to clear user's basket when order is cancelled
+        BasketClearedIntegrationEvent basketClearedEvent = new BasketClearedIntegrationEvent(order.getBuyerId());
+        eventBus.publish(basketClearedEvent);
+        log.info("✅ BasketClearedIntegrationEvent published for buyerId: {} due to order cancellation", order.getBuyerId());
+
         log.info("Order cancelled successfully: {}", orderId);
         return true;
     }
@@ -199,10 +204,10 @@ public class OrderingServiceImpl implements IOrderingService {
 
         log.info("✅ Publishing OrderStatusChangedToPaidIntegrationEventV2 for buyerId: {}", order.getBuyerId());
 
-        OrderStatusChangedToSubmittedIntegrationEvent submittedEvent = new OrderStatusChangedToSubmittedIntegrationEvent(
-                order.getOrderId(), order.getBuyerId(), order.getBuyerEmail());
-        eventBus.publish(submittedEvent);
-        log.info("✅ OrderStatusChangedToSubmittedIntegrationEventV2 published for OrderId: {}", order.getOrderId());
+        // Publish basket cleared event to clear user's basket
+        BasketClearedIntegrationEvent basketClearedEvent = new BasketClearedIntegrationEvent(order.getBuyerId());
+        eventBus.publish(basketClearedEvent);
+        log.info("✅ BasketClearedIntegrationEvent published for buyerId: {}", order.getBuyerId());
 
     }
 

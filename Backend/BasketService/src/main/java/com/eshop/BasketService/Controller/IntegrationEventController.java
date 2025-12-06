@@ -1,8 +1,9 @@
 package com.eshop.BasketService.Controller;
 
 
-import com.eshop.BasketService.IntegrationEvents.Events.OrderStatusChangedToSubmittedIntegrationEvent;
-import com.eshop.BasketService.IntegrationEvents.EventHandling.OrderStatusChangedToSubmittedIntegrationEventHandler;
+
+import com.eshop.BasketService.IntegrationEvents.EventHandling.BasketClearedIntegrationEventHandler;
+import com.eshop.BasketService.IntegrationEvents.Events.BasketClearedIntegrationEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -14,11 +15,11 @@ import static com.eshop.BasketService.Constants.BasketConstants.QUEUE_NAME;
 @RequiredArgsConstructor
 @RabbitListener(queues = QUEUE_NAME)
 public class IntegrationEventController {
-    private final OrderStatusChangedToSubmittedIntegrationEventHandler submittedEventHandler;
+    private final BasketClearedIntegrationEventHandler basketClearedEventHandler;
 
     @RabbitHandler
-    public void handleIntegrationEvent(OrderStatusChangedToSubmittedIntegrationEvent event) {
-        submittedEventHandler.handle(event);
+    public void handleIntegrationEvent(BasketClearedIntegrationEvent event) {
+        basketClearedEventHandler.handle(event);
     }
 
 }
