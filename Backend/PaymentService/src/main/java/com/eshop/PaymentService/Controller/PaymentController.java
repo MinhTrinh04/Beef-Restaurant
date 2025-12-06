@@ -52,4 +52,20 @@ public class PaymentController {
             return ResponseEntity.ok("Webhook received but error: " + e.getMessage());
         }
     }
+
+    // 3. Cancel URL - Redirect từ PayOS khi user ấn Cancel
+    @GetMapping("/cancel")
+    public ResponseEntity<String> handleCancelPayment(@RequestParam Long orderId) {
+        log.info("❌ Payment CANCELLED by user for OrderId: {}", orderId);
+
+        try {
+            payOSService.handlePaymentCancelled(orderId);
+            // Redirect về frontend payment cancelled page hoặc order detail
+            return ResponseEntity.ok("Payment cancelled. OrderId: " + orderId);
+        } catch (Exception e) {
+            log.error("Error handling cancel payment for OrderId: {}: {}", orderId, e.getMessage(), e);
+            return ResponseEntity.internalServerError()
+                    .body("Error processing cancellation: " + e.getMessage());
+        }
+    }
 }

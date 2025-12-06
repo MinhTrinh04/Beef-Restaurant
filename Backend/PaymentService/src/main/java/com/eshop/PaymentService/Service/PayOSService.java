@@ -1,6 +1,7 @@
 package com.eshop.PaymentService.Service;
 
 import com.eshop.PaymentService.DTO.CreatePaymentUrlRequestDto;
+import com.eshop.PaymentService.IntegrationEvents.Events.OrderPaymentCancelledIntegrationEvent;
 import com.eshop.PaymentService.IntegrationEvents.Events.OrderPaymentFailedIntegrationEvent;
 import com.eshop.PaymentService.IntegrationEvents.Events.OrderPaymentSucceededIntegrationEvent;
 import com.eshop.buildingblocks.EventBus.Abstractions.IEventBus;
@@ -14,7 +15,6 @@ import vn.payos.model.v2.paymentRequests.CreatePaymentLinkRequest;
 import vn.payos.model.v2.paymentRequests.CreatePaymentLinkResponse;
 import vn.payos.model.v2.paymentRequests.PaymentLinkItem;
 import vn.payos.model.webhooks.WebhookData;
-
 
 @Service
 @Slf4j
@@ -40,7 +40,8 @@ public class PayOSService {
         // 2. Tạo nội dung thanh toán
         // Lưu ý: PayOS giới hạn độ dài description
         String description = "Thanh toan don " + orderCode;
-        if (description.length() > 25) description = description.substring(0, 25);
+        if (description.length() > 25)
+            description = description.substring(0, 25);
 
         // 3. Tạo Item (bắt buộc)
         PaymentLinkItem item = PaymentLinkItem.builder()
@@ -101,5 +102,17 @@ public class PayOSService {
             // Có thể throw exception để PayOS biết và retry nếu cần
             throw new RuntimeException("Webhook verification failed");
         }
+    }
+
+    public void handlePaymentCancelled(Long orderId) {
+        log.warn("🚫 Payment cancelled by user for OrderId: {}", orderId);
+
+        // Bắn sự kiện "Thanh toán bị hủy" -> OrderingService sẽ hủy order
+        OrderPaymentCancelledIntegrationEvent cancelledEvent = new OrderPaymentCancelledIntegrationEvent(
+                orderId,
+                "User cancelled payment");
+        eventBus.publish(cancelledEvent);
+
+        log.info("✅ OrderPaymentCancelledIntegrationEvent published for cancelled payment. OrderId: {}", orderId);
     }
 }

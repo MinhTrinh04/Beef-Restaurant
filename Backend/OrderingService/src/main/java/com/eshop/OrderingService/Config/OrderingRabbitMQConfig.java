@@ -71,6 +71,14 @@ public class OrderingRabbitMQConfig {
     }
 
     @Bean
+    public Binding bindingOrderPaymentCancelled(TopicExchange eventBusExchange, Queue orderServiceQueue) {
+        return BindingBuilder
+                .bind(orderServiceQueue)
+                .to(eventBusExchange)
+                .with(ORDER_PAYMENT_CANCELLED_EVENT);
+    }
+
+    @Bean
     public MessageConverter jsonMessageConverter() {
         Jackson2JsonMessageConverter converter = new Jackson2JsonMessageConverter();
 
