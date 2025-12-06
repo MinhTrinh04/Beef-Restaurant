@@ -48,6 +48,9 @@ public class UserService {
 
             log.info("User registered on Keycloak with ID: {}", keycloakUserId);
 
+            // 2.5 Gán role USER cho user (tự động)
+            keycloakService.assignUserRole(keycloakUserId);
+
             // 3. Tạo profile trong UserService DB
             UserProfile userProfile = new UserProfile();
             userProfile.setEmail(request.getEmail());

@@ -281,4 +281,52 @@ public class KeycloakService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Lỗi xác thực admin");
         }
     }
+
+    public void assignUserRole(String keycloakUserId) throws Exception {
+        try {
+            String adminToken = getAdminToken();
+
+            // 1. Lấy role ID của "USER" role
+            String roleUrl = keycloakServerUrl + "/admin/realms/" + realm + "/roles/USER";
+            HttpRequest getRoleRequest = HttpRequest.newBuilder()
+                    .uri(URI.create(roleUrl))
+                    .header("Authorization", "Bearer " + adminToken)
+                    .GET()
+                    .build();
+
+            HttpResponse<String> roleResponse = httpClient.send(getRoleRequest, HttpResponse.BodyHandlers.ofString());
+
+            if (roleResponse.statusCode() != 200) {
+                log.warn("USER role not found in Keycloak, skipping role assignment");
+                return;
+            }
+
+            JsonObject roleJson = gson.fromJson(roleResponse.body(), JsonObject.class);
+
+            // 2. Gán role cho user
+            String assignRoleUrl = keycloakServerUrl + "/admin/realms/" + realm + 
+                                   "/users/" + keycloakUserId + "/role-mappings/realm";
+            
+            JsonArray rolesArray = new JsonArray();
+            rolesArray.add(roleJson);
+
+            HttpRequest assignRoleRequest = HttpRequest.newBuilder()
+                    .uri(URI.create(assignRoleUrl))
+                    .header("Authorization", "Bearer " + adminToken)
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(rolesArray.toString()))
+                    .build();
+
+            HttpResponse<String> assignResponse = httpClient.send(assignRoleRequest, HttpResponse.BodyHandlers.ofString());
+
+            if (assignResponse.statusCode() == 204 || assignResponse.statusCode() == 201) {
+                log.info("Role USER assigned to user: {}", keycloakUserId);
+            } else {
+                log.warn("Failed to assign USER role: {}", assignResponse.body());
+            }
+        } catch (Exception e) {
+            log.error("Error assigning role to user: {}", e.getMessage());
+            // Không throw exception - registration should succeed even if role assignment fails
+        }
+    }
 }
