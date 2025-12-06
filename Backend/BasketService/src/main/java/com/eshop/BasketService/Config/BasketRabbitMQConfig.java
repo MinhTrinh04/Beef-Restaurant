@@ -10,8 +10,7 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static com.eshop.BasketService.Constants.BasketConstants.ORDER_STATUS_CHANGE_TO_SUBMITTED;
-import static com.eshop.BasketService.Constants.BasketConstants.QUEUE_NAME;
+import static com.eshop.BasketService.Constants.BasketConstants.*;
 
 @Configuration
 public class BasketRabbitMQConfig {
@@ -25,6 +24,12 @@ public class BasketRabbitMQConfig {
     public Binding bindingOrderStatusChangedToSubmitted(TopicExchange eventBusExchange, Queue basketServiceQueue) {
         return BindingBuilder.bind(basketServiceQueue).to(eventBusExchange).with(ORDER_STATUS_CHANGE_TO_SUBMITTED);
     }
+
+    @Bean
+    public Binding bindingBasketCleared(TopicExchange eventBusExchange, Queue basketServiceQueue) {
+        return BindingBuilder.bind(basketServiceQueue).to(eventBusExchange).with(BASKET_CLEARED);
+    }
+
 
     @Bean
     public MessageConverter jsonMessageConverter() {

@@ -4,18 +4,18 @@ import HeroInnerBlock from "@/app/components/common/hero-inner/Hero-inner";
 import SidebarNavigation from "./SidebarNavigation";
 import MenuContentDisplay from "./MenuContentDisplay";
 import throttle from 'lodash.throttle';
+import { MenuCategory } from "@/app/types/common.types";
 
 //Data
 import { HeroInnerMenuSidebarData } from "@/app/hooks/data";
-import { categoryDishesData } from "@/app/hooks/data-dish";
 
 interface MenuSidebarProps {
-  // Props can be added here if needed in the future
+  categories?: MenuCategory[];
 }
 
 const SCROLL_THROTTLE_LIMIT = 200; // Throttle limit in ms
 
-const MenuSidebar: React.FC<MenuSidebarProps> = () => {
+const MenuSidebar: React.FC<MenuSidebarProps> = ({ categories = [] }) => {
 	const [activeItem, setActiveItem] = useState(0);
 	const navLinksRef = useRef<NodeListOf<HTMLAnchorElement> | null>(null);
 	const sectionsRef = useRef<NodeListOf<HTMLElement> | null>(null);
@@ -142,17 +142,17 @@ const MenuSidebar: React.FC<MenuSidebarProps> = () => {
 
 			<div className="menu menu-sidebar">
 				<div className="navmenu__container">
-					{categoryDishesData?.items && (
+					{categories && categories.length > 0 && (
 						<SidebarNavigation
-							navItems={categoryDishesData.items}
+							navItems={categories}
 							activeItem={activeItem}
 							onNavLinkClick={handleNavLinkClick}
 						/>
 					)}
-					{categoryDishesData?.items && (
+					{categories && categories.length > 0 && (
 						<MenuContentDisplay
-							categories={categoryDishesData.items}
-							emptyMessage={categoryDishesData.emptyMessage}
+							categories={categories}
+							emptyMessage="No menu items available."
 						/>
 					)}
 				</div>

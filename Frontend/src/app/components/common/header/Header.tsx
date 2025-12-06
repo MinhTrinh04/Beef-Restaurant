@@ -2,13 +2,15 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import LogoLink from "@/app/components/common/logo/logoLink";
-import { LogoData, socialIconsData } from "@/app/hooks/data-general";
+import { LogoData } from "@/app/hooks/data-general";
 import { itemsNavbar } from "@/app/hooks/data-navbar";
-import SocialIcons from "@/app/components/common/social/SocialIcons";
+
 import MenuMobile from "@/app/components/common/menuMobile/menuMobile";
 import MenuToggleButton from "./MenuToggleButton";
 import { cn } from "@/lib/utils";
 import throttle from 'lodash.throttle';
+import BasketIndicator from "./BasketIndicator";
+import LoginButton from "@/app/components/auth/LoginButton";
 
 const STICKY_THRESHOLD = 100; // Define scroll threshold (adjust as needed)
 const SCROLL_THROTTLE_LIMIT = 200; // Throttle limit in ms
@@ -94,9 +96,11 @@ const Header: React.FC = () => {
 						</nav>
 
 						{/* Mobile Menu Toggle & Social Icons Wrapper */}
-						<div className="flex items-center">
-							<div className="header__social">
-								<SocialIcons socials={socialIconsData} />
+						<div className="flex items-center gap-4">
+							<div className="header__social gap-4">
+								<BasketIndicator />
+								<LoginButton />
+
 							</div>
 							<div className="header__mobile">
 								<MenuToggleButton

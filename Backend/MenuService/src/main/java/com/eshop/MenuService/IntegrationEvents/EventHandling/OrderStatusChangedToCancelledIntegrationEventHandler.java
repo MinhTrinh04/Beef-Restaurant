@@ -16,7 +16,8 @@ import java.util.Optional;
 @Service
 @Slf4j
 @AllArgsConstructor
-public class OrderStatusChangedToCancelledIntegrationEventHandler implements IIntegrationEventHandler<OrderStatusChangedToCancelledIntegrationEvent> {
+public class OrderStatusChangedToCancelledIntegrationEventHandler
+        implements IIntegrationEventHandler<OrderStatusChangedToCancelledIntegrationEvent> {
 
     private final MenuItemRepository menuItemRepository;
 
@@ -30,17 +31,21 @@ public class OrderStatusChangedToCancelledIntegrationEventHandler implements IIn
 
             if (menuItemOptional.isPresent()) {
                 MenuItem menuItem = menuItemOptional.get();
-                log.info("✅ Updating stock for MenuItem ID: {}. Old stock: {}, Old reserved stock: {} ",
+                log.info("✅ Restoring stock for MenuItem ID: {}. Old available: {}, Old reserved: {} ",
                         menuItem.getId(), menuItem.getAvailableStock(), menuItem.getReservedStock());
                 menuItem.setAvailableStock(menuItem.getAvailableStock() + orderStockItem.getUnits());
                 menuItem.setReservedStock(menuItem.getReservedStock() - orderStockItem.getUnits());
-                log.info("✅ Updating stock for MenuItem ID: {}.  New stock: {}, New reserved stock: {}",
+
+                menuItemRepository.save(menuItem);
+
+                log.info("✅ Stock restored for MenuItem ID: {}.  New available: {}, New reserved: {}",
                         menuItem.getId(), menuItem.getAvailableStock(), menuItem.getReservedStock());
             } else {
                 throw new ResourceNotFoundException("MenuItem", "ProductId", orderStockItem.getProductId().toString());
             }
         }
 
+        log.info("✅ All menu items stock restored successfully for OrderId: {}", event.getOrderId());
     }
 
 }

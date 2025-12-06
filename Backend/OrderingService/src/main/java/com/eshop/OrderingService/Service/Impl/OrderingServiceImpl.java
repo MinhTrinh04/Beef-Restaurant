@@ -124,16 +124,21 @@ public class OrderingServiceImpl implements IOrderingService {
         orderRepository.save(order);
 
         List<OrderStockItem> stockItems = order.getOrderItems().stream()
-                .map(item -> new OrderStockItem(item.getProductId(), item.getProductName(), item.getUnits(), item.getPictureUrl()))
+                .map(item -> new OrderStockItem(item.getProductId(), item.getProductName(), item.getUnits(),
+                        item.getPictureUrl()))
                 .collect(Collectors.toList());
 
         // Publish cancellation event
         eventBus.publish(new OrderStatusChangedToCancelledIntegrationEvent(
                 order.getOrderId(),
                 order.getBuyerId(),
-                "Order cancelled",
-                stockItems
-        ));
+                reason,
+                stockItems));
+
+        // Publish basket cleared event to clear user's basket when order is cancelled
+        BasketClearedIntegrationEvent basketClearedEvent = new BasketClearedIntegrationEvent(order.getBuyerId());
+        eventBus.publish(basketClearedEvent);
+        log.info("✅ BasketClearedIntegrationEvent published for buyerId: {} due to order cancellation", order.getBuyerId());
 
         log.info("Order cancelled successfully: {}", orderId);
         return true;
@@ -188,7 +193,8 @@ public class OrderingServiceImpl implements IOrderingService {
         orderRepository.save(order);
 
         List<OrderStockItem> stockItems = order.getOrderItems().stream()
-                .map(orderItem -> new OrderStockItem(orderItem.getProductId(), orderItem.getProductName(), orderItem.getUnits(), orderItem.getPictureUrl()))
+                .map(orderItem -> new OrderStockItem(orderItem.getProductId(), orderItem.getProductName(),
+                        orderItem.getUnits(), orderItem.getPictureUrl()))
                 .collect(Collectors.toList());
 
         // Publish paid event
@@ -198,10 +204,10 @@ public class OrderingServiceImpl implements IOrderingService {
 
         log.info("✅ Publishing OrderStatusChangedToPaidIntegrationEventV2 for buyerId: {}", order.getBuyerId());
 
-        OrderStatusChangedToSubmittedIntegrationEvent submittedEvent = new OrderStatusChangedToSubmittedIntegrationEvent(
-                order.getOrderId(), order.getBuyerId(), order.getBuyerEmail());
-        eventBus.publish(submittedEvent);
-        log.info("✅ OrderStatusChangedToSubmittedIntegrationEventV2 published for OrderId: {}", order.getOrderId());
+        // Publish basket cleared event to clear user's basket
+        BasketClearedIntegrationEvent basketClearedEvent = new BasketClearedIntegrationEvent(order.getBuyerId());
+        eventBus.publish(basketClearedEvent);
+        log.info("✅ BasketClearedIntegrationEvent published for buyerId: {}", order.getBuyerId());
 
     }
 

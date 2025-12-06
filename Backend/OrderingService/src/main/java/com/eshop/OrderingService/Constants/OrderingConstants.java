@@ -17,7 +17,7 @@ public class OrderingConstants {
     public static final String ORDER_STOCK_REJECTED_EVENT = "OrderStockRejectedIntegrationEvent";
     public static final String ORDER_PAYMENT_SUCCEEDED_EVENT = "OrderPaymentSucceededIntegrationEvent";
     public static final String ORDER_PAYMENT_FAILED_EVENT = "OrderPaymentFailedIntegrationEvent";
-
+    public static final String ORDER_PAYMENT_CANCELLED_EVENT = "OrderPaymentCancelledIntegrationEvent";
     // Grace Period (in seconds)
     public static final int GRACE_PERIOD_SECONDS = 15;
 
