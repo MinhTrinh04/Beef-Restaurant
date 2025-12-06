@@ -50,6 +50,34 @@ keycloak:
   admin-username: ${KEYCLOAK_ADMIN_USER:admin}
   admin-password: ${KEYCLOAK_ADMIN_PASSWORD:admin}
 
+# RabbitMQ Configuration
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    connection-timeout: 10000
+
+# Mail Configuration
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:your-email@gmail.com}
+    password: ${MAIL_PASSWORD:your-password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          starttls.enable: true
+          ssl.protocols: TLSv1.2
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
 # Eureka Service Discovery
 eureka:
   client:
