@@ -9,6 +9,7 @@ import com.eshop.UserService.Repository.UserRepository;
 import com.eshop.UserService.Service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/users")
 @AllArgsConstructor
+@Slf4j
 public class UserController {
     private UserRepository userProfileRepository;
     private UserService userService;
@@ -36,9 +38,12 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<UserDTO> register(@Valid @RequestBody RegisterRequest request) {
         try {
+            log.info("Register request for email: {}", request.getEmail());
             UserDTO newUser = userService.register(request);
+            log.info("User registered successfully: {}", request.getEmail());
             return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
         } catch (Exception e) {
+            log.error("Register error: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

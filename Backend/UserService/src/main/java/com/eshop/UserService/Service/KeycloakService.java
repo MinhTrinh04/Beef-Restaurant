@@ -30,6 +30,12 @@ public class KeycloakService {
     @Value("${keycloak.client-secret}")
     private String clientSecret;
 
+    @Value("${keycloak.admin-username:admin}")
+    private String adminUsername;
+
+    @Value("${keycloak.admin-password:admin}")
+    private String adminPassword;
+
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private final Gson gson = new Gson();
 
@@ -82,7 +88,7 @@ public class KeycloakService {
      */
     public Map<String, Object> login(String email, String password) throws Exception {
         String tokenUrl = keycloakServerUrl + "/realms/" + realm + "/protocol/openid-connect/token";
-
+        String adminToken = getAdminToken();
         String body = "grant_type=password" +
                 "&client_id=" + URLEncoder.encode(clientId, StandardCharsets.UTF_8) +
                 "&client_secret=" + URLEncoder.encode(clientSecret, StandardCharsets.UTF_8) +
@@ -188,9 +194,11 @@ public class KeycloakService {
     private String getAdminToken() throws Exception {
         String tokenUrl = keycloakServerUrl + "/realms/" + realm + "/protocol/openid-connect/token";
 
-        String body = "grant_type=client_credentials" +
-                "&client_id=" + URLEncoder.encode(clientId, StandardCharsets.UTF_8) +
-                "&client_secret=" + URLEncoder.encode(clientSecret, StandardCharsets.UTF_8);
+        // Use password grant with admin credentials
+        String body = "grant_type=password" +
+                "&client_id=admin-cli" +
+                "&username=" + URLEncoder.encode(adminUsername, StandardCharsets.UTF_8) +
+                "&password=" + URLEncoder.encode(adminPassword, StandardCharsets.UTF_8);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(tokenUrl))

@@ -28,9 +28,10 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
 
-# Keycloak Configuration
 keycloak:
   server-url: http://localhost:8180
   realm: master
   client-id: test-user
   client-secret: CVyEApmC2fpBYTAr6arwl6P2VztQwKJ5
+  admin-username: admin
+  admin-password: admin
