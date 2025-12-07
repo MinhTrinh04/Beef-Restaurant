@@ -138,7 +138,10 @@ public class OrderingServiceImpl implements IOrderingService {
         // Publish basket cleared event to clear user's basket when order is cancelled
         BasketClearedIntegrationEvent basketClearedEvent = new BasketClearedIntegrationEvent(order.getBuyerId());
         eventBus.publish(basketClearedEvent);
-        log.info("✅ BasketClearedIntegrationEvent published for buyerId: {} due to order cancellation", order.getBuyerId());
+        log.info("✅ BasketClearedIntegrationEvent published for buyerId: {} due to order cancellation",
+                order.getBuyerId());
+
+        publishOrderCancelledForEmailEvent(order, reason);
 
         log.info("Order cancelled successfully: {}", orderId);
         return true;
@@ -215,5 +218,26 @@ public class OrderingServiceImpl implements IOrderingService {
         return OrderingConstants.ORDER_STATUS_SUBMITTED.equals(orderStatus) ||
                 OrderingConstants.ORDER_STATUS_AWAITING_STOCK_VALIDATION.equals(orderStatus) ||
                 OrderingConstants.ORDER_STATUS_VALIDATED.equals(orderStatus);
+    }
+
+    private void publishOrderCancelledForEmailEvent(Order order, String reason) {
+        List<OrderCancelledForEmailEvent.OrderItemInfo> orderItems = order.getOrderItems().stream()
+                .map(item -> new OrderCancelledForEmailEvent.OrderItemInfo(
+                        item.getProductName(),
+                        item.getUnits(),
+                        item.getUnitPrice().doubleValue(),
+                        item.getPictureUrl()))
+                .collect(Collectors.toList());
+
+        OrderCancelledForEmailEvent event = new OrderCancelledForEmailEvent(
+                order.getOrderId(),
+                order.getBuyerEmail(),
+                order.getBuyerName(),
+                reason,
+                order.getTotalAmount().doubleValue(),
+                orderItems);
+
+        eventBus.publish(event);
+        log.info("✅ OrderCancelledForEmailEvent published for OrderId: {}", order.getOrderId());
     }
 }

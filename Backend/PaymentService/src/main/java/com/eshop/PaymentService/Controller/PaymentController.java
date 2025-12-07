@@ -53,7 +53,6 @@ public class PaymentController {
             payOSService.handleWebhook(webhookBody);
             return ResponseEntity.ok("Webhook received");
         } catch (Exception e) {
-            // Trả về 200 kể cả khi lỗi logic để PayOS không retry spam server mình
             return ResponseEntity.ok("Webhook received but error: " + e.getMessage());
         }
     }
