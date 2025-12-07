@@ -11,6 +11,7 @@ import com.eshop.BasketService.Model.Basket;
 import com.eshop.BasketService.Model.BasketCheckout;
 import com.eshop.BasketService.Repository.BasketRepository;
 import com.eshop.BasketService.Service.IBasketService;
+import com.eshop.BasketService.Service.IIdentityService;
 import com.eshop.BasketService.Service.client.MenuServiceClient;
 import com.eshop.BasketService.Service.client.OrderingServiceClient;
 import com.eshop.BasketService.Service.client.PaymentServiceClient;
@@ -33,10 +34,12 @@ public class BasketService implements IBasketService {
     private final MenuServiceClient menuServiceClient;
     private final OrderingServiceClient orderingServiceClient;
     private final PaymentServiceClient paymentServiceClient;
+    private final IIdentityService identityService;
 
     @Override
     public Basket getBasketById(String id) {
-        Basket existingBasket = basketRepository.findById(id).orElseThrow(() -> new BasketNotFoundException("Basket", "buyerId", id));
+        Basket existingBasket = basketRepository.findById(id)
+                .orElseThrow(() -> new BasketNotFoundException("Basket", "buyerId", id));
         return existingBasket;
     }
 
@@ -44,7 +47,7 @@ public class BasketService implements IBasketService {
     @Transactional
     public boolean updateBasket(Basket basket) {
         Basket resBasket = basketRepository.save(basket);
-        if (resBasket == null){
+        if (resBasket == null) {
             log.error("Error updating/creating basket for buyerId: {}", basket.getBuyerId());
             return false;
         }
@@ -61,9 +64,10 @@ public class BasketService implements IBasketService {
     }
 
     @Override
-    public ResponseEntity<PaymentUrlResponseDto> checkoutV2(String buyerId, BasketCheckout basketCheckout, String requestId) {
+    public ResponseEntity<PaymentUrlResponseDto> checkoutV2(String buyerId, BasketCheckout basketCheckout,
+            String requestId) {
         Basket basket = basketRepository.findById(buyerId)
-                .orElseThrow(() -> new BasketNotFoundException("Basket", "buyerId" , buyerId));
+                .orElseThrow(() -> new BasketNotFoundException("Basket", "buyerId", buyerId));
         log.info("Basket founded with total items: {}.", basket.getItems().size());
 
         List<StockValidationItem> validationRequest = basket.getItems().stream()
@@ -86,9 +90,15 @@ public class BasketService implements IBasketService {
                 .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getUnits())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+        // Get user email from JWT
+        String userEmail = identityService.getUserEmail();
+        if (userEmail == null || userEmail.isEmpty()) {
+            throw new RuntimeException("User email not found in JWT token");
+        }
+
         CreateOrderFromBasketRequestDto createOrderRequest = new CreateOrderFromBasketRequestDto(
                 buyerId,
-                basketCheckout.getUserEmail(),
+                userEmail,
                 basketCheckout.getCity(),
                 basketCheckout.getStreet(),
                 basketCheckout.getState(),
@@ -104,8 +114,7 @@ public class BasketService implements IBasketService {
                             return dto;
                         })
                         .collect(Collectors.toList()),
-                totalAmount
-        );
+                totalAmount);
 
         Long orderId;
         try {
@@ -125,8 +134,7 @@ public class BasketService implements IBasketService {
                 orderId,
                 totalAmount,
                 null,
-                "vn"
-        );
+                "vn");
 
         ResponseEntity<PaymentUrlResponseDto> paymentResponse = paymentServiceClient.createPaymentUrl(paymentRequest);
 

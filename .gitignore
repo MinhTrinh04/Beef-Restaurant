@@ -188,6 +188,7 @@ bin/
 # Local env overrides
 .env.local
 .env.*.local
+.env.*
 
 # yarn v2
 .yarn/cache
