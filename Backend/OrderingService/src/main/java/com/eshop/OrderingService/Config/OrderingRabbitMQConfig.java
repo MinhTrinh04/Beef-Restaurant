@@ -1,6 +1,5 @@
 package com.eshop.OrderingService.Config;
 
-import com.eshop.buildingblocks.EventBus.Config.ConventionBasedJavaTypeMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -79,15 +78,30 @@ public class OrderingRabbitMQConfig {
     }
 
     @Bean
+    public Binding bindingOrderPaymentSucceededNotification(TopicExchange eventBusExchange, Queue orderServiceQueue) {
+        return BindingBuilder
+                .bind(orderServiceQueue)
+                .to(eventBusExchange)
+                .with(ORDER_PAYMENT_SUCCEEDED_NOTIFICATION_EVENT);
+    }
+
+    @Bean
+    public Binding bindingOrderCreatedWithPaymentLinkNotification(TopicExchange eventBusExchange,
+            Queue orderServiceQueue) {
+        return BindingBuilder
+                .bind(orderServiceQueue)
+                .to(eventBusExchange)
+                .with(ORDER_CREATED_WITH_PAYMENT_LINK_NOTIFICATION_EVENT);
+    }
+
+    @Bean
     public MessageConverter jsonMessageConverter() {
         Jackson2JsonMessageConverter converter = new Jackson2JsonMessageConverter();
 
-        // 1. Sử dụng mapper tùy chỉnh
-        ConventionBasedJavaTypeMapper typeMapper = new ConventionBasedJavaTypeMapper(
-                "com.eshop.OrderingService.IntegrationEvents.Events"
-        );
+        // Use custom mapper that supports events from multiple services
+        OrderingServiceTypeMapper typeMapper = new OrderingServiceTypeMapper();
 
-        // 2. Tin tưởng tất cả các gói
+        // Trust all packages
         typeMapper.setTrustedPackages("*");
 
         converter.setJavaTypeMapper(typeMapper);

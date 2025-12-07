@@ -3,28 +3,28 @@ package com.eshop.OrderingService.IntegrationEvents.Events;
 import com.eshop.buildingblocks.EventBus.Events.IntegrationEvent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * Event from OrderingService to UserService when order is created
+ * Contains full order details enriched from database with payment link
+ */
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-public class OrderPaymentSucceededIntegrationEvent extends IntegrationEvent {
+public class OrderCreatedForEmailEvent extends IntegrationEvent {
     private Long orderId;
     private String userEmail;
     private String userName;
-    private BigDecimal totalAmount;
+    private Double totalAmount;
+    private String paymentUrl;
     private List<OrderItemInfo> orderItems;
 
     @Getter
-    @NoArgsConstructor
     @AllArgsConstructor
     public static class OrderItemInfo {
         private String productName;
         private Integer units;
-        private BigDecimal unitPrice;
+        private Double unitPrice;
         private String pictureUrl;
     }
 }

@@ -3,7 +3,6 @@ package com.eshop.OrderingService.IntegrationEvents.EventHandling;
 import com.eshop.OrderingService.IntegrationEvents.Events.OrderPaymentSucceededIntegrationEvent;
 import com.eshop.OrderingService.Service.IOrderingService;
 import com.eshop.buildingblocks.EventBus.Abstractions.IIntegrationEventHandler;
-import com.eshop.buildingblocks.EventBus.Events.IntegrationEvent;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
