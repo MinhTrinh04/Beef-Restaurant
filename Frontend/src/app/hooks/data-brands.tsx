@@ -30,12 +30,12 @@ export const badgesListData = {
 		},
 		{
 			id: 6,
-			image: "/badges/badges-2.png",
+			image: "/badges/badges-6.png",
             altText: "Badges 6",
 		},
 		{
 			id: 7,
-			image: "/badges/badges-5.png",
+			image: "/badges/badges-7.png",
             altText: "Badges 7",
 		},
 	],
