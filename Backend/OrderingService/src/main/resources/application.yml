@@ -1,5 +1,5 @@
 server:
-    port: 8082
+    port: ${SERVER_PORT_ORDERING:8082}
 
 spring:
     application:
@@ -41,7 +41,7 @@ spring:
       oauth2:
         resourceserver:
           jwt:
-            issuer-uri: http://localhost:8180/realms/master
+            issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8180/realms/master}
 
 app:
   payment:
@@ -57,8 +57,8 @@ eureka:
     fetchRegistry: true
     registerWithEureka: true
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
-
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka/}
+      
 management:
   endpoints:
     web:
