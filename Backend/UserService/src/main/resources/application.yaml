@@ -40,8 +40,8 @@ spring:
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}
     port: ${MAIL_PORT:587}
-    username: ${MAIL_USERNAME:your-email@gmail.com}
-    password: ${MAIL_PASSWORD:your-password}
+    username: ${MAIL_USERNAME:minhfananime@gmail.com}
+    password: ${MAIL_PASSWORD:xfev qyad ayzl qqbd}
     from: ${MAIL_FROM:noreply@beefrestaurant.com}
     properties:
       mail:
@@ -55,7 +55,6 @@ spring:
           timeout: 5000
           writetimeout: 5000
 
-# Keycloak Configuration
 keycloak:
   server-url: http://localhost:8180
   realm: master
@@ -64,7 +63,6 @@ keycloak:
   admin-username: ${KEYCLOAK_ADMIN_USER:admin}
   admin-password: ${KEYCLOAK_ADMIN_PASSWORD:admin}
 
-# RabbitMQ Configuration
   rabbitmq:
     host: localhost
     port: 5672
