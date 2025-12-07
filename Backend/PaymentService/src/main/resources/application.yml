@@ -1,5 +1,5 @@
 server:
-  port: 8083
+  port: ${SERVER_PORT_PAYMENT:8083}
 spring:
   application:
     name: "payment-service"
@@ -8,19 +8,18 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8180/realms/master
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8180/realms/master}
 
 payos:
-  client-id: "837f93ad-5c2b-410f-aa51-b963253131c6"
-  api-key: "21bf9186-9aed-44c7-8e98-c5cea9f4d9fd"
-  checksum-key: "82f33e76456893a4f4af6e1e5cc7e512d6ec814639e34f6f258fb4e1df3e65c6"
-  return-url: "http://localhost:3000/payment-success"
-  cancel-url: "http://localhost:9000/api/payment/cancel"
-  fe-cancel-url: "http://localhost:3000/payment-cancel"
+  client-id: ${PAYOS_CLIENT_ID}
+  api-key: ${PAYOS_API_KEY}
+  checksum-key: ${PAYOS_CHECKSUM_KEY}
 
+  return-url: "${FRONTEND_URL:http://localhost:3000}/payment-success"
+  cancel-url: "${GATEWAY_URL:http://localhost:9000}/api/payment/cancel"
+  fe-cancel-url: "${FRONTEND_URL:http://localhost:3000}/payment-cancel"
+  
 eureka:
   client:
-    fetchRegistry: true
-    registerWithEureka: true
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka/}
