@@ -17,15 +17,18 @@ public class OrderingConstants {
     public static final String ORDER_STOCK_REJECTED_EVENT = "OrderStockRejectedIntegrationEvent";
     public static final String ORDER_PAYMENT_SUCCEEDED_EVENT = "OrderPaymentSucceededIntegrationEvent";
     public static final String ORDER_PAYMENT_FAILED_EVENT = "OrderPaymentFailedIntegrationEvent";
-
+    public static final String ORDER_PAYMENT_CANCELLED_EVENT = "OrderPaymentCancelledIntegrationEvent";
+    public static final String ORDER_PAYMENT_SUCCEEDED_NOTIFICATION_EVENT = "OrderPaymentSucceededNotificationEvent";
+    public static final String ORDER_CREATED_WITH_PAYMENT_LINK_NOTIFICATION_EVENT = "OrderCreatedWithPaymentLinkNotificationEvent";
+    public static final String ORDER_CREATED_FOR_EMAIL_EVENT = "OrderCreatedForEmailEvent";
+    public static final String ORDER_PAID_FOR_EMAIL_EVENT = "OrderPaidForEmailEvent";
+    public static final String ORDER_CANCELLED_FOR_EMAIL_EVENT = "OrderCancelledForEmailEvent";
     // Grace Period (in seconds)
     public static final int GRACE_PERIOD_SECONDS = 15;
 
     // Default values
     public static final String DEFAULT_CARD_TYPE = "Visa";
     public static final String DEFAULT_CURRENCY = "VND";
-
-
 
     public static final String QUEUE_NAME = "order-service-queue";
 }

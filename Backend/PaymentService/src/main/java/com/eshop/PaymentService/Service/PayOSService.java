@@ -1,8 +1,10 @@
 package com.eshop.PaymentService.Service;
 
 import com.eshop.PaymentService.DTO.CreatePaymentUrlRequestDto;
+import com.eshop.PaymentService.IntegrationEvents.Events.OrderPaymentCancelledIntegrationEvent;
 import com.eshop.PaymentService.IntegrationEvents.Events.OrderPaymentFailedIntegrationEvent;
 import com.eshop.PaymentService.IntegrationEvents.Events.OrderPaymentSucceededIntegrationEvent;
+import com.eshop.PaymentService.IntegrationEvents.Events.OrderCreatedWithPaymentLinkNotificationEvent;
 import com.eshop.buildingblocks.EventBus.Abstractions.IEventBus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +16,6 @@ import vn.payos.model.v2.paymentRequests.CreatePaymentLinkRequest;
 import vn.payos.model.v2.paymentRequests.CreatePaymentLinkResponse;
 import vn.payos.model.v2.paymentRequests.PaymentLinkItem;
 import vn.payos.model.webhooks.WebhookData;
-
 
 @Service
 @Slf4j
@@ -38,9 +39,9 @@ public class PayOSService {
         Long amount = requestDto.getAmount().longValue(); // PayOS cần int/long
 
         // 2. Tạo nội dung thanh toán
-        // Lưu ý: PayOS giới hạn độ dài description
         String description = "Thanh toan don " + orderCode;
-        if (description.length() > 25) description = description.substring(0, 25);
+        if (description.length() > 25)
+            description = description.substring(0, 25);
 
         // 3. Tạo Item (bắt buộc)
         PaymentLinkItem item = PaymentLinkItem.builder()
@@ -62,44 +63,64 @@ public class PayOSService {
         // 5. Gọi SDK PayOS
         CreatePaymentLinkResponse response = payOS.paymentRequests().create(payOSRequest);
 
-        log.info("PayOS Checkout URL created for Order {}: {}", orderCode, response.getCheckoutUrl());
-        return response.getCheckoutUrl();
+        String checkoutUrl = response.getCheckoutUrl();
+        if (checkoutUrl == null || checkoutUrl.isEmpty()) {
+            throw new RuntimeException("PayOS did not return checkout URL for Order: " + orderCode);
+        }
+
+        log.info("PayOS Checkout URL created for Order {}: {}", orderCode, checkoutUrl);
+
+        // Publish order created with payment link event to OrderingService
+        OrderCreatedWithPaymentLinkNotificationEvent event = new OrderCreatedWithPaymentLinkNotificationEvent(
+                orderCode,
+                checkoutUrl);
+        eventBus.publish(event);
+        log.info("✅ OrderCreatedWithPaymentLinkNotificationEvent published for OrderId: {}", orderCode);
+
+        return checkoutUrl;
     }
 
-    /**
-     * Xử lý Webhook từ PayOS (Thay thế cho VNPay Callback)
-     */
     public void handleWebhook(Object webhookBody) {
         try {
-            // 1. Xác thực Webhook (Verify Signature)
-            // PayOS SDK có hàm verify, nhưng nó cần ObjectNode hoặc String JSON
-            // Để đơn giản, ta convert Object nhận được về đúng kiểu
             WebhookData webhookData = payOS.webhooks().verify(webhookBody);
 
             Long orderId = webhookData.getOrderCode();
             String desc = webhookData.getDescription();
 
-            // 2. Kiểm tra trạng thái thanh toán
-            // Nếu webhook được gửi đến, thường nghĩa là thanh toán thành công (hoặc hủy)
-            // PayOS quy định code "00" là thành công
             if ("00".equals(webhookData.getCode())) {
                 log.info("✅ PayOS Webhook: Payment SUCCESS for OrderId: {}", orderId);
 
-                // Bắn sự kiện "Thanh toán thành công" -> OrderingService sẽ nghe thấy
-                OrderPaymentSucceededIntegrationEvent successEvent = new OrderPaymentSucceededIntegrationEvent(orderId);
-                eventBus.publish(successEvent);
+                // Publish payment succeeded event to OrderingService
+                OrderPaymentSucceededIntegrationEvent succeededEvent = new OrderPaymentSucceededIntegrationEvent(
+                        orderId,
+                        null, // email - fetch from order
+                        null, // userName - fetch from order
+                        null, // totalAmount - fetch from order
+                        null // orderItems - fetch from order
+                );
+                eventBus.publish(succeededEvent);
+                log.info("✅ OrderPaymentSucceededIntegrationEvent published for OrderId: {}", orderId);
             } else {
                 log.warn("❌ PayOS Webhook: Payment FAILED/CANCELLED for OrderId: {}. Desc: {}", orderId, desc);
 
-                // Bắn sự kiện "Thanh toán thất bại"
                 OrderPaymentFailedIntegrationEvent failedEvent = new OrderPaymentFailedIntegrationEvent(orderId, desc);
                 eventBus.publish(failedEvent);
             }
 
         } catch (Exception e) {
             log.error("Error processing PayOS Webhook: ", e);
-            // Có thể throw exception để PayOS biết và retry nếu cần
             throw new RuntimeException("Webhook verification failed");
         }
+    }
+
+    public void handlePaymentCancelled(Long orderId) {
+        log.warn("🚫 Payment cancelled by user for OrderId: {}", orderId);
+
+        OrderPaymentCancelledIntegrationEvent cancelledEvent = new OrderPaymentCancelledIntegrationEvent(
+                orderId,
+                "User cancelled payment");
+        eventBus.publish(cancelledEvent);
+
+        log.info("✅ OrderPaymentCancelledIntegrationEvent published for cancelled payment. OrderId: {}", orderId);
     }
 }

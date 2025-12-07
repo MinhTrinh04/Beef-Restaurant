@@ -1,5 +1,8 @@
 server:
   port: 8085
+  servlet:
+    context-path: /
+
 spring:
   application:
     name: "user-service"
@@ -15,11 +18,58 @@ spring:
       enabled: true
       path: /h2-console
 
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
   security:
     oauth2:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:8180/realms/master
+
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:minhfananime@gmail.com}
+    password: ${MAIL_PASSWORD:xfev qyad ayzl qqbd}
+    from: ${MAIL_FROM:noreply@beefrestaurant.com}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl.protocols: TLSv1.2
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+keycloak:
+  server-url: http://localhost:8180
+  realm: master
+  client-id: ${KEYCLOAK_CLIENT_ID:test-user}
+  client-secret: ${KEYCLOAK_CLIENT_SECRET:CVyEApmC2fpBYTAr6arwl6P2VztQwKJ5}
+  admin-username: ${KEYCLOAK_ADMIN_USER:admin}
+  admin-password: ${KEYCLOAK_ADMIN_PASSWORD:admin}
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    connection-timeout: 10000
 
 eureka:
   client:
@@ -27,3 +77,17 @@ eureka:
     registerWithEureka: true
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+
+# Actuator & Monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
