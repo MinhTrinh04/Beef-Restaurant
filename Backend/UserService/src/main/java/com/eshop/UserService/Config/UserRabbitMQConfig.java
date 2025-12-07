@@ -17,14 +17,6 @@ public class UserRabbitMQConfig {
         return new Queue(QUEUE_NAME, true);
     }
 
-    @Bean
-    public Binding orderPaymentSucceededBinding(
-            Queue userServiceQueue,
-            TopicExchange eventBusExchange) {
-        return BindingBuilder.bind(userServiceQueue)
-                .to(eventBusExchange)
-                .with(THANK_YOU_ORDER_EMAIL_EVENT);
-    }
 
     @Bean
     public Binding orderCreatedForEmailBinding(

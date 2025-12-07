@@ -9,15 +9,11 @@ import com.eshop.buildingblocks.EventBus.Abstractions.IIntegrationEventHandler;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Handles notification from PaymentService when order payment link is created
- * Fetches order details from database and publishes enriched email event to
- * UserService
- */
 @Service
 @Slf4j
 @AllArgsConstructor
@@ -28,12 +24,13 @@ public class OrderCreatedWithPaymentLinkNotificationEventHandler
         private final IEventBus eventBus;
 
         @Override
+        @Transactional(readOnly = true)
         public void handle(OrderCreatedWithPaymentLinkNotificationEvent event) {
                 log.info("📧 OrderCreatedWithPaymentLinkNotificationEvent received for OrderId: {}",
                                 event.getOrderId());
 
                 try {
-                        // Fetch order from database
+                        // Fetch order from database with lazy-loaded orderItems in active transaction
                         Order order = orderRepository.findByOrderId(event.getOrderId())
                                         .orElseThrow(() -> new RuntimeException(
                                                         "Order not found: " + event.getOrderId()));

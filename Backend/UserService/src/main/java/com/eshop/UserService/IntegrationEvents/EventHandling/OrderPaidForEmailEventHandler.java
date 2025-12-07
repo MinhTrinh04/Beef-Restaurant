@@ -19,35 +19,35 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class OrderPaidForEmailEventHandler implements IIntegrationEventHandler<OrderPaidForEmailEvent> {
 
-    private final EmailService emailService;
+        private final EmailService emailService;
 
-    @Override
-    public void handle(OrderPaidForEmailEvent event) {
-        log.info("📧 OrderPaidForEmailEvent received for OrderId: {}", event.getOrderId());
+        @Override
+        public void handle(OrderPaidForEmailEvent event) {
+                log.info("📧 OrderPaidForEmailEvent received for OrderId: {}", event.getOrderId());
 
-        try {
-            // Convert OrderPaidForEmailEvent items to EmailService item format
-            List<OrderCreatedForEmailEvent.OrderItemInfo> orderItems = event.getOrderItems().stream()
-                    .map(item -> new OrderCreatedForEmailEvent.OrderItemInfo(
-                            item.getProductName(),
-                            item.getUnits(),
-                            item.getUnitPrice(),
-                            item.getPictureUrl()))
-                    .collect(Collectors.toList());
+                try {
+                        // Convert OrderPaidForEmailEvent items to EmailService item format
+                        List<OrderCreatedForEmailEvent.OrderItemInfo> orderItems = event.getOrderItems().stream()
+                                        .map(item -> new OrderCreatedForEmailEvent.OrderItemInfo(
+                                                        item.getProductName(),
+                                                        item.getUnits(),
+                                                        item.getUnitPrice(),
+                                                        item.getPictureUrl()))
+                                        .collect(Collectors.toList());
 
-            // Send payment success email
-            emailService.sendOrderPaidEmail(
-                    event.getUserEmail(),
-                    event.getUserName(),
-                    event.getOrderId(),
-                    event.getTotalAmount(),
-                    orderItems);
+                        // Send payment success email
+                        emailService.sendOrderPaidEmail(
+                                        event.getUserEmail(),
+                                        event.getUserName(),
+                                        event.getOrderId(),
+                                        event.getTotalAmount(),
+                                        orderItems);
 
-            log.info("✅ Order paid email sent for OrderId: {}", event.getOrderId());
+                        log.info("✅ Order paid email sent for OrderId: {}", event.getOrderId());
 
-        } catch (Exception e) {
-            log.error("❌ Failed to send order paid email for OrderId: {}. Error: {}", event.getOrderId(),
-                    e.getMessage(), e);
+                } catch (Exception e) {
+                        log.error("❌ Failed to send order paid email for OrderId: {}. Error: {}", event.getOrderId(),
+                                        e.getMessage(), e);
+                }
         }
-    }
 }

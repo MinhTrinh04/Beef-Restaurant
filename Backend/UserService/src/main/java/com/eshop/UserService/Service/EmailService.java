@@ -26,7 +26,7 @@ public class EmailService {
         if (paymentUrl == null || paymentUrl.isEmpty()) {
             paymentUrl = "#";
         }
-        
+
         try {
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -220,7 +220,8 @@ public class EmailService {
                 "    <p>Cảm ơn bạn! Thanh toán của bạn đã được xác nhận thành công.</p>" +
                 "    <div class='info-box'>" +
                 "      <p><strong>Mã đơn hàng:</strong> #" + orderId + "</p>" +
-                "      <p><strong>Số tiền thanh toán:</strong> <span class='total'>" + formatCurrency(totalAmount) + "</span></p>"
+                "      <p><strong>Số tiền thanh toán:</strong> <span class='total'>" + formatCurrency(totalAmount)
+                + "</span></p>"
                 +
                 "      <p><strong>Trạng thái:</strong> ✅ Đã thanh toán</p>" +
                 "    </div>" +
