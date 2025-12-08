@@ -25,4 +25,28 @@ public class IdentityService implements IIdentityService {
 
         return authentication.getName();
     }
+
+    @Override
+    public String getUserEmail() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return null;
+        }
+
+        Object principal = authentication.getPrincipal();
+
+        if (principal instanceof Jwt) {
+            Jwt jwt = (Jwt) principal;
+            Object emailClaim = jwt.getClaim("email");
+            if (emailClaim != null) {
+                return emailClaim.toString();
+            }
+            Object usernameClaim = jwt.getClaim("preferred_username");
+            if (usernameClaim != null) {
+                return usernameClaim.toString();
+            }
+        }
+
+        return authentication.getName();
+    }
 }

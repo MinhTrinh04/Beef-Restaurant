@@ -71,7 +71,7 @@ export const sliderHeroIntroData = {
 	items: [
 		{
 			id: 1,
-			image: "/hero/hero-1.jpeg",
+			image: "/hero/hero-1.jpg",
 			altText: "hero-1",
 			subtitle: "Welcome to Our Restaurant",
 			title: "Beef - Restaurant Template",

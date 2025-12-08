@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: ${SERVER_PORT_MENU:8080}
 spring:
   application:
     name: "menu-service"
@@ -22,14 +22,14 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8180/realms/master
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8180/realms/master}
 
 eureka:
   client:
     fetchRegistry: true
     registerWithEureka: true
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka/}
 
 management:
   endpoints:
