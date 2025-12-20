@@ -29,9 +29,10 @@ spring:
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/api/users/**
+            - Path=/api/users/**, /api/admin/**
           filters:
             - RewritePath=/api/users, /api/v1/users
+            - RewritePath=/api/admin/(?<segment>.*), /api/v1/admin/${segment}
             - RewritePath=/api/users/(?<segment>.*), /api/v1/users/${segment}
 
         - id: menu_service_route
