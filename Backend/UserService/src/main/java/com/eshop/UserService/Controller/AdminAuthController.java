@@ -1,6 +1,8 @@
 package com.eshop.UserService.Controller;
 
 import com.eshop.UserService.DTO.*;
+import com.eshop.UserService.Model.UserProfile;
+import com.eshop.UserService.Repository.UserRepository;
 import com.eshop.UserService.Service.KeycloakService;
 import com.eshop.UserService.Service.UserService;
 import jakarta.servlet.http.Cookie;
@@ -14,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/admin")
@@ -26,6 +29,9 @@ public class AdminAuthController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     /**
      * Admin Login - Chỉ cho phép users có role ADMIN
@@ -48,12 +54,7 @@ public class AdminAuthController {
             String refreshToken = (String) tokenResponse.get("refreshToken");
             Long expiresIn = (Long) tokenResponse.get("expiresIn");
 
-            // 2. Validate user có role ADMIN không
-            Map<String, Object> userInfo = keycloakService.getUserProfile(accessToken);
-            // TODO: Check if user has ADMIN role from token claims
-            // Có thể parse JWT để check roles hoặc call Keycloak API
-
-            // 3. Set refresh token vào HttpOnly cookie
+            // 2. Set refresh token vào HttpOnly cookie
             Cookie refreshCookie = new Cookie("admin_refresh_token", refreshToken);
             refreshCookie.setHttpOnly(true);
             refreshCookie.setSecure(false); // Set true trong production với HTTPS
@@ -62,15 +63,33 @@ public class AdminAuthController {
             refreshCookie.setAttribute("SameSite", "Lax");
             response.addCookie(refreshCookie);
 
-            // 4. Lấy user profile
-            UserProfileDTO profile = userService.getMyProfile(request.getEmail());
+            // 3. Lấy profile từ UserService DB (auto-sync nếu chưa tồn tại)
+            String email = request.getEmail();
+            Optional<UserProfile> userProfileOpt = userRepository.findById(email);
 
-            // 5. Trả về access token cho frontend (lưu trong memory)
+            UserProfile userProfile;
+            if (userProfileOpt.isPresent()) {
+                userProfile = userProfileOpt.get();
+            } else {
+                // Nếu profile chưa tồn tại, tạo mới từ thông tin Keycloak (giống user login)
+                Map<String, Object> keycloakUserInfo = keycloakService.getUserProfile(accessToken);
+
+                userProfile = new UserProfile();
+                userProfile.setEmail(email);
+                userProfile.setKeycloakUserId((String) keycloakUserInfo.get("keycloakUserId"));
+                userProfile.setFirstName((String) keycloakUserInfo.get("firstName"));
+                userProfile.setLastName((String) keycloakUserInfo.get("lastName"));
+
+                userProfile = userRepository.save(userProfile);
+                log.info("Admin profile created during login for email: {}", email);
+            }
+
+            // 4. Trả về access token cho frontend (lưu trong memory)
             AdminLoginResponse loginResponse = AdminLoginResponse.builder()
                     .accessToken(accessToken)
                     .expiresIn(expiresIn)
                     .tokenType("Bearer")
-                    .userProfile(profile)
+                    .userProfile(mapToDTO(userProfile))
                     .build();
 
             log.info("Admin login successful for: {}", request.getEmail());
@@ -180,5 +199,20 @@ public class AdminAuthController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.error("Không thể lấy thông tin", "GET_PROFILE_FAILED"));
         }
+    }
+
+    /**
+     * Map UserProfile entity sang DTO
+     */
+    private UserProfileDTO mapToDTO(UserProfile userProfile) {
+        return UserProfileDTO.builder()
+                .email(userProfile.getEmail())
+                .keycloakUserId(userProfile.getKeycloakUserId())
+                .firstName(userProfile.getFirstName())
+                .lastName(userProfile.getLastName())
+                .phoneNumber(userProfile.getPhoneNumber())
+                .createdAt(userProfile.getCreatedAt())
+                .updatedAt(userProfile.getUpdatedAt())
+                .build();
     }
 }

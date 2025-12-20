@@ -48,9 +48,9 @@ public class SecurityConfig {
                                                 .permitAll()
                                                 // Admin auth endpoints - public (login, refresh, logout)
                                                 .requestMatchers(HttpMethod.POST,
-                                                                "/api/v1/admin/auth/login",
-                                                                "/api/v1/admin/auth/refresh-token",
-                                                                "/api/v1/admin/auth/logout")
+                                                                "/api/v1/admin/login",
+                                                                "/api/v1/admin/refresh-token",
+                                                                "/api/v1/admin/logout")
                                                 .permitAll()
                                                 // Authenticated endpoints - cần token
                                                 .requestMatchers(HttpMethod.GET, "/api/v1/users/me").authenticated()
