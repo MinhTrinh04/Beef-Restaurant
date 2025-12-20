@@ -127,6 +127,53 @@ public class UserController {
                 "Kiểm tra email thành công"));
     }
 
+    /**
+     * Gửi lại email xác thực
+     * POST /api/v1/users/resend-verification
+     */
+    @PostMapping("/resend-verification")
+    public ResponseEntity<ApiResponse<Void>> resendVerificationEmail(
+            @Valid @RequestBody ResendVerificationRequest request) {
+        try {
+            log.info("Resend verification email request for: {}", request.getEmail());
+
+            keycloakService.resendVerificationEmail(request.getEmail());
+
+            return ResponseEntity.ok(ApiResponse.ok(null,
+                    "Email xác thực đã được gửi lại. Vui lòng kiểm tra hộp thư của bạn."));
+
+        } catch (ResponseStatusException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Error resending verification email: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Không thể gửi lại email xác thực", "RESEND_FAILED"));
+        }
+    }
+
+    /**
+     * Kiểm tra trạng thái xác thực email
+     * GET /api/v1/users/verification-status?email=xxx@xxx.com
+     */
+    @GetMapping("/verification-status")
+    public ResponseEntity<ApiResponse<Map<String, Boolean>>> checkVerificationStatus(
+            @RequestParam String email) {
+        try {
+            log.info("Check verification status for: {}", email);
+
+            boolean isVerified = keycloakService.checkEmailVerified(email);
+
+            return ResponseEntity.ok(ApiResponse.ok(
+                    Map.of("verified", isVerified),
+                    "Kiểm tra trạng thái thành công"));
+
+        } catch (Exception e) {
+            log.error("Error checking verification status: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("Không thể kiểm tra trạng thái", "CHECK_FAILED"));
+        }
+    }
+
     // ==================== USER PROFILE ENDPOINTS ====================
 
     /**
