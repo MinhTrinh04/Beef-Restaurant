@@ -11,7 +11,7 @@ import { AuthProvider } from 'react-oidc-context';
 */
 const oidcConfig = {
     authority: "http://localhost:8180/realms/master",
-    client_id: "beef-admin",
+    client_id: "test-user",
     redirect_uri: window.location.origin,
     onSigninCallback: (_user) => {
         // You can redirect to specific page here if needed
