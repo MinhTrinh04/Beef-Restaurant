@@ -63,7 +63,7 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:24.0.0
     container_name: keycloak
-    command: start-dev
+    command: start-dev --import-realm
     environment:
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
@@ -72,6 +72,8 @@ services:
       KC_HOSTNAME: localhost
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import
     ports:
       - "8180:8080"
     depends_on:
@@ -84,6 +86,9 @@ services:
   # ==========================================
   # 2. MICROSERVICES
   # ==========================================
+  # NOTE: All microservice images are built locally using Maven Jib plugin
+  # Run: cd Backend/Docker-Compose/scripts && ./build-all-services.ps1 (or .sh)
+  # Images will be tagged as: minh28012004/<service-name>:latest
 
   discovery-service:
     image: "minh28012004/discovery-service:latest"
