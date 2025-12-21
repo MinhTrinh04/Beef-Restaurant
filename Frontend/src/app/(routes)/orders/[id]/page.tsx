@@ -57,7 +57,7 @@ const OrderDetailPage = () => {
         <>
             <HeroInnerBlock
                 title={`Order #${order.orderNumber}`}
-                image="/hero/hero-inner-1.jpg"
+                image="/hero/hero-inner-1.webp"
                 altText="Order Details"
                 breadcrumbs={[
                     { id: 1, title: "Home", link: "/" },

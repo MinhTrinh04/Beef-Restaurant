@@ -9,7 +9,6 @@
 	width: 100%;
 	z-index: 99;
 	background-color: transparent;
-	border-bottom: 1px solid var(--border-color);
 	transition: all 0.4s ease-in-out;
 
 	&__content {
@@ -155,7 +154,7 @@
     Header Area 
 ======================*/
 .header{
-    @apply w-full flex flex-wrap items-center justify-between pl-0 pr-4 lg:pr-12 xl:px-8 py-4 top-0 xl:top-12 left-0 right-0 z-[99] opacity-100 absolute transform-none transition-all duration-300 ease-in-out;
+    @apply w-full flex flex-wrap items-center justify-between pl-0 pr-4 lg:pr-12 xl:px-8 py-4 top-0 xl:top-12 left-0 right-0 z-[99] opacity-100 absolute transform-none transition-all duration-300 ease-in-out bg-surface-dark/40;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
 
@@ -163,7 +162,7 @@
         @apply flex flex-wrap items-center justify-between w-full;
     }
     &__logo{
-        @apply w-[160px] sm:w-[160px] md:w-[180px] pl-4 xl:pl-0;
+        @apply w-[80px] sm:w-[80px] md:w-[100px] pl-4 xl:pl-0;
         transition: transform 0.3s ease;
         img{
 			@apply w-full h-auto;
@@ -276,7 +275,7 @@
         animation: slideDown 0.3s ease-out forwards;
 		.header__logo{
 			img{
-				@apply w-[120px] h-auto;
+				@apply w-[70px] h-auto;
 			}
 		}
     }

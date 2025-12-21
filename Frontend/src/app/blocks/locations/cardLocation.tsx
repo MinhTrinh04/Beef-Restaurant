@@ -19,8 +19,8 @@ export const LocationItem = ({
 				<Image
 					src={imageSrc}
 					alt={imageAltText || `Image of the ${name} location`}
-					width={500}
-					height={300}
+					fill
+					className="object-cover"
 				/>
 			</div>
 			{/*/ image */}

@@ -55,12 +55,12 @@ const BadgesList = ({
 				{items.map((item) => (
 					<SwiperSlide key={item.id}>
 						<div className="badges__item">
-							<Image
-								src={item.image}
-								alt={item.altText || defaultAltText}
-								width={180}
-								height={180}
-							/>
+								<Image
+									src={item.image}
+									alt={item.altText || defaultAltText}
+									fill
+									className="object-cover"
+								/>
 						</div>
 					</SwiperSlide>
 				))}

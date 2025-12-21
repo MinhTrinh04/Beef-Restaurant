@@ -42,6 +42,10 @@ public class SecurityConfig {
                                                 .requestMatchers(HttpMethod.POST, "/api/v1/users/logout").permitAll()
                                                 .requestMatchers(HttpMethod.GET, "/api/v1/users/check-email")
                                                 .permitAll()
+                                                .requestMatchers(HttpMethod.POST, "/api/v1/users/resend-verification")
+                                                .permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/api/v1/users/verification-status")
+                                                .permitAll()
                                                 // Authenticated endpoints - cần token
                                                 .requestMatchers(HttpMethod.GET, "/api/v1/users/me").authenticated()
                                                 .requestMatchers(HttpMethod.PUT, "/api/v1/users/me").authenticated()
