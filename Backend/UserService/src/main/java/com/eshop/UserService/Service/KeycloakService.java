@@ -64,7 +64,7 @@ public class KeycloakService {
             userJson.addProperty("email", email);
             userJson.addProperty("firstName", firstName);
             userJson.addProperty("lastName", lastName != null ? lastName : "");
-            userJson.addProperty("emailVerified", true); // ✅ Set true để user có thể login ngay
+            userJson.addProperty("emailVerified", false); // ❌ Set false - user must verify email
             userJson.addProperty("enabled", true); // ✅ Ensure user is enabled
 
             // Set password
@@ -91,6 +91,11 @@ public class KeycloakService {
                 String location = response.headers().firstValue("Location").orElse("");
                 String keycloakUserId = location.substring(location.lastIndexOf("/") + 1);
                 log.info("User registered successfully on Keycloak: {}", email);
+                
+                // Trigger email verification
+                sendVerificationEmail(keycloakUserId);
+                log.info("Verification email sent to: {}", email);
+                
                 return keycloakUserId;
             } else if (response.statusCode() == 409) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Email đã được đăng ký");
@@ -131,8 +136,16 @@ public class KeycloakService {
 
             if (response.statusCode() == 200) {
                 JsonObject jsonResponse = gson.fromJson(response.body(), JsonObject.class);
+                String accessToken = jsonResponse.get("access_token").getAsString();
+                
+                // Check if email is verified
+                if (!isEmailVerified(accessToken)) {
+                    throw new ResponseStatusException(HttpStatus.FORBIDDEN, 
+                        "Email chưa được xác thực. Vui lòng kiểm tra email và xác thực tài khoản trước khi đăng nhập.");
+                }
+                
                 Map<String, Object> result = new HashMap<>();
-                result.put("accessToken", jsonResponse.get("access_token").getAsString());
+                result.put("accessToken", accessToken);
                 result.put("refreshToken", jsonResponse.get("refresh_token").getAsString());
                 result.put("expiresIn", jsonResponse.get("expires_in").getAsLong());
                 result.put("tokenType", jsonResponse.get("token_type").getAsString());
@@ -327,6 +340,156 @@ public class KeycloakService {
         } catch (Exception e) {
             log.error("Error assigning role to user: {}", e.getMessage());
             // Không throw exception - registration should succeed even if role assignment fails
+        }
+    }
+
+    /**
+     * Send verification email to user via Keycloak
+     */
+    private void sendVerificationEmail(String keycloakUserId) throws Exception {
+        try {
+            String adminToken = getAdminToken();
+            
+            // Keycloak API: PUT /admin/realms/{realm}/users/{id}/send-verify-email
+            String url = keycloakServerUrl + "/admin/realms/" + realm + "/users/" + keycloakUserId + "/send-verify-email";
+            
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header("Authorization", "Bearer " + adminToken)
+                    .PUT(HttpRequest.BodyPublishers.noBody())
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 204 || response.statusCode() == 200) {
+                log.info("Verification email sent successfully for user: {}", keycloakUserId);
+            } else {
+                log.error("Failed to send verification email: {}", response.body());
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, 
+                    "Không thể gửi email xác thực. Vui lòng thử lại sau.");
+            }
+        } catch (ResponseStatusException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Error sending verification email: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, 
+                "Lỗi khi gửi email xác thực: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Resend verification email to user by email address
+     */
+    public void resendVerificationEmail(String email) throws Exception {
+        try {
+            String adminToken = getAdminToken();
+            
+            // Get user by email
+            String searchUrl = keycloakServerUrl + "/admin/realms/" + realm + "/users?email=" + 
+                              URLEncoder.encode(email, StandardCharsets.UTF_8);
+            
+            HttpRequest searchRequest = HttpRequest.newBuilder()
+                    .uri(URI.create(searchUrl))
+                    .header("Authorization", "Bearer " + adminToken)
+                    .GET()
+                    .build();
+
+            HttpResponse<String> searchResponse = httpClient.send(searchRequest, HttpResponse.BodyHandlers.ofString());
+
+            if (searchResponse.statusCode() == 200) {
+                JsonArray users = gson.fromJson(searchResponse.body(), JsonArray.class);
+                
+                if (users.size() == 0) {
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Email không tồn tại trong hệ thống");
+                }
+                
+                JsonObject user = users.get(0).getAsJsonObject();
+                String keycloakUserId = user.get("id").getAsString();
+                boolean emailVerified = user.get("emailVerified").getAsBoolean();
+                
+                if (emailVerified) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, 
+                        "Email đã được xác thực. Bạn có thể đăng nhập ngay.");
+                }
+                
+                // Send verification email
+                sendVerificationEmail(keycloakUserId);
+                log.info("Resent verification email to: {}", email);
+                
+            } else {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, 
+                    "Không thể tìm kiếm người dùng");
+            }
+        } catch (ResponseStatusException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Error resending verification email: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, 
+                "Lỗi khi gửi lại email xác thực: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Check if user's email is verified by access token
+     */
+    private boolean isEmailVerified(String accessToken) throws Exception {
+        try {
+            String userInfoUrl = keycloakServerUrl + "/realms/" + realm + "/protocol/openid-connect/userinfo";
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(userInfoUrl))
+                    .header("Authorization", "Bearer " + accessToken)
+                    .GET()
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 200) {
+                JsonObject userInfo = gson.fromJson(response.body(), JsonObject.class);
+                return userInfo.has("email_verified") && userInfo.get("email_verified").getAsBoolean();
+            } else {
+                log.error("Failed to get user info: {}", response.body());
+                return false;
+            }
+        } catch (Exception e) {
+            log.error("Error checking email verification: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Check if email is verified by email address
+     */
+    public boolean checkEmailVerified(String email) throws Exception {
+        try {
+            String adminToken = getAdminToken();
+            
+            String searchUrl = keycloakServerUrl + "/admin/realms/" + realm + "/users?email=" + 
+                              URLEncoder.encode(email, StandardCharsets.UTF_8);
+            
+            HttpRequest searchRequest = HttpRequest.newBuilder()
+                    .uri(URI.create(searchUrl))
+                    .header("Authorization", "Bearer " + adminToken)
+                    .GET()
+                    .build();
+
+            HttpResponse<String> searchResponse = httpClient.send(searchRequest, HttpResponse.BodyHandlers.ofString());
+
+            if (searchResponse.statusCode() == 200) {
+                JsonArray users = gson.fromJson(searchResponse.body(), JsonArray.class);
+                
+                if (users.size() == 0) {
+                    return false;
+                }
+                
+                JsonObject user = users.get(0).getAsJsonObject();
+                return user.get("emailVerified").getAsBoolean();
+            }
+            
+            return false;
+        } catch (Exception e) {
+            log.error("Error checking email verification status: {}", e.getMessage());
+            return false;
         }
     }
 }
