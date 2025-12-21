@@ -14,7 +14,7 @@ export const teamBlockData = {
 			id: 1,
 			name: "Sara Smith",
 			position: "Head Chef",
-			image: "/team/team-1.jpg",
+			image: "/team/team-1.webp",
 			social: [
 				{
 					href: "http://www.facebook.com",
@@ -37,7 +37,7 @@ export const teamBlockData = {
 			id: 2,
 			name: "Werner Kuchler",
 			position: "Sous Chef",
-			image: "/team/team-2.jpg",
+			image: "/team/team-2.webp",
 			social: [
 				{
 					href: "http://www.facebook.com",
@@ -60,7 +60,7 @@ export const teamBlockData = {
 			id: 3,
 			name: "John Doe",
 			position: "Sous Chef",
-			image: "/team/team-3.jpg",
+			image: "/team/team-3.webp",
 			social: [
 				{
 					href: "http://www.facebook.com",
@@ -83,7 +83,7 @@ export const teamBlockData = {
 			id: 4,
 			name: "Eric Doe",
 			position: "Sous Chef",
-			image: "/team/team-4.jpg",
+			image: "/team/team-4.webp",
 			social: [
 				{
 					href: "http://www.facebook.com",
@@ -106,7 +106,7 @@ export const teamBlockData = {
 			id: 5,
 			name: "Ana Doe",
 			position: "Sous Chef",
-			image: "/team/team-5.jpg",
+			image: "/team/team-5.webp",
 			social: [
 				{
 					href: "http://www.facebook.com",
@@ -129,7 +129,7 @@ export const teamBlockData = {
 			id: 6,
 			name: "Jane Doe",
 			position: "Sous Chef",
-			image: "/team/team-6.jpg",
+			image: "/team/team-6.webp",
 			social: [
 				{
 					href: "http://www.facebook.com",

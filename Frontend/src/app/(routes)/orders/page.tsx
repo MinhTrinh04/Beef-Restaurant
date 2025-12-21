@@ -30,7 +30,7 @@ const OrdersPage = () => {
         <>
             <HeroInnerBlock
                 title="My Orders"
-                image="/hero/hero-inner-1.jpg"
+                image="/hero/hero-inner-1.webp"
                 altText="My Orders"
                 breadcrumbs={[{ id: 1, title: "Home", link: "/" }, { id: 2, title: "My Orders", link: "/orders" }]}
             />

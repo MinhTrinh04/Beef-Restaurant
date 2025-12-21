@@ -15,7 +15,7 @@ export const specialOffersData = {
 			tag: "Specialty",
 			title: "Four cheese garlic bread",
 			price: "$32.00",
-			image: "/special-offers/special-offers-5.jpg",
+			image: "/special-offers/special-offers-5.webp",
 			altText: "Four cheese garlic bread",
 			description_primary:
 				"Nam nec tellus a odio tincidunt auctor a ornare odio. Sed non mauris vitae erat consequat auctor eu in elit.",
@@ -29,7 +29,7 @@ export const specialOffersData = {
 			tag: "Specialty",
 			title: "Nduja Pork Chicken Terrine",
 			price: "$41.00",
-			image: "/special-offers/special-offers-6.jpg",
+			image: "/special-offers/special-offers-6.webp",
 			altText: "Nduja Pork Chicken Terrine",
 			description_primary:
 				"Nam nec tellus a odio tincidunt auctor aornare odio. Sed non mauris vitae eratconsequat auctor eu in elit.",
@@ -43,7 +43,7 @@ export const specialOffersData = {
 			tag: "Specialty",
 			title: "Crab With Curry Sources",
 			price: "$18.00",
-			image: "/special-offers/special-offers-7.jpg",
+			image: "/special-offers/special-offers-7.webp",
 			altText: "Crab With Curry Sources",
 			description_primary:
 				"Nam nec tellus a odio tincidunt auctor aornare odio. Sed non mauris vitae eratconsequat auctor eu in elit.",

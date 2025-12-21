@@ -2,7 +2,6 @@
 /*                                   Header                                   */
 /* -------------------------------------------------------------------------- */
 
-/* 
 .header {
 	position: absolute;
 	top: 0;
@@ -10,7 +9,6 @@
 	width: 100%;
 	z-index: 99;
 	background-color: transparent;
-	border-bottom: 1px solid var(--border-color);
 	transition: all 0.4s ease-in-out;
 
 	&__content {
@@ -30,7 +28,7 @@
 	&__menu {
 		&-list {
 			display: flex;
-			gap: 1.5rem;
+			gap: 1.5rem; /* Adjust gap between menu items */
 			list-style: none;
 			margin: 0;
 			padding: 0;
@@ -81,6 +79,7 @@
 		}
 
 		&-item {
+			/* No specific styles needed for item itself */
 		}
 
 		&-link {
@@ -104,6 +103,7 @@
 		@apply flex items-center pr-4 xl:pr-0;
 	}
 
+	/* Sticky Header Styles */
 	&__sticky {
 		position: fixed;
 		background-color: var(--background-color);
@@ -111,7 +111,6 @@
 		animation: slideDown 0.5s ease-in-out;
 	}
 }
-*/
 
 @keyframes slideDown {
 	from {
@@ -155,7 +154,7 @@
     Header Area 
 ======================*/
 .header{
-    @apply w-full flex flex-wrap items-center justify-between pl-0 pr-4 lg:pr-12 xl:px-8 py-4 top-0 xl:top-12 left-0 right-0 z-[99] opacity-100 absolute transform-none transition-all duration-300 ease-in-out;
+    @apply w-full flex flex-wrap items-center justify-between pl-0 pr-4 lg:pr-12 xl:px-8 py-4 top-0 xl:top-12 left-0 right-0 z-[99] opacity-100 absolute transform-none transition-all duration-300 ease-in-out bg-surface-dark/40;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
 

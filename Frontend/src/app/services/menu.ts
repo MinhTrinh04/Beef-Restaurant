@@ -75,7 +75,7 @@ export function transformMenuItemsToCategories(
             id: catId,
             title: category?.name || `Category ${catId}`,
             phrase: category?.description || "",
-            image: category?.image || `/menu/menu-${catId}.jpg`, // Default image fallback
+            image: category?.image || `/menu/menu-${catId}.webp`, // Default image fallback
             altText: category?.name || `Category ${catId}`,
             dishesList: dishes,
             anchor: `category-${catId}`,

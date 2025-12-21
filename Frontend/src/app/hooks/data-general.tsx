@@ -80,7 +80,7 @@ export const socialIconsData = [
 ];
 
 export const confirmationPageData: StatusPageProps = {
-    backgroundImageSrc: "/bg/bg-cta.jpg",
+    backgroundImageSrc: "/bg/bg-cta.webp",
     backgroundImageAlt: "Decorative background with a pleasant texture",
     imageSrc: "",
     imageAlt: "Illustration for confirmation page",
@@ -93,7 +93,7 @@ export const confirmationPageData: StatusPageProps = {
 };
 
 export const paymentSuccessPageData: StatusPageProps = {
-    backgroundImageSrc: "/bg/bg-cta.jpg",
+    backgroundImageSrc: "/bg/bg-cta.webp",
     backgroundImageAlt: "Decorative background with a pleasant texture",
     imageSrc: "",
     imageAlt: "Illustration for payment success",
@@ -106,7 +106,7 @@ export const paymentSuccessPageData: StatusPageProps = {
 };
 
 export const paymentCancelPageData: StatusPageProps = {
-    backgroundImageSrc: "/bg/bg-cta.jpg",
+    backgroundImageSrc: "/bg/bg-cta.webp",
     backgroundImageAlt: "Decorative background with a pleasant texture",
     imageSrc: "",
     imageAlt: "Illustration for payment cancellation",

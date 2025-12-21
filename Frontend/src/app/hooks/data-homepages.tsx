@@ -9,14 +9,14 @@ export const homepagesListData = {
 	items: [
 		{
 			id: 1,
-			image: "/sections/home-classic.jpg",
+			image: "/sections/home-classic.webp",
 			altText: "Homer Classic",
 			link: "/home-classic",
 			caption: "Home Classic",
 		},
 		{
 			id: 2,
-			image: "/sections/home-creative.jpg",
+			image: "/sections/home-creative.webp",
 			altText: "Homer Creative",
 			link: "/home-creative",
 			caption: "Home Creative",

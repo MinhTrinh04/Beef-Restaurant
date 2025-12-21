@@ -14,7 +14,7 @@ export const HeroInnerContactData = {
 			link: "",
 		},
 	],
-	image: "/bg/bg-cta.jpg",
+	image: "/bg/bg-cta.webp",
   altText: "Contact us",
 };
 
@@ -62,7 +62,7 @@ export const locationsData = {
 			addressLine2: "NY 10001, USA",
 			phone: "+1 123 456 7890",
 			email: "brooklyn@beef.com",
-			imageSrc: "/locations/location-1.jpg",
+			imageSrc: "/locations/location-1.webp",
 			imageAltText: "Image of the Brooklyn location",
 			directionLink: "#", // Replace with actual direction link
 			directionButtonText: "Get direction",
@@ -74,7 +74,7 @@ export const locationsData = {
 			addressLine2: "NY 11216, USA",
 			phone: "+1 123 456 7890",
 			email: "queens@beef.com", // Assuming different email, update if needed
-			imageSrc: "/locations/location-2.jpg",
+			imageSrc: "/locations/location-2.webp",
 			imageAltText: "Image of the Queens location",
 			directionLink: "#", // Replace with actual direction link
 			directionButtonText: "Get direction",

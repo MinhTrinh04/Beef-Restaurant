@@ -11,7 +11,7 @@ export const historyData = {
 			title: "Open first restaurant",
 			description:
 				"Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias voluptatum, at est quis debitis corrupti aut repellendus, excepturi culpa perspiciatis soluta delectus numquam praesentium nesciunt a molestiae totam dignissimos. Error!",
-			imageSrc: "/history/history-1.jpg",
+			imageSrc: "/history/history-1.webp",
 		},
 		{
 			id: 2,
@@ -19,7 +19,7 @@ export const historyData = {
 			title: "Increased Our Team",
 			description:
 				"Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias voluptatum, at est quis debitis corrupti aut repellendus, excepturi culpa perspiciatis soluta delectus numquam praesentium nesciunt a molestiae totam dignissimos. Error!",
-			imageSrc: "/history/history-2.jpg",
+			imageSrc: "/history/history-2.webp",
 		},
 		{
 			id: 3,
@@ -27,7 +27,7 @@ export const historyData = {
 			title: "We Become The Leading",
 			description:
 				"Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias voluptatum, at est quis debitis corrupti aut repellendus, excepturi culpa perspiciatis soluta delectus numquam praesentium nesciunt a molestiae totam dignissimos. Error!",
-			imageSrc: "/history/history-1.jpg", // Assuming reuse of image, update if needed
+			imageSrc: "/history/history-1.webp", // Assuming reuse of image, update if needed
 		},
 		{
 			id: 4,
@@ -35,7 +35,7 @@ export const historyData = {
 			title: "top 100 restaurants in USA",
 			description:
 				"Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias voluptatum, at est quis debitis corrupti aut repellendus, excepturi culpa perspiciatis soluta delectus numquam praesentium nesciunt a molestiae totam dignissimos. Error!",
-			imageSrc: "/history/history-2.jpg", // Assuming reuse of image, update if needed
+			imageSrc: "/history/history-2.webp", // Assuming reuse of image, update if needed
 		},
 	],
 };

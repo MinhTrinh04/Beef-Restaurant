@@ -1,5 +1,5 @@
 export const aboutData = {
-	imageUrl: "/about/about-1.jpg",
+	imageUrl: "/about/about-1.webp",
 	imageLeftUrl: "/about/about-left.jpg",
 	imageRightUrl: "",
 	altText:
@@ -43,7 +43,7 @@ export const aboutData = {
 };
 
 export const aboutTwoData = {
-	imageUrl: "/about/about-1.jpg",
+	imageUrl: "/about/about-1.webp",
 	imageLeftUrl: "/about/about-left.jpg",
 	imageRightUrl: "/about/about-right.jpg",
 	altText:
