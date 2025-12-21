@@ -8,7 +8,7 @@
 	will-change: transform, opacity;
 	
 	&-image {
-		@apply !max-h-min !min-h-min !h-[200px] lg:!h-[360px] lg:!max-h-[360px] lg:!min-h-[360px] overflow-hidden relative;
+		@apply !max-h-min !min-h-min !h-[200px] lg:!h-[360px] lg:!max-h-[360px] lg:!min-h-[360px] w-full overflow-hidden relative;
 		&::after {
 			content: '';
 			@apply absolute inset-0 bg-surface-dark/0;

@@ -3,7 +3,7 @@
 ===========================*/
 .week-specials {
 	@apply bg-center bg-cover relative bg-no-repeat overflow-hidden border-none;
-	background-image: url("/bg/bg-menu.jpg");
+	background-image: url("/bg/bg-menu.webp");
 	@screen md {
 		background-attachment: fixed;
 		background-position: center 100%;

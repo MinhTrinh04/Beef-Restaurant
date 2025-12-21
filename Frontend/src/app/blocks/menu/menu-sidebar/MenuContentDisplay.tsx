@@ -48,8 +48,8 @@ const MenuContentDisplay: React.FC<MenuContentDisplayProps> = ({
 							<Image
 								src={categoryItem.image}
 								alt={categoryItem.altText || ""}
-								width={568}
-								height={880}
+								fill
+								className="object-cover"
 							/>
 						</div>
 					</div>

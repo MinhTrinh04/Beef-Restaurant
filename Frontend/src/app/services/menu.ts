@@ -75,7 +75,7 @@ export function transformMenuItemsToCategories(
             id: catId,
             title: category?.name || `Category ${catId}`,
             phrase: category?.description || "",
-            image: category?.image || "/menu/menu-1.jpg", // Default image
+            image: category?.image || `/menu/menu-${catId}.webp`, // Default image fallback
             altText: category?.name || `Category ${catId}`,
             dishesList: dishes,
             anchor: `category-${catId}`,
@@ -86,8 +86,22 @@ export function transformMenuItemsToCategories(
 /**
  * Fetch all menu items and transform them into categories
  */
+import { categoryDishesData } from "@/app/hooks/data-dish";
+
+/**
+ * Fetch all menu items and transform them into categories
+ */
 export async function getMenuCategories(): Promise<MenuCategory[]> {
     const items = await getAllMenuItems();
-    return transformMenuItemsToCategories(items);
+    
+    // Map static data to the format expected by transformMenuItemsToCategories
+    const categoryInfo = categoryDishesData.items.map(item => ({
+        id: item.id,
+        name: item.title,
+        image: item.image,
+        description: item.phrase
+    }));
+
+    return transformMenuItemsToCategories(items, categoryInfo);
 }
 

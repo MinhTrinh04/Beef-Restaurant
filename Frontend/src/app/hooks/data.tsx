@@ -18,7 +18,7 @@ export const HeroInnerMenuData = {
 			link: "/menu",
 		}
 	],
-	image: "/bg/bg-menu.jpg",
+	image: "/bg/bg-menu.webp",
 	altText: "Menu",
 };
 export const HeroInnerMenuFullData = {
@@ -40,7 +40,7 @@ export const HeroInnerMenuFullData = {
 			link: "/",
 		},
 	],
-	image: "/bg/bg-menu-full-width.jpg",
+	image: "/bg/bg-menu-full-width.webp",
 	altText: "Menu Full Width",
 };
 
@@ -63,7 +63,7 @@ export const HeroInnerMenuTabsData = {
             link: "/",
         },
     ],
-    image: "/bg/bg-menu-tabs.jpg",
+    image: "/bg/bg-menu-tabs.webp",
 	altText: "Menu Tabs",
 };
 
@@ -86,14 +86,14 @@ export const HeroInnerMenuSidebarData = {
             link: "/",
         },
     ],
-    image: "/bg/bg-menu-tabs.jpg",
+    image: "/bg/bg-menu-tabs.webp",
 	altText: "Menu Sidebar",
 };
 
 export const heroClassicSliderData = [
 	{
 		id: 1,
-		image: "/hero/hero-6.jpg",
+		image: "/hero/hero-6.webp",
 		subtitle: "Welcome to Our Restaurant",
 		title: "traditional & modern",
 		description:
@@ -101,7 +101,7 @@ export const heroClassicSliderData = [
 	},
 	{
 		id: 2,
-		image: "/hero/hero-7.jpg",
+		image: "/hero/hero-7.webp",
 		subtitle: "Take a sip of our innovative drinks",
 		title: "the best food for the best moments",
 		description:
@@ -109,7 +109,7 @@ export const heroClassicSliderData = [
 	},
 	{
 		id: 3,
-		image: "/hero/hero-8.jpg",
+		image: "/hero/hero-8.webp",
 		subtitle: "the most delicious",
 		title: "check out our gourmet menu",
 		description:
@@ -131,7 +131,7 @@ export const HeroInnerAboutData = {
 			link: "",
 		},
 	],
-	image: "/bg/bg-cta.jpg",
+	image: "/bg/bg-cta.webp",
 	altText: "About Us",
 };
 
@@ -149,7 +149,7 @@ export const HeroInnerServicesData = {
 			link: "",
 		},
 	],
-	image: "/bg/bg-services.jpg",
+	image: "/bg/bg-services.webp",
 	altText: "Services",
 };
 
@@ -167,7 +167,7 @@ export const HeroInnerChefsData = {
 			link: "",
 		},
 	],
-	image: "/bg/bg-chefs.jpg",
+	image: "/bg/bg-chefs.webp",
 	altText: "Our Chefs",
 };
 
@@ -185,7 +185,7 @@ export const HeroInnerHistoryData = {
 			link: "",
 		},
 	],
-	image: "/bg/bg-cta.jpg",
+	image: "/bg/bg-cta.webp",
 	altText: "Our History",
 };
 

@@ -1,5 +1,5 @@
 export const testimonialsData = {
-	bgImage: "/bg/bg-testimonials.jpg",
+	bgImage: "/bg/bg-testimonials.webp",
 	bgImageAlt: "A collage of restaurant dishes and ambiance as a background for testimonials",
 	prevButtonAriaLabel: "Previous testimonial",
 	nextButtonAriaLabel: "Next testimonial",

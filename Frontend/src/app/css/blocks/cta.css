@@ -3,7 +3,7 @@
 ===========================*/
 .cta {
 	@apply bg-center bg-cover relative bg-no-repeat overflow-hidden;
-	background-image: url("/bg/bg-cta.jpg");
+	background-image: url("/bg/bg-cta.webp");
 	@screen md {
 		background-attachment: fixed;
 		background-position: center 100%;
@@ -40,7 +40,7 @@
 /* ------ style 2 ------ */
 .cta-2 {
 	@apply bg-center bg-cover relative bg-no-repeat overflow-hidden;
-	background-image: url("/bg/bg-cta-2.jpg");
+	background-image: url("/bg/bg-cta-2.webp");
 	@screen md {
 		background-attachment: fixed;
 		background-position: center 100%;

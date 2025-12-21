@@ -8,6 +8,7 @@ import {
     getBasket,
     removeBasketItem,
     updateBasketItemQuantity,
+    deleteBasket,
 } from "@/app/services/basket";
 import BasketToast from "@/app/components/common/basket/BasketToast";
 
@@ -31,6 +32,7 @@ interface BasketContextValue {
     addDish: (payload: AddDishPayload) => Promise<void>;
     updateQuantity: (productId: number, units: number) => Promise<void>;
     removeItem: (productId: number) => Promise<void>;
+    clearBasket: () => Promise<void>;
     refresh: (options?: { silent?: boolean }) => Promise<void>;
     toast: BasketToastState | null;
     dismissToast: () => void;
@@ -138,6 +140,13 @@ export const BasketProvider = ({ children }: { children: ReactNode }) => {
         [withMutation]
     );
 
+    const clearBasket = useCallback(
+        async () => {
+            await withMutation(async () => { await deleteBasket(); }, createToast("Basket cleared", "Your basket is now empty"));
+        },
+        [withMutation]
+    );
+
     const dismissToast = useCallback(() => {
         setToast(null);
     }, []);
@@ -164,6 +173,7 @@ export const BasketProvider = ({ children }: { children: ReactNode }) => {
             addDish,
             updateQuantity,
             removeItem,
+            clearBasket,
             refresh,
             toast,
             dismissToast,
@@ -177,6 +187,7 @@ export const BasketProvider = ({ children }: { children: ReactNode }) => {
             addDish,
             updateQuantity,
             removeItem,
+            clearBasket,
             refresh,
             toast,
             dismissToast,

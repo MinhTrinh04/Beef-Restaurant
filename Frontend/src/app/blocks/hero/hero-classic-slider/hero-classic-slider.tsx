@@ -155,8 +155,8 @@ const HeroClassicSliderBlock = ({
 									<Image
 										src={item.image}
 										alt={item.altText}
-										width={1920}
-										height={1080}
+										fill
+										className="object-cover object-center"
 										priority={index === 0}
 										loading={index === 0 ? "eager" : "lazy"}
 										quality={90}

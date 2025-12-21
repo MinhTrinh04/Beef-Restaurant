@@ -12,7 +12,7 @@
     &__item{
         @apply w-full sm:w-5/12 lg:w-4/12;
         &-image{
-            @apply relative rounded-xl;
+            @apply relative rounded-xl h-[300px] w-full;
             img{
                 @apply block w-full h-full object-cover rounded-xl;
             }

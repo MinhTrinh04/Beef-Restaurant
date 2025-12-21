@@ -2,7 +2,10 @@
     Topbar
 ====================================== */
 .topbar {
-	@apply absolute top-0 left-0 right-0 z-[100] items-center justify-between hidden w-full px-8 py-3 border-b border-border border-opacity-20 xl:flex;
+	@apply absolute top-0 left-0 right-0 z-[100] items-center justify-between hidden w-full px-8 h-12 xl:flex bg-surface-dark/40;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: none;
 
     &__left {
 		@apply inline-flex items-center justify-start gap-9;

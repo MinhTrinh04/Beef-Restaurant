@@ -2,7 +2,7 @@ import { socialIconsData } from "./data-general";
 import { subscriptionFormData } from "./data-forms";
 
 export const comingSoonData = {
-    backgroundImage: "/bg/bg-hero.jpg",
+    backgroundImage: "/bg/bg-hero.webp",
     backgroundAltText: "A dramatic, cloudy sky",
     logoImage: "/logo.png",
     logoAltText: "Deliciosa Restaurant Logo",

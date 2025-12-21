@@ -30,7 +30,7 @@ const OrdersPage = () => {
         <>
             <HeroInnerBlock
                 title="My Orders"
-                image="/hero/hero-inner-1.jpg"
+                image="/hero/hero-inner-1.webp"
                 altText="My Orders"
                 breadcrumbs={[{ id: 1, title: "Home", link: "/" }, { id: 2, title: "My Orders", link: "/orders" }]}
             />
@@ -42,7 +42,7 @@ const OrdersPage = () => {
                         <p className="text-red-500">{error}</p>
                     ) : orders.length === 0 ? (
                         <div className="text-center">
-                            <p className="mb-4">You haven't placed any orders yet.</p>
+                            <p className="mb-4">You haven&apos;t placed any orders yet.</p>
                             <Link href="/menu" className="btn btn__solid">
                                 Browse Menu
                             </Link>

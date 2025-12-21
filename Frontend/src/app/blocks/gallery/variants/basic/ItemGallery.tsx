@@ -22,8 +22,8 @@ const ItemGallery = ({
 					<Image
 						src={image}
 						alt={altText ?? ""}
-						width={382}
-						height={360}
+						fill
+						className="object-cover"
 					/>
 					{/* / Image */}
 

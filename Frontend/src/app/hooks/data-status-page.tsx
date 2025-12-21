@@ -1,7 +1,7 @@
 import { StatusPageProps } from "@/app/types/common.types";
 
 export const notFoundPageData: StatusPageProps = {
-	backgroundImageSrc: "/bg/bg-cta.jpg",
+	backgroundImageSrc: "/bg/bg-cta.webp",
 	backgroundImageAlt: "A misty forest background",
 	imageSrc: "/other/lemon.png",
 	imageAlt: "404 Error",

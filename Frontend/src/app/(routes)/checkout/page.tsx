@@ -45,7 +45,7 @@ const CheckoutPage = () => {
             <>
                 <HeroInnerBlock
                     title="Checkout"
-                    image="/hero/hero-inner-1.jpg"
+                    image="/hero/hero-inner-1.webp"
                     altText="Checkout"
                     breadcrumbs={[{ id: 1, title: "Home", link: "/" }, { id: 2, title: "Checkout", link: "/checkout" }]}
                 />
@@ -65,7 +65,7 @@ const CheckoutPage = () => {
         <>
             <HeroInnerBlock
                 title="Checkout"
-                image="/hero/hero-inner-1.jpg"
+                image="/hero/hero-inner-1.webp"
                 altText="Checkout"
                 breadcrumbs={[{ id: 1, title: "Home", link: "/" }, { id: 2, title: "Checkout", link: "/checkout" }]}
             />
