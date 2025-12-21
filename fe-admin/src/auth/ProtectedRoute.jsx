@@ -1,21 +1,11 @@
-import { useAuth } from 'react-oidc-context';
-import { useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const ProtectedRoute = ({ children }) => {
-    const auth = useAuth();
+    const { user } = useAuth();
 
-    useEffect(() => {
-        if (!auth.isLoading && !auth.isAuthenticated) {
-            auth.signinRedirect();
-        }
-    }, [auth.isLoading, auth.isAuthenticated]); // Removed 'auth' object dependency
-
-    if (auth.isLoading) {
-        return <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20%' }}>Loading Authentication...</div>;
-    }
-
-    if (!auth.isAuthenticated) {
-        return null; // Will redirect
+    if (!user) {
+        return <Navigate to="/login" replace />;
     }
 
     return children;

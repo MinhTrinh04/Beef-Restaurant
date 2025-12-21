@@ -1,32 +1,109 @@
 import axios from 'axios';
-import { User } from 'oidc-client-ts';
 
 const api = axios.create({
-    baseURL: '/api', // Proxied to http://localhost:9000
+    baseURL: '/api',
+    withCredentials: true, // ✅ Gửi cookies (admin_refresh_token)
     headers: {
         'Content-Type': 'application/json',
     },
 });
 
-/*
- * Request Interceptor to add Bearer Token
- * oidc-client-ts stores user in sessionStorage by default with key `oidc.user:${authority}:${clientId}`
- */
+// Access token management
+let accessToken = null;
+
+export const setAccessToken = (token) => {
+    accessToken = token;
+};
+
+export const getAccessToken = () => accessToken;
+
+export const clearAccessToken = () => {
+    accessToken = null;
+};
+
+// Request interceptor - thêm Bearer token
 api.interceptors.request.use(
     (config) => {
-        // Note: If you change authority or client_id in AuthWrapper.jsx, update this key!
-        const oidcStorage = sessionStorage.getItem(`oidc.user:http://localhost:8180/realms/master:beef-admin`);
-        if (oidcStorage) {
-            const user = User.fromStorageString(oidcStorage);
-            if (user && user.access_token) {
-                config.headers.Authorization = `Bearer ${user.access_token}`;
-            }
+        if (accessToken) {
+            config.headers.Authorization = `Bearer ${accessToken}`;
         }
         return config;
     },
     (error) => Promise.reject(error)
 );
 
+// Response interceptor - auto refresh khi 401
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+    failedQueue.forEach(prom => {
+        if (error) {
+            prom.reject(error);
+        } else {
+            prom.resolve(token);
+        }
+    });
+    failedQueue = [];
+};
+
+api.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+        const originalRequest = error.config;
+
+        // Nếu 401 và chưa retry
+        // QUAN TRỌNG: Không retry nếu request là refresh endpoint (tránh vòng lặp)
+        if (error.response?.status === 401 &&
+            !originalRequest._retry &&
+            !originalRequest.url?.includes('/admin/refresh')) {
+
+            if (isRefreshing) {
+                // Đợi refresh hoàn thành
+                return new Promise((resolve, reject) => {
+                    failedQueue.push({ resolve, reject });
+                }).then(token => {
+                    originalRequest.headers.Authorization = `Bearer ${token}`;
+                    return api(originalRequest);
+                }).catch(err => Promise.reject(err));
+            }
+
+            originalRequest._retry = true;
+            isRefreshing = true;
+
+            try {
+                // Gọi refresh endpoint
+                const response = await axios.post('/api/admin/refresh', {}, {
+                    withCredentials: true
+                });
+
+                const newAccessToken = response.data.data.accessToken;
+                setAccessToken(newAccessToken);
+
+                processQueue(null, newAccessToken);
+
+                // Retry request ban đầu
+                originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+                return api(originalRequest);
+
+            } catch (refreshError) {
+                processQueue(refreshError, null);
+                clearAccessToken();
+                // Chỉ redirect nếu không phải đang ở trang login
+                if (!window.location.pathname.includes('/login')) {
+                    window.location.href = '/login';
+                }
+                return Promise.reject(refreshError);
+            } finally {
+                isRefreshing = false;
+            }
+        }
+
+        return Promise.reject(error);
+    }
+);
+
+// Service exports
 export const menuService = {
     getAll: () => api.get('/menu/items'),
     create: (data) => api.post('/menu/items', data),
@@ -38,7 +115,6 @@ export const orderService = {
     getAll: () => api.get('/admin/orders'),
     getById: (id) => api.get(`/admin/orders/${id}`),
     getByUser: (userId) => api.get(`/admin/orders/user/${userId}`),
-    // Note: No admin update status endpoint found in backend currently
 };
 
 export const userService = {
