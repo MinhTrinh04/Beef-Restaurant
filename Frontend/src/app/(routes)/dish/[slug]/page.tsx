@@ -19,7 +19,7 @@ export default async function DishDetailPage({ params }: { params: { slug: strin
         return (
             <main className="container mx-auto px-4 py-12">
                 <h1 className="text-2xl font-barlow-condensed mb-4">Dish not found</h1>
-                <p className="text-text-muted">We couldn't find that dish. It may have been removed.</p>
+                <p className="text-text-muted">We couldn&apos;t find that dish. It may have been removed.</p>
             </main>
         );
     }

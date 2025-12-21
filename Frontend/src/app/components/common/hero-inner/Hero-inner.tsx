@@ -13,7 +13,7 @@ const HeroInnerBlock: React.FC<HeroInnerBlockProps> = ({
 		<div className="hero-inner">
 			{/* Background */}
 			<div className="hero-inner__background">
-				<Image src={image} alt={altText} width={1620} height={880} />
+				<Image src={image} alt={altText} fill className="object-cover" />
 			</div>
 			{/* Background */}
 			{/* Content */}

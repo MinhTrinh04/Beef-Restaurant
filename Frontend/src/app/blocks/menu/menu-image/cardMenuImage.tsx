@@ -24,8 +24,8 @@ const CardMenuImage = ({
 				<Image
 					src={image}
 					alt={altText || ""}
-					width={568}
-					height={880}
+					fill
+					className="object-cover"
 				/>
 			</div>
 			{/* Category image */}

@@ -107,7 +107,7 @@
     Hero Classic - slider 
 ==================================================*/
 .hero-basic {
-	@apply flex flex-wrap items-center justify-center h-[100vh] sm:min-h-[680px] md:min-h-[880px] bg-surface-dark overflow-hidden relative;
+	@apply flex flex-wrap items-center justify-center h-[100vh] sm:min-h-[500px] md:min-h-[600px] bg-surface-dark overflow-hidden relative;
 
 	&__background {
 		@apply absolute top-0 bottom-0 left-0 right-0 z-0 block w-full h-full;
@@ -189,7 +189,7 @@
     Hero Inner 
 ==================================================*/
 .hero-inner {
-	@apply relative z-0 w-full h-[280px] min-h-[280px] md:h-[460px] md:min-h-[460px] lg:h-[560px] lg:min-h-[560px] max-h-[560px] bg-surface-dark overflow-hidden;
+	@apply relative z-0 w-full h-[320px] min-h-[320px] md:h-[460px] md:min-h-[460px] lg:h-[560px] lg:min-h-[560px] max-h-[560px] bg-surface-dark overflow-hidden;
 
 	&__background {
 		@apply absolute top-0 bottom-0 left-0 right-0 z-0 block w-full h-full;
@@ -201,7 +201,7 @@
 		}
 	}
 	&__container {
-		@apply relative z-20 flex flex-col items-center justify-center w-full h-full pt-20;
+		@apply relative z-20 flex flex-col items-center justify-center w-full h-full pt-32;
 		background: linear-gradient(
 			to bottom,
 			rgba(5, 6, 8, 0.2),

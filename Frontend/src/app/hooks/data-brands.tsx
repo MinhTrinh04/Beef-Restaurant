@@ -5,37 +5,37 @@ export const badgesListData = {
 	items: [
 		{
 			id: 1,
-			image: "/badges/badges-1.png",
+			image: "/badges/badges-1.jpg",
             altText: "Badges 1",
 		},
 		{
 			id: 2,
-			image: "/badges/badges-2.png",
+			image: "/badges/badges-2.jpg",
             altText: "Badges 2",
 		},
 		{
 			id: 3,
-			image: "/badges/badges-3.png",
+			image: "/badges/badges-3.jpg",
             altText: "Badges 3",
 		},
 		{
 			id: 4,
-			image: "/badges/badges-4.png",
+			image: "/badges/badges-4.jpg",
             altText: "Badges 4",
 		},
 		{
 			id: 5,
-			image: "/badges/badges-5.png",
+			image: "/badges/badges-5.jpg",
             altText: "Badges 5",
 		},
 		{
 			id: 6,
-			image: "/badges/badges-6.png",
+			image: "/badges/badges-6.jpg",
             altText: "Badges 6",
 		},
 		{
 			id: 7,
-			image: "/badges/badges-7.png",
+			image: "/badges/badges-7.jpg",
             altText: "Badges 7",
 		},
 	],

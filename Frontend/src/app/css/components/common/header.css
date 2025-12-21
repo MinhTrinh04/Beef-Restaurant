@@ -2,6 +2,7 @@
 /*                                   Header                                   */
 /* -------------------------------------------------------------------------- */
 
+/* 
 .header {
 	position: absolute;
 	top: 0;
@@ -29,7 +30,7 @@
 	&__menu {
 		&-list {
 			display: flex;
-			gap: 1.5rem; /* Adjust gap between menu items */
+			gap: 1.5rem;
 			list-style: none;
 			margin: 0;
 			padding: 0;
@@ -80,7 +81,6 @@
 		}
 
 		&-item {
-			/* No specific styles needed for item itself */
 		}
 
 		&-link {
@@ -104,7 +104,6 @@
 		@apply flex items-center pr-4 xl:pr-0;
 	}
 
-	/* Sticky Header Styles */
 	&__sticky {
 		position: fixed;
 		background-color: var(--background-color);
@@ -112,6 +111,7 @@
 		animation: slideDown 0.5s ease-in-out;
 	}
 }
+*/
 
 @keyframes slideDown {
 	from {
@@ -163,7 +163,7 @@
         @apply flex flex-wrap items-center justify-between w-full;
     }
     &__logo{
-        @apply w-[160px] sm:w-[160px] md:w-[180px] pl-4 xl:pl-0;
+        @apply w-[80px] sm:w-[80px] md:w-[100px] pl-4 xl:pl-0;
         transition: transform 0.3s ease;
         img{
 			@apply w-full h-auto;
@@ -276,7 +276,7 @@
         animation: slideDown 0.3s ease-out forwards;
 		.header__logo{
 			img{
-				@apply w-[120px] h-auto;
+				@apply w-[70px] h-auto;
 			}
 		}
     }

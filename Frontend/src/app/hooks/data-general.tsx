@@ -33,8 +33,8 @@ export const LogoData = {
     urlLogo: "/logo.png",
     altLogo: "Logo",
     hrefLogo: "/",
-    widthLogo: 120,
-    heightLogo: 120,
+    widthLogo: 80,
+    heightLogo: 80,
 };
 
 export const menuLegalData = [
