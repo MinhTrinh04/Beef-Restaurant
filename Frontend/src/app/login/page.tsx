@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -10,23 +10,41 @@ export default function LoginPage() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm();
+  const { update } = useSession();
+
 
   const onSubmit = async (data: any) => {
     setError(null);
     try {
+      console.log("🔑 Submitting login form for:", data.email);
+
       const result = await signIn("credentials", {
         redirect: false,
         email: data.email,
         password: data.password,
       });
 
-      if (result?.error) {
-        setError("Login failed. Please check your credentials.");
-      } else {
+      console.log("📋 SignIn result:", result);
+
+      // Check if login was successful
+      // NextAuth returns { ok: true } on success, { error: "..." } on failure
+      if (result?.ok) {
+        console.log("✅ Login successful, updating session...");
+
+        // Update the session to get the latest data
+        await update();
+
+        console.log("✅ Session updated, redirecting to home...");
+
+        // Redirect to home page
         router.push("/");
-        router.refresh();
+        router.refresh(); // Force refresh to update UI
+      } else {
+        console.error("❌ Login failed with error:", result?.error);
+        setError(result?.error || "Login failed. Please check your credentials.");
       }
     } catch (err) {
+      console.error("💥 Unexpected error during login:", err);
       setError("An unexpected error occurred. Please try again.");
     }
   };
@@ -35,7 +53,7 @@ export default function LoginPage() {
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-zinc-900 px-4">
       <div className="w-full max-w-md p-8 bg-white dark:bg-zinc-800 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold text-center mb-6 text-zinc-900 dark:text-zinc-100">Welcome Back</h2>
-        
+
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
             <span className="block sm:inline">{error}</span>
@@ -75,16 +93,16 @@ export default function LoginPage() {
         </form>
 
         <div className="my-6 flex items-center">
-            <div className="flex-grow border-t border-zinc-300 dark:border-zinc-600"></div>
-            <span className="flex-shrink-0 mx-4 text-zinc-500 text-sm">Or</span>
-            <div className="flex-grow border-t border-zinc-300 dark:border-zinc-600"></div>
+          <div className="flex-grow border-t border-zinc-300 dark:border-zinc-600"></div>
+          <span className="flex-shrink-0 mx-4 text-zinc-500 text-sm">Or</span>
+          <div className="flex-grow border-t border-zinc-300 dark:border-zinc-600"></div>
         </div>
 
         <button
-            onClick={() => signIn("keycloak", { callbackUrl: "/" })}
-            className="w-full bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2 px-4 rounded transition duration-200 flex items-center justify-center gap-2"
+          onClick={() => signIn("keycloak", { callbackUrl: "/" })}
+          className="w-full bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2 px-4 rounded transition duration-200 flex items-center justify-center gap-2"
         >
-            <span>Sign in with SSO</span>
+          <span>Sign in with SSO</span>
         </button>
 
         <div className="mt-6 text-center text-sm">
