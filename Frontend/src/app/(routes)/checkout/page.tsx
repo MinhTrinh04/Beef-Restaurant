@@ -28,9 +28,9 @@ const CheckoutPage = () => {
                 // Let's assume we redirect to it.
                 window.location.href = response.paymentUrl;
             } else {
-                 // Fallback if no URL (e.g. cash on delivery or immediate success)
-                 await clearBasket();
-                 router.push("/orders");
+                // Fallback if no URL (e.g. cash on delivery or immediate success)
+                await clearBasket();
+                router.push("/orders");
             }
         } catch (err: any) {
             console.error("Checkout error:", err);
@@ -96,21 +96,14 @@ const CheckoutPage = () => {
                         <div>
                             <h3 className="text-xl font-bold mb-6">Shipping Details</h3>
                             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">Email</label>
-                                    <input
-                                        {...register("userEmail", { required: "Email is required" })}
-                                        type="email"
-                                        className="w-full p-2 border border-border-default rounded bg-surface-primary"
-                                    />
-                                    {errors.userEmail && <p className="text-red-500 text-sm">{errors.userEmail.message}</p>}
-                                </div>
+
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-sm font-medium mb-1">City</label>
                                         <input
                                             {...register("city", { required: "City is required" })}
-                                            className="w-full p-2 border border-border-default rounded bg-surface-primary"
+                                            placeholder="Enter your city"
+                                            className="w-full p-3 border border-zinc-300 dark:border-zinc-600 rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
                                         />
                                         {errors.city && <p className="text-red-500 text-sm">{errors.city.message}</p>}
                                     </div>
@@ -118,7 +111,8 @@ const CheckoutPage = () => {
                                         <label className="block text-sm font-medium mb-1">State</label>
                                         <input
                                             {...register("state", { required: "State is required" })}
-                                            className="w-full p-2 border border-border-default rounded bg-surface-primary"
+                                            placeholder="Enter your state"
+                                            className="w-full p-3 border border-zinc-300 dark:border-zinc-600 rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
                                         />
                                         {errors.state && <p className="text-red-500 text-sm">{errors.state.message}</p>}
                                     </div>
@@ -127,7 +121,8 @@ const CheckoutPage = () => {
                                     <label className="block text-sm font-medium mb-1">Street Address</label>
                                     <input
                                         {...register("street", { required: "Street is required" })}
-                                        className="w-full p-2 border border-border-default rounded bg-surface-primary"
+                                        placeholder="Enter your street address"
+                                        className="w-full p-3 border border-zinc-300 dark:border-zinc-600 rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
                                     />
                                     {errors.street && <p className="text-red-500 text-sm">{errors.street.message}</p>}
                                 </div>
@@ -135,7 +130,8 @@ const CheckoutPage = () => {
                                     <label className="block text-sm font-medium mb-1">Country</label>
                                     <input
                                         {...register("country", { required: "Country is required" })}
-                                        className="w-full p-2 border border-border-default rounded bg-surface-primary"
+                                        placeholder="Enter your country"
+                                        className="w-full p-3 border border-zinc-300 dark:border-zinc-600 rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
                                     />
                                     {errors.country && <p className="text-red-500 text-sm">{errors.country.message}</p>}
                                 </div>

@@ -36,13 +36,13 @@ export interface PaymentUrlResponse {
 
 /**
  * Basket checkout request (matching backend BasketCheckout model)
+ * Note: userEmail is extracted from JWT token by backend, not sent in request
  */
 export interface BasketCheckout {
-    userEmail?: string;
-    city?: string;
-    street?: string;
-    state?: string;
-    country?: string;
+    city: string;
+    street: string;
+    state: string;
+    country: string;
 }
 
 /**

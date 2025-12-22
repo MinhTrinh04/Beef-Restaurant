@@ -68,7 +68,7 @@ export default function LoginPage() {
             <input
               {...register("email", { required: "Email is required" })}
               type="email"
-              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
+              className="w-full px-4 py-2 border border-zinc-300 rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white dark:focus:border-amber-500"
               placeholder="Enter your email"
             />
             {errors.email && <p className="text-red-500 text-xs mt-1">{String(errors.email.message)}</p>}
@@ -79,7 +79,7 @@ export default function LoginPage() {
             <input
               {...register("password", { required: "Password is required" })}
               type="password"
-              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
+              className="w-full px-4 py-2 border border-zinc-300 rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white dark:focus:border-amber-500"
               placeholder="Enter your password"
             />
             {errors.password && <p className="text-red-500 text-xs mt-1">{String(errors.password.message)}</p>}
