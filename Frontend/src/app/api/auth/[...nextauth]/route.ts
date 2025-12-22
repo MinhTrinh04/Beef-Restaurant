@@ -1,6 +1,7 @@
 import NextAuth, { AuthOptions } from "next-auth";
 import KeycloakProvider from "next-auth/providers/keycloak";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { API_ENDPOINTS } from "@/lib/api-config";
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -16,11 +17,16 @@ export const authOptions: AuthOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
+        if (!credentials?.email || !credentials?.password) {
+          console.log("❌ Missing credentials");
+          return null;
+        }
 
         try {
-          // Adjust the URL to your Backend API address
-          const res = await fetch("http://localhost:8080/api/v1/users/login", {
+          console.log("🔐 Attempting login for:", credentials.email);
+          
+          // Call through API Gateway using centralized config
+          const res = await fetch(API_ENDPOINTS.users.login, {
             method: "POST",
             body: JSON.stringify({
               email: credentials.email,
@@ -30,21 +36,57 @@ export const authOptions: AuthOptions = {
           });
 
           const data = await res.json();
+          
+          // Enhanced logging
+          console.log("📡 Login response status:", res.status);
+          console.log("📦 Login response data:", JSON.stringify(data, null, 2));
 
-          if (res.ok && data.success) {
-            // Mapping LoginResponse to User object expected by NextAuth
-            return {
-              id: data.data.userProfile.email, // using email as ID
-              name: `${data.data.userProfile.firstName} ${data.data.userProfile.lastName}`,
-              email: data.data.userProfile.email,
-              accessToken: data.data.accessToken,
-              refreshToken: data.data.refreshToken,
-            };
-          }
-          return null;
-        } catch (e) {
-            console.error(e);
+          // Check if response is successful
+          if (!res.ok) {
+            console.error("❌ Login failed - HTTP error:", res.status, res.statusText);
+            console.error("❌ Error message from backend:", data.message);
+            // Return null to trigger generic error message
             return null;
+          }
+
+          // Validate response structure
+          if (!data.success) {
+            console.error("❌ Login failed - API returned success=false:", data.message);
+            return null;
+          }
+
+          if (!data.data) {
+            console.error("❌ Login failed - Missing data field in response");
+            return null;
+          }
+
+          // Validate required fields
+          const { userProfile, accessToken, refreshToken } = data.data;
+          
+          if (!userProfile || !accessToken) {
+            console.error("❌ Login failed - Missing required fields in data.data:", { 
+              hasUserProfile: !!userProfile, 
+              hasAccessToken: !!accessToken 
+            });
+            return null;
+          }
+
+          // Successfully authenticated - return user object
+          const user = {
+            id: userProfile.keycloakUserId || userProfile.email,
+            name: `${userProfile.firstName} ${userProfile.lastName}`,
+            email: userProfile.email,
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+          };
+
+          console.log("✅ Login successful for:", user.email);
+          console.log("✅ User object:", JSON.stringify(user, null, 2));
+          
+          return user;
+        } catch (e) {
+          console.error("💥 Login exception:", e);
+          return null;
         }
       }
     }),
