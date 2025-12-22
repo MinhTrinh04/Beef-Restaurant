@@ -1,7 +1,6 @@
 import { MenuItemDto } from "@/app/types/menu.types";
 import { MenuCategory } from "@/app/types/common.types";
-
-const baseURL = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:9000";
+import { API_ENDPOINTS } from "@/lib/api-config";
 
 /**
  * Format price to display format
@@ -14,7 +13,7 @@ function formatPrice(price: number): string {
  * Fetch all menu items from the backend
  */
 export async function getAllMenuItems(): Promise<MenuItemDto[]> {
-    const res = await fetch(`${baseURL}/api/menu/items`, {
+    const res = await fetch(API_ENDPOINTS.menu.items, {
         next: { revalidate: 60 }, // Revalidate every 60 seconds
     });
     
@@ -29,7 +28,7 @@ export async function getAllMenuItems(): Promise<MenuItemDto[]> {
  * Fetch menu items by category ID
  */
 export async function getMenuItemsByCategory(categoryId: number): Promise<MenuItemDto[]> {
-    const res = await fetch(`${baseURL}/api/menu/items/category/${categoryId}`, {
+    const res = await fetch(API_ENDPOINTS.menu.itemsByCategory(categoryId), {
         next: { revalidate: 60 },
     });
     

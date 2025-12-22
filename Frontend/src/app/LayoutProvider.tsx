@@ -15,7 +15,7 @@ export default function LayoutProvider({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const hideOnRoutes = ['/coming-soon'];
+  const hideOnRoutes = ['/coming-soon', '/login', '/register'];
   const shouldHideHeaderFooter = hideOnRoutes.includes(pathname);
 
   return (

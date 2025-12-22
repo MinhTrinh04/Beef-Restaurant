@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/users")
 @Slf4j
-@CrossOrigin(origins = "*", maxAge = 3600)
 public class UserController {
 
     @Autowired
