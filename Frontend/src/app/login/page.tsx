@@ -41,11 +41,13 @@ export default function LoginPage() {
         router.refresh(); // Force refresh to update UI
       } else {
         console.error("❌ Login failed with error:", result?.error);
-        setError(result?.error || "Login failed. Please check your credentials.");
+        // Always show user-friendly Vietnamese message for any login error
+        setError("Email hoặc mật khẩu không chính xác");
       }
     } catch (err) {
       console.error("💥 Unexpected error during login:", err);
-      setError("An unexpected error occurred. Please try again.");
+      // Show same message for unexpected errors for security
+      setError("Email hoặc mật khẩu không chính xác");
     }
   };
 

@@ -43,19 +43,20 @@ export const authOptions: AuthOptions = {
 
           // Check if response is successful
           if (!res.ok) {
-            console.error("❌ HTTP error:", res.status, res.statusText);
-            console.error("❌ Error data:", data);
+            console.error("❌ Login failed - HTTP error:", res.status, res.statusText);
+            console.error("❌ Error message from backend:", data.message);
+            // Return null to trigger generic error message
             return null;
           }
 
           // Validate response structure
           if (!data.success) {
-            console.error("❌ API returned success=false:", data.message);
+            console.error("❌ Login failed - API returned success=false:", data.message);
             return null;
           }
 
           if (!data.data) {
-            console.error("❌ Missing data field in response");
+            console.error("❌ Login failed - Missing data field in response");
             return null;
           }
 
@@ -63,7 +64,7 @@ export const authOptions: AuthOptions = {
           const { userProfile, accessToken, refreshToken } = data.data;
           
           if (!userProfile || !accessToken) {
-            console.error("❌ Missing required fields in data.data:", { 
+            console.error("❌ Login failed - Missing required fields in data.data:", { 
               hasUserProfile: !!userProfile, 
               hasAccessToken: !!accessToken 
             });
