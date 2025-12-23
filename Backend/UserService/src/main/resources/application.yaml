@@ -35,7 +35,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8180/realms/beef}
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8180/realms/master}
 
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}
@@ -57,7 +57,7 @@ spring:
 
 keycloak:
   server-url: http://localhost:8180
-  realm: ${KEYCLOAK_REALM:beef}
+  realm: ${KEYCLOAK_REALM:master}
   client-id: ${KEYCLOAK_CLIENT_ID:test-user}
   client-secret: ${KEYCLOAK_CLIENT_SECRET:CVyEApmC2fpBYTAr6arwl6P2VztQwKJ5}
   admin-username: ${KEYCLOAK_ADMIN_USER:admin}
