@@ -52,7 +52,7 @@ public class Order {
     @Column(name = "buyer_email")
     private String buyerEmail;
 
-    //3 cái này xem xét lại
+    // 3 cái này xem xét lại
     @Column(name = "total_amount", nullable = false)
     private BigDecimal totalAmount;
 
