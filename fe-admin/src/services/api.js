@@ -9,16 +9,23 @@ const api = axios.create({
 });
 
 // Access token management
-let accessToken = null;
+let accessToken = localStorage.getItem('admin_access_token');
 
 export const setAccessToken = (token) => {
+    console.log('Setting Access Token:', token ? '***' + token.slice(-5) : 'null');
     accessToken = token;
+    if (token) {
+        localStorage.setItem('admin_access_token', token);
+    } else if (token === null) {
+        localStorage.removeItem('admin_access_token');
+    }
 };
 
 export const getAccessToken = () => accessToken;
 
 export const clearAccessToken = () => {
     accessToken = null;
+    localStorage.removeItem('admin_access_token');
 };
 
 // Request interceptor - thêm Bearer token
@@ -73,11 +80,13 @@ api.interceptors.response.use(
 
             try {
                 // Gọi refresh endpoint
+                console.log('🔄 Attempting to refresh access token...');
                 const response = await axios.post('/api/admin/refresh', {}, {
                     withCredentials: true
                 });
 
                 const newAccessToken = response.data.data.accessToken;
+                console.log('✅ Token refreshed successfully');
                 setAccessToken(newAccessToken);
 
                 processQueue(null, newAccessToken);
@@ -87,6 +96,7 @@ api.interceptors.response.use(
                 return api(originalRequest);
 
             } catch (refreshError) {
+                console.error('❌ Token refresh failed:', refreshError.response?.data || refreshError.message);
                 processQueue(refreshError, null);
                 clearAccessToken();
                 // Chỉ redirect nếu không phải đang ở trang login
