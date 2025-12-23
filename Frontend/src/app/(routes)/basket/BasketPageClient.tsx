@@ -4,10 +4,13 @@ import Link from "next/link";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { useBasket } from "@/app/contexts/BasketContext";
 
-const currency = new Intl.NumberFormat("en-US", {
-	style: "currency",
-	currency: "USD",
+const currency = new Intl.NumberFormat("vi-VN", {
+	style: "decimal",
+	minimumFractionDigits: 0,
+	maximumFractionDigits: 0,
 });
+
+const formatVND = (amount: number) => `${currency.format(Math.round(amount))}₫`;
 
 const BasketPageClient = () => {
 	const { items, isLoading, isMutating, totalItems, totalCost, updateQuantity, removeItem } =
@@ -58,12 +61,12 @@ const BasketPageClient = () => {
 								<div className="basket-card__info">
 									<h3>{item.productName}</h3>
 									<p>
-										{currency.format(item.unitPrice)} &middot;{" "}
+										{formatVND(item.unitPrice)} &middot;{" "}
 										{item.units} serving{item.units > 1 ? "s" : ""}
 									</p>
 								</div>
 								<div className="basket-card__price">
-									{currency.format(item.unitPrice * item.units)}
+									{formatVND(item.unitPrice * item.units)}
 								</div>
 								<div className="basket-card__controls">
 									<div className="basket-card__qty" aria-label="Quantity selector">
@@ -107,7 +110,7 @@ const BasketPageClient = () => {
 						</div>
 						<div className="basket-summary__row">
 							<span>Subtotal</span>
-							<span>{currency.format(totalCost)}</span>
+							<span>{formatVND(totalCost)}</span>
 						</div>
 						<div className="basket-summary__row">
 							<span>Service</span>
@@ -115,7 +118,7 @@ const BasketPageClient = () => {
 						</div>
 						<div className="basket-summary__total">
 							<span>Total</span>
-							<span>{currency.format(totalCost)}</span>
+							<span>{formatVND(totalCost)}</span>
 						</div>
 						<Link href="/checkout" className="w-full">
 							<button
