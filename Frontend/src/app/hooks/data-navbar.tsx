@@ -1,5 +1,13 @@
+// Define the type for navbar items
+export interface NavbarItem {
+	id: number;
+	title: string;
+	link: string;
+	children?: NavbarItem[];
+}
+
 // Extract history data into an array
-export const itemsNavbar = [
+export const itemsNavbar: NavbarItem[] = [
 	{
 		id: 1,
 		title: "Home",
@@ -19,27 +27,5 @@ export const itemsNavbar = [
 		id: 6,
 		title: "Contact",
 		link: "/contact-us",
-	},
-	{
-		id: 7,
-		title: "Others",
-		link: "/",
-		children: [
-			{
-				id: 71,
-				title: "Error 404",
-				link: "/404",
-			},
-			{
-				id: 72,
-				title: "Confirmation",
-				link: "/confirmation",
-			},
-			{
-				id: 73,
-				title: "Coming Soon",
-				link: "/coming-soon",
-			},
-		],
 	},
 ];
