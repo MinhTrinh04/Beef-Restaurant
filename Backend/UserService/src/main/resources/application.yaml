@@ -1,5 +1,5 @@
 server:
-  port: ${SERVER_PORT_USER}
+  port: ${SERVER_PORT_USER:8085}
   servlet:
     context-path: /
 
@@ -8,85 +8,84 @@ spring:
     name: "user-service"
 
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: ${DB_DRIVER}
+    url: jdbc:h2:mem:userdb
+    username: sa
+    password: ''
+    driver-class-name: org.h2.Driver
 
   h2:
     console:
-      enabled: ${H2_CONSOLE_ENABLED}
-      path: ${H2_CONSOLE_PATH}
+      enabled: true
+      path: /h2-console
 
   jpa:
     hibernate:
-      ddl-auto: ${JPA_DDL_AUTO}
-    show-sql: ${JPA_SHOW_SQL}
+      ddl-auto: validate
+    show-sql: false
     properties:
       hibernate:
-        format_sql: ${JPA_FORMAT_SQL}
-        dialect: ${JPA_DIALECT}
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
 
   flyway:
-    enabled: ${FLYWAY_ENABLED}
-    locations: ${FLYWAY_LOCATIONS}
-    baseline-on-migrate: ${FLYWAY_BASELINE_ON_MIGRATE}
+    enabled: true
+    locations: classpath:db/migration
 
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${KEYCLOAK_ISSUER_URI}
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8180/realms/master}
 
   mail:
-    host: ${MAIL_HOST}
-    port: ${MAIL_PORT}
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
-    from: ${MAIL_FROM}
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:minhfananime@gmail.com}
+    password: ${MAIL_PASSWORD:xfev qyad ayzl qqbd}
+    from: ${MAIL_FROM:noreply@beefrestaurant.com}
     properties:
       mail:
         smtp:
-          auth: ${MAIL_SMTP_AUTH}
+          auth: true
           starttls:
-            enable: ${MAIL_SMTP_STARTTLS_ENABLE}
-            required: ${MAIL_SMTP_STARTTLS_REQUIRED}
-          ssl.protocols: ${MAIL_SMTP_SSL_PROTOCOLS}
-          connectiontimeout: ${MAIL_SMTP_CONNECTION_TIMEOUT}
-          timeout: ${MAIL_SMTP_TIMEOUT}
-          writetimeout: ${MAIL_SMTP_WRITE_TIMEOUT}
+            enable: true
+            required: true
+          ssl.protocols: TLSv1.2
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
 
 keycloak:
-  server-url: ${KEYCLOAK_SERVER_URL}
-  realm: ${KEYCLOAK_REALM}
-  client-id: ${KEYCLOAK_CLIENT_ID}
-  client-secret: ${KEYCLOAK_CLIENT_SECRET}
-  admin-username: ${KEYCLOAK_ADMIN_USER}
-  admin-password: ${KEYCLOAK_ADMIN_PASSWORD}
+  server-url: http://localhost:8180
+  realm: master
+  client-id: ${KEYCLOAK_CLIENT_ID:test-user}
+  client-secret: ${KEYCLOAK_CLIENT_SECRET:CVyEApmC2fpBYTAr6arwl6P2VztQwKJ5}
+  admin-username: ${KEYCLOAK_ADMIN_USER:admin}
+  admin-password: ${KEYCLOAK_ADMIN_PASSWORD:admin}
 
   rabbitmq:
-    host: ${RABBITMQ_HOST}
-    port: ${RABBITMQ_PORT}
-    username: ${RABBITMQ_USERNAME}
-    password: ${RABBITMQ_PASSWORD}
-    virtual-host: ${RABBITMQ_VIRTUAL_HOST}
-    connection-timeout: ${RABBITMQ_CONNECTION_TIMEOUT}
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    connection-timeout: 10000
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: ${EUREKA_URI}
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka/}
   instance:
-    prefer-ip-address: ${EUREKA_PREFER_IP_ADDRESS}
-    instance-id: ${spring.application.name}:${EUREKA_INSTANCE_ID}
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
 
 # Actuator & Monitoring
 management:
   endpoints:
     web:
       exposure:
-        include: ${MANAGEMENT_ENDPOINTS_INCLUDE}
+        include: health,info,metrics
   endpoint:
     health:
-      show-details: ${MANAGEMENT_HEALTH_SHOW_DETAILS}
+      show-details: always
 

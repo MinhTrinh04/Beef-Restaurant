@@ -1,51 +1,38 @@
 server:
-  port: ${SERVER_PORT_MENU}
-
+  port: ${SERVER_PORT_MENU:8080}
 spring:
   application:
     name: "menu-service"
 
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: ${DB_DRIVER}
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: ''
+    driver-class-name: org.h2.Driver
 
   h2:
     console:
-      enabled: ${H2_CONSOLE_ENABLED}
-      path: ${H2_CONSOLE_PATH}
+      enabled: true
+      path: /h2-console
 
   jpa:
-    show-sql: ${JPA_SHOW_SQL}
-    hibernate:
-      ddl-auto: ${JPA_DDL_AUTO}
-    properties:
-      hibernate:
-        format_sql: ${JPA_FORMAT_SQL}
-        dialect: ${JPA_DIALECT}
+    show-sql: true
 
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${KEYCLOAK_ISSUER_URI}
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8180/realms/master}
 
 eureka:
   client:
-    fetchRegistry: ${EUREKA_FETCH_REGISTRY}
-    registerWithEureka: ${EUREKA_REGISTER_WITH_EUREKA}
+    fetchRegistry: true
+    registerWithEureka: true
     serviceUrl:
-      defaultZone: ${EUREKA_URI}
-  instance:
-    prefer-ip-address: ${EUREKA_PREFER_IP_ADDRESS}
-    instance-id: ${spring.application.name}:${EUREKA_INSTANCE_ID}
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka/}
 
 management:
   endpoints:
     web:
       exposure:
-        include: ${MANAGEMENT_ENDPOINTS_INCLUDE}
-  endpoint:
-    health:
-      show-details: ${MANAGEMENT_HEALTH_SHOW_DETAILS}
+        include: "*" # Mở endpoint 'beans' và 'health'
