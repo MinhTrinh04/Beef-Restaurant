@@ -6,7 +6,7 @@ import { TeamOneBlock as TeamBlock } from "@/app/blocks/team";
 import WeekSpecials from "@/app/blocks/menu/menu-week-specials/menuWeekSpecials";
 import { HeroClassicSliderBlock } from "@/app/blocks/hero";
 import { MasonryGallery } from "@/app/blocks/gallery";
-import {ServicesList} from "@/app/blocks/services/";
+import { ServicesList } from "@/app/blocks/services/";
 
 // Data
 import { badgesListData } from "@/app/hooks/data-brands";
@@ -21,7 +21,7 @@ import { teamBlockData } from "@/app/hooks/data-team";
 
 
 const PageHomeClassic = () => {
-    return (
+	return (
 		<>
 			{/* Slider Hero - Block */}
 			<HeroClassicSliderBlock {...sliderHeroData} />
@@ -35,21 +35,21 @@ const PageHomeClassic = () => {
 			<SpecialOffersTwoBlock {...specialOffersData} />
 			{/* / Special Offers - Block */}
 
-			{/* Badges - Block */}
-			<BadgesList {...badgesListData} />
-			{/* / Badges - Block */}
-
 			{/* Week Specials - Block */}
-			<WeekSpecials {...menuWeekData} />
+			{/* <WeekSpecials {...menuWeekData} /> */}
 			{/* / Week Specials - Block */}
 
 			{/* Illustrations Card - List - Block */}
-			<ServicesList {...ServiceCardListData} />
+			{/* <ServicesList {...ServiceCardListData} /> */}
 			{/* / Illustrations Card - List - Block */}
 
 			{/* CTA - Block */}
 			<Cta {...ctaData} />
 			{/* / CTA - Block */}
+
+			{/* Badges - Block */}
+			<BadgesList {...badgesListData} />
+			{/* / Badges - Block */}
 
 			{/* Masonry Gallery */}
 			<MasonryGallery {...galleryData} />

@@ -51,7 +51,7 @@ const AboutPage = () => {
 			{/* / Team Two Block */}
 
 			{/* Contact Block */}
-			<ContactBlock {...contactData} />
+			{/* <ContactBlock {...contactData} /> */}
 			{/* / Contact Block */}
 
 			{/* Masonry Gallery */}

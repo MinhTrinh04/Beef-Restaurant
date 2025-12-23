@@ -1,66 +1,73 @@
 server:
-    port: ${SERVER_PORT_ORDERING:8082}
+    port: ${SERVER_PORT_ORDERING}
 
 spring:
     application:
         name: "ordering-service"
 
     datasource:
-        url: jdbc:h2:mem:orderingdb
-        driver-class-name: org.h2.Driver
-        username: sa
-        password: ''
+        url: ${DB_URL}
+        driver-class-name: ${DB_DRIVER}
+        username: ${DB_USERNAME}
+        password: ${DB_PASSWORD}
 
     h2:
         console:
-            enabled: true
-            path: /h2-console
+            enabled: ${H2_CONSOLE_ENABLED}
+            path: ${H2_CONSOLE_PATH}
 
     jpa:
         hibernate:
-            ddl-auto: validate
-        show-sql: true
+            ddl-auto: ${JPA_DDL_AUTO}
+        show-sql: ${JPA_SHOW_SQL}
         properties:
             hibernate:
-                format_sql: true
-                dialect: org.hibernate.dialect.H2Dialect
+                format_sql: ${JPA_FORMAT_SQL}
+                dialect: ${JPA_DIALECT}
 
     flyway:
-        enabled: true
-        locations: classpath:db/migration
-        baseline-on-migrate: true
+        enabled: ${FLYWAY_ENABLED}
+        locations: ${FLYWAY_LOCATIONS}
+        baseline-on-migrate: ${FLYWAY_BASELINE_ON_MIGRATE}
 
     rabbitmq:
-        host: localhost
-        port: 5672
-        username: guest
-        password: guest
-        virtual-host: /
+        host: ${RABBITMQ_HOST}
+        port: ${RABBITMQ_PORT}
+        username: ${RABBITMQ_USERNAME}
+        password: ${RABBITMQ_PASSWORD}
+        virtual-host: ${RABBITMQ_VIRTUAL_HOST}
+        connection-timeout: ${RABBITMQ_CONNECTION_TIMEOUT}
 
     security:
       oauth2:
         resourceserver:
           jwt:
-            issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8180/realms/master}
+            issuer-uri: ${KEYCLOAK_ISSUER_URI}
 
 app:
   payment:
-    timeout-minutes: 15
+    timeout-minutes: ${PAYMENT_TIMEOUT_MINUTES}
 
 logging:
     level:
-        com.eshop.OrderingService: DEBUG
-        org.springframework.amqp: DEBUG
+        com.eshop.OrderingService: ${LOG_LEVEL_ORDERING}
+        org.springframework.amqp: ${LOG_LEVEL_AMQP}
 
 eureka:
   client:
-    fetchRegistry: true
-    registerWithEureka: true
+    fetchRegistry: ${EUREKA_FETCH_REGISTRY}
+    registerWithEureka: ${EUREKA_REGISTER_WITH_EUREKA}
     serviceUrl:
-      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka/}
+      defaultZone: ${EUREKA_URI}
+  instance:
+    prefer-ip-address: ${EUREKA_PREFER_IP_ADDRESS}
+    instance-id: ${spring.application.name}:${EUREKA_INSTANCE_ID}
       
 management:
   endpoints:
     web:
       exposure:
-        include: "*"
+        include: ${MANAGEMENT_ENDPOINTS_INCLUDE}
+  endpoint:
+    health:
+      show-details: ${MANAGEMENT_HEALTH_SHOW_DETAILS}

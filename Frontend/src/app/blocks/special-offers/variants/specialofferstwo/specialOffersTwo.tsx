@@ -94,12 +94,12 @@ const SpecialOffersTwoBlock = ({
 										{item.description_secondary}
 									</p>
 
-									<Link
+									{/* <Link
 										href={item.link}
 										className="btn btn__link"
 									>
 										{item.linkText || "add order"}
-									</Link>
+									</Link> */}
 								</div>
 							</div>
 						</SwiperSlide>

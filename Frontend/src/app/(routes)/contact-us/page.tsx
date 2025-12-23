@@ -21,7 +21,7 @@ const ContactUsPage = () => {
 			{/* / Hero Inner - Block */}
 
 			{/* Contact Block */}
-			<ContactBlock {...contactData} />
+			{/* <ContactBlock {...contactData} /> */}
 			{/* / Contact Block */}
 
 			{/* Locations Block */}

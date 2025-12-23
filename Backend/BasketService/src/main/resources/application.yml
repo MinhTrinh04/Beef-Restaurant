@@ -1,5 +1,5 @@
 server:
-  port: ${SERVER_PORT_BASKET:8081}
+  port: ${SERVER_PORT_BASKET}
 
 spring:
   application:
@@ -7,30 +7,46 @@ spring:
 
   data:
     redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+      timeout: ${REDIS_TIMEOUT}
+      lettuce:
+        pool:
+          max-active: ${REDIS_POOL_MAX_ACTIVE}
+          max-idle: ${REDIS_POOL_MAX_IDLE}
+          min-idle: ${REDIS_POOL_MIN_IDLE}
+          max-wait: ${REDIS_POOL_MAX_WAIT}
 
   rabbitmq:
-    host: ${RABBITMQ_HOST:localhost}
-    port: ${RABBITMQ_PORT:5672}
-    username: ${RABBITMQ_USERNAME:guest}
-    password: ${RABBITMQ_PASSWORD:guest}
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT}
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
+    virtual-host: ${RABBITMQ_VIRTUAL_HOST}
+    connection-timeout: ${RABBITMQ_CONNECTION_TIMEOUT}
 
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8180/realms/master}
+          issuer-uri: ${KEYCLOAK_ISSUER_URI}
 
 eureka:
   client:
-    fetchRegistry: true
-    registerWithEureka: true
+    fetchRegistry: ${EUREKA_FETCH_REGISTRY}
+    registerWithEureka: ${EUREKA_REGISTER_WITH_EUREKA}
     serviceUrl:
-      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka/}
+      defaultZone: ${EUREKA_URI}
+  instance:
+    prefer-ip-address: ${EUREKA_PREFER_IP_ADDRESS}
+    instance-id: ${spring.application.name}:${EUREKA_INSTANCE_ID}
 
 management:
   endpoints:
     web:
       exposure:
-        include: "*"
+        include: ${MANAGEMENT_ENDPOINTS_INCLUDE}
+  endpoint:
+    health:
+      show-details: ${MANAGEMENT_HEALTH_SHOW_DETAILS}
