@@ -1,8 +1,8 @@
 export const ctaData = {
-	title: "delicious blog",
+	title: "Explore Our Full Menu",
 	description:
-		"The public dining room that came ultimately to be known as the restaurant originated in France, and the French have continued to make major contributions to the restaurant’s development.",
-	link: "/page-menu.html",
+		"Discover an exquisite selection of premium beef cuts, artisan appetizers, and chef's specialties. From tender steaks to innovative fusion dishes, our menu offers something extraordinary for every palate. View our complete collection and find your next favorite dish.",
+	link: "/menu",
 	linkText: "View Our Menu",
 };
 

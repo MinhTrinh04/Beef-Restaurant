@@ -5,7 +5,7 @@ export const aboutData = {
 	altText:
 		"Elegant interior of the main restaurant dining room with set tables",
 	subtitle: "About us",
-	title: "Discover Lorem From Flavors Within Wines.",
+	title: "Discover Beefy From Flavors Within Wines.",
 	divider: false,
 	align: "left" as const,
 	priorityImage: false,
