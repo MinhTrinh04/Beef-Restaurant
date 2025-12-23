@@ -30,7 +30,7 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/**", "/h2-console/**").permitAll()
-                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/admin/orders/**").hasRole("ADMIN")
 
                         .requestMatchers("/api/v1/orders/**").authenticated()
                         .anyRequest().authenticated()

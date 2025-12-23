@@ -26,15 +26,6 @@ spring:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
 
       routes:
-        - id: user-service
-          uri: lb://USER-SERVICE
-          predicates:
-            - Path=/api/users/**, /api/admin/**
-          filters:
-            - RewritePath=/api/users, /api/v1/users
-            - RewritePath=/api/admin/(?<segment>.*), /api/v1/admin/${segment}
-            - RewritePath=/api/users/(?<segment>.*), /api/v1/users/${segment}
-
         - id: menu_service_route
           uri: lb://MENU-SERVICE
           predicates:
@@ -42,15 +33,20 @@ spring:
           filters:
             - RewritePath=/api/menu/(?<segment>.*), /api/v1/menu/${segment}
 
-        - id: ordering_service_route
+        - id: admin_orders_route
           uri: lb://ORDERING-SERVICE
           predicates:
-            - Path=/api/admin/orders, /api/admin/orders/** ,/api/orders, /api/orders/**
+            - Path=/api/admin/orders, /api/admin/orders/**
           filters:
             - RewritePath=/api/admin/orders, /api/v1/admin/orders
-            - RewritePath=/api/admin/orders/(?<segment>.*), /api/v1/admin/orders/${segment}
-            - RewritePath=/api/orders, /api/v1/orders
-            - RewritePath=/api/orders/(?<segment>.*), /api/v1/orders/${segment}
+            - RewritePath=/api/admin/orders(?<segment>/?.*), /api/v1/admin/orders${segment}
+
+        - id: user_orders_route
+          uri: lb://ORDERING-SERVICE
+          predicates:
+            - Path=/api/orders/**
+          filters:
+            - RewritePath=/api/orders(?<segment>/?.*), /api/v1/orders${segment}
 
         - id: basket_service_route
           uri: lb://BASKET-SERVICE
@@ -66,6 +62,16 @@ spring:
             - Path=/api/payment/**
           filters:
             - RewritePath=/api/payment/(?<segment>.*), /api/v1/payment/${segment}
+
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/users/**, /api/admin/**
+          filters:
+            - RewritePath=/api/users, /api/v1/users
+            - RewritePath=/api/admin/(?<segment>.*), /api/v1/admin/${segment}
+            - RewritePath=/api/users/(?<segment>.*), /api/v1/users/${segment}
+
 
 eureka:
   client:
