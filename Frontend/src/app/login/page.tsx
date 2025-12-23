@@ -94,18 +94,18 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div className="my-6 flex items-center">
+        {/* <div className="my-6 flex items-center">
           <div className="flex-grow border-t border-zinc-300 dark:border-zinc-600"></div>
           <span className="flex-shrink-0 mx-4 text-zinc-500 text-sm">Or</span>
           <div className="flex-grow border-t border-zinc-300 dark:border-zinc-600"></div>
-        </div>
+        </div> */}
 
-        <button
+        {/* <button
           onClick={() => signIn("keycloak", { callbackUrl: "/" })}
           className="w-full bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2 px-4 rounded transition duration-200 flex items-center justify-center gap-2"
         >
           <span>Sign in with SSO</span>
-        </button>
+        </button> */}
 
         <div className="mt-6 text-center text-sm">
           <p className="text-zinc-600 dark:text-zinc-400">
