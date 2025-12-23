@@ -58,7 +58,7 @@ public class AdminAuthController {
             Cookie refreshCookie = new Cookie("admin_refresh_token", refreshToken);
             refreshCookie.setHttpOnly(true);
             refreshCookie.setSecure(false); // Set true trong production với HTTPS
-            refreshCookie.setPath("/api/v1/admin");
+            refreshCookie.setPath("/");
             refreshCookie.setMaxAge(7 * 24 * 60 * 60); // 7 ngày
             refreshCookie.setAttribute("SameSite", "Lax");
             response.addCookie(refreshCookie);
@@ -160,7 +160,7 @@ public class AdminAuthController {
             // 2. Xóa cookie
             Cookie refreshCookie = new Cookie("admin_refresh_token", null);
             refreshCookie.setHttpOnly(true);
-            refreshCookie.setPath("/api/v1/users/admin/auth");
+            refreshCookie.setPath("/");
             refreshCookie.setMaxAge(0); // Xóa ngay
             response.addCookie(refreshCookie);
 
