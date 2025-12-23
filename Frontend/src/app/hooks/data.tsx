@@ -2,7 +2,7 @@ import { link } from 'fs';
 import { title } from 'process';
 
 {
-    /* Heros Inner´s */
+	/* Heros Inner´s */
 }
 export const HeroInnerMenuData = {
 	title: "Menu",
@@ -45,48 +45,43 @@ export const HeroInnerMenuFullData = {
 };
 
 export const HeroInnerMenuTabsData = {
-    title: "Menu - Tabs",
-    breadcrumbs: [
-        {
-            id: 1,
-            title: "Home",
-            link: "/",
-        },
-        {
-            id: 2,
-            title: "Menu",
-            link: "/menu",
-        },
-        {
-            id: 3,
-            title: "tabs",
-            link: "/",
-        },
-    ],
-    image: "/bg/bg-menu-tabs.webp",
+	title: "Menu - Tabs",
+	breadcrumbs: [
+		{
+			id: 1,
+			title: "Home",
+			link: "/",
+		},
+		{
+			id: 2,
+			title: "Menu",
+			link: "/menu",
+		},
+		{
+			id: 3,
+			title: "tabs",
+			link: "/",
+		},
+	],
+	image: "/bg/bg-menu-tabs.webp",
 	altText: "Menu Tabs",
 };
 
 export const HeroInnerMenuSidebarData = {
-    title: "Menu - Sidebar",
-    breadcrumbs: [
-        {
-            id: 1,
-            title: "Home",
-            link: "/",
-        },
-        {
-            id: 2,
-            title: "Menu",
-            link: "/menu",
-        },
-        {
-            id: 3,
-            title: "sidebar",
-            link: "/",
-        },
-    ],
-    image: "/bg/bg-menu-tabs.webp",
+	title: "Menu",
+	breadcrumbs: [
+		{
+			id: 1,
+			title: "Home",
+			link: "/",
+		},
+		{
+			id: 2,
+			title: "Menu",
+			link: "/menu",
+		},
+	],
+	image: "/bg/bg-menu-tabs.webp",
 	altText: "Menu Sidebar",
 };
 

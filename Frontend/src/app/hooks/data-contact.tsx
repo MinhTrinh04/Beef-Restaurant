@@ -15,13 +15,13 @@ export const HeroInnerContactData = {
 		},
 	],
 	image: "/bg/bg-cta.webp",
-  altText: "Contact us",
+	altText: "Contact us",
 };
 
 export const contactData = {
 	subtitle: "Reservation",
 	title: "Book a Table on Time",
-  align: "center",
+	align: "center",
 	phrase: `The first restaurant proprietor is believed to have
             been one A. Boulanger, a soup vendor, who opened his
             business in 1765.`,
@@ -53,30 +53,30 @@ export const titleLocationsData = {
 export const locationsData = {
 	title: "Our locations",
 	description:
-		"Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
+		"Visit us at our premium locations in Vietnam's most vibrant cities. Experience exceptional dining in the heart of Ho Chi Minh City and Hanoi.",
 	items: [
 		{
 			id: 1,
-			name: "Brooklyn",
-			addressLine1: "123 Main Street, New York,",
-			addressLine2: "NY 10001, USA",
-			phone: "+1 123 456 7890",
-			email: "brooklyn@beef.com",
+			name: "Ho Chi Minh City",
+			addressLine1: "123 Nguyen Hue Boulevard, District 1,",
+			addressLine2: "Ho Chi Minh City, Vietnam",
+			phone: "+84 28 3822 5678",
+			email: "saigon@beef.vn",
 			imageSrc: "/locations/location-1.webp",
-			imageAltText: "Image of the Brooklyn location",
-			directionLink: "#", // Replace with actual direction link
+			imageAltText: "Image of the Ho Chi Minh City location",
+			directionLink: "https://maps.google.com/?q=Nguyen+Hue+Boulevard+District+1+Ho+Chi+Minh+City",
 			directionButtonText: "Get direction",
 		},
 		{
 			id: 2,
-			name: "Queens",
-			addressLine1: "St Jhons PI/Nostrand Av, Brooklyn,",
-			addressLine2: "NY 11216, USA",
-			phone: "+1 123 456 7890",
-			email: "queens@beef.com", // Assuming different email, update if needed
+			name: "Hanoi",
+			addressLine1: "45 Trang Tien Street, Hoan Kiem District,",
+			addressLine2: "Hanoi, Vietnam",
+			phone: "+84 24 3826 1234",
+			email: "hanoi@beef.vn",
 			imageSrc: "/locations/location-2.webp",
-			imageAltText: "Image of the Queens location",
-			directionLink: "#", // Replace with actual direction link
+			imageAltText: "Image of the Hanoi location",
+			directionLink: "https://maps.google.com/?q=Trang+Tien+Street+Hoan+Kiem+Hanoi",
 			directionButtonText: "Get direction",
 		},
 	],
