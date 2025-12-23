@@ -65,16 +65,15 @@ const OrdersPage = () => {
                                             <td className="p-4">{order.orderNumber}</td>
                                             <td className="p-4">{new Date(order.date).toLocaleDateString()}</td>
                                             <td className="p-4">
-                                                <span className={`px-2 py-1 rounded text-xs font-bold ${
-                                                    order.status === 'Submitted' ? 'bg-blue-100 text-blue-800' :
+                                                <span className={`px-2 py-1 rounded text-xs font-bold ${order.status === 'Submitted' ? 'bg-blue-100 text-blue-800' :
                                                     order.status === 'Paid' ? 'bg-green-100 text-green-800' :
-                                                    order.status === 'Cancelled' ? 'bg-red-100 text-red-800' :
-                                                    'bg-gray-100 text-gray-800'
-                                                }`}>
+                                                        order.status === 'Cancelled' ? 'bg-red-100 text-red-800' :
+                                                            'bg-gray-100 text-gray-800'
+                                                    }`}>
                                                     {order.status}
                                                 </span>
                                             </td>
-                                            <td className="p-4">${order.total.toFixed(2)}</td>
+                                            <td className="p-4">{Math.round(order.total)}₫</td>
                                             <td className="p-4">
                                                 <Link href={`/orders/${order.orderId}`} className="text-primary hover:underline">
                                                     View Details

@@ -35,7 +35,7 @@ const OrderDetailPage = () => {
 
     const handleCancel = async () => {
         if (!confirm("Are you sure you want to cancel this order?")) return;
-        
+
         setIsCancelling(true);
         try {
             await cancelOrder(orderId);
@@ -74,8 +74,8 @@ const OrderDetailPage = () => {
                                 <p className="text-text-muted">Placed on {new Date(order.date).toLocaleString()}</p>
                             </div>
                             {order.status === 'Submitted' && (
-                                <button 
-                                    onClick={handleCancel} 
+                                <button
+                                    onClick={handleCancel}
                                     disabled={isCancelling}
                                     className="btn btn__outline border-red-500 text-red-500 hover:bg-red-50"
                                 >
@@ -93,8 +93,8 @@ const OrderDetailPage = () => {
                             </div>
                             <div>
                                 <h3 className="font-bold mb-2">Order Summary</h3>
-                                <p className="flex justify-between"><span>Subtotal:</span> <span>${order.total.toFixed(2)}</span></p>
-                                <p className="flex justify-between font-bold mt-2 pt-2 border-t border-border-default"><span>Total:</span> <span>${order.total.toFixed(2)}</span></p>
+                                <p className="flex justify-between"><span>Subtotal:</span> <span>{Math.round(order.total)}₫</span></p>
+                                <p className="flex justify-between font-bold mt-2 pt-2 border-t border-border-default"><span>Total:</span> <span>{Math.round(order.total)}₫</span></p>
                             </div>
                         </div>
                     </div>
@@ -108,15 +108,15 @@ const OrderDetailPage = () => {
                                 </div>
                                 <div className="flex-grow">
                                     <h4 className="font-bold">{item.productName}</h4>
-                                    <p className="text-sm text-text-muted">${item.unitPrice.toFixed(2)} x {item.units}</p>
+                                    <p className="text-sm text-text-muted">{Math.round(item.unitPrice)}₫ x {item.units}</p>
                                 </div>
                                 <div className="font-bold">
-                                    ${(item.unitPrice * item.units).toFixed(2)}
+                                    {Math.round(item.unitPrice * item.units)}₫
                                 </div>
                             </div>
                         ))}
                     </div>
-                    
+
                     <div className="mt-8">
                         <Link href="/orders" className="text-primary hover:underline">&larr; Back to My Orders</Link>
                     </div>

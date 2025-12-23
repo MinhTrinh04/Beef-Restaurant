@@ -82,12 +82,12 @@ const CheckoutPage = () => {
                                             <p className="font-medium">{item.productName}</p>
                                             <p className="text-sm text-text-muted">Qty: {item.units}</p>
                                         </div>
-                                        <p className="font-medium">${(item.unitPrice * item.units).toFixed(2)}</p>
+                                        <p className="font-medium">{Math.round(item.unitPrice * item.units)}₫</p>
                                     </div>
                                 ))}
                                 <div className="flex justify-between mt-4 pt-4 border-t border-border-default font-bold text-lg">
                                     <span>Total</span>
-                                    <span>${totalCost.toFixed(2)}</span>
+                                    <span>{Math.round(totalCost)}₫</span>
                                 </div>
                             </div>
                         </div>

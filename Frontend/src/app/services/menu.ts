@@ -3,10 +3,10 @@ import { MenuCategory } from "@/app/types/common.types";
 import { API_ENDPOINTS } from "@/lib/api-config";
 
 /**
- * Format price to display format
+ * Format price to VND display format
  */
 function formatPrice(price: number): string {
-    return `$${price.toFixed(2)}`;
+    return `${Math.round(price)}₫`;
 }
 
 /**
