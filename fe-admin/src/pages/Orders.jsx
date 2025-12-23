@@ -62,36 +62,18 @@ const Orders = () => {
                             <th>Date</th>
                             <th>Total</th>
                             <th>Status</th>
-                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {loading ? (
-                            <tr><td colSpan="6" style={{ textAlign: 'center' }}>Loading...</td></tr>
+                            <tr><td colSpan="5" style={{ textAlign: 'center' }}>Loading...</td></tr>
                         ) : orders.map(order => (
                             <tr key={order.id}>
                                 <td>#{order.id}</td>
                                 <td>{order.customer}</td>
                                 <td>{order.date}</td>
-                                <td>${order.total.toFixed(2)}</td>
+                                <td>{Math.round(order.total)}</td>
                                 <td>{getStatusBadge(order.status)}</td>
-                                <td>
-                                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                        <button className="btn btn-outline" style={{ padding: '0.4rem' }} title="View Details">
-                                            <MdVisibility size={16} />
-                                        </button>
-                                        {order.status === 'Pending' && (
-                                            <>
-                                                <button className="btn btn-primary" style={{ padding: '0.4rem', backgroundColor: 'var(--success)' }} title="Approve">
-                                                    <MdCheckCircle size={16} />
-                                                </button>
-                                                <button className="btn btn-danger" style={{ padding: '0.4rem' }} title="Cancel">
-                                                    <MdCancel size={16} />
-                                                </button>
-                                            </>
-                                        )}
-                                    </div>
-                                </td>
                             </tr>
                         ))}
                     </tbody>

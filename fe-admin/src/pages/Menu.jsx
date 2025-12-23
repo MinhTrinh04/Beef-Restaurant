@@ -181,7 +181,7 @@ const Menu = () => {
                                         <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{item.slug}</div>
                                     </td>
                                     <td>{item.menuCategory}</td>
-                                    <td>${item.price}</td>
+                                    <td>{Math.round(item.price)}</td>
                                     <td>
                                         <span className={`badge ${item.availableStock > 0 ? 'badge-success' : 'badge-warning'}`}>
                                             {item.availableStock || 0}
