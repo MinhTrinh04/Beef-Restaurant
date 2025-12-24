@@ -20,9 +20,9 @@ spec:
             - containerPort: 80
           env:
             - name: VITE_API_BASE_URL
-              value: "https://api.beef.local"
+              value: "https://beef-api.trungkienit.cloud"
             - name: VITE_KEYCLOAK_URL
-              value: "https://auth.beef.local"
+              value: "https://beef-auth.trungkienit.cloud"
             - name: VITE_KEYCLOAK_REALM
               value: "master"
             - name: VITE_KEYCLOAK_CLIENT_ID

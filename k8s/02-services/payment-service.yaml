@@ -45,7 +45,7 @@ spec:
             - name: FRONTEND_URL
               value: "https://app.beef.local"
             - name: GATEWAY_URL
-              value: "https://api.beef.local"
+              value: "https://beef-api.trungkienit.cloud"
 ---
 apiVersion: v1
 kind: Service

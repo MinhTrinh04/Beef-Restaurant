@@ -16,8 +16,9 @@ spec:
       hostAliases:
         - ip: "192.168.1.33"
           hostnames:
-            - "api.beef.local"
-            - "auth.beef.local"
+          hostnames:
+            - "beef-api.trungkienit.cloud"
+            - "beef-auth.trungkienit.cloud"
       containers:
         - name: frontend
           image: minh28012004/frontend:latest
@@ -26,11 +27,11 @@ spec:
           env:
             # Runtime variables (Next.js server-side)
             - name: NEXT_PUBLIC_API_BASE
-              value: "https://api.beef.local"
+              value: "https://beef-api.trungkienit.cloud"
             - name: NEXTAUTH_URL
-              value: "https://app.beef.local"
+              value: "https://beef.trungkienit.cloud"
             - name: KEYCLOAK_ISSUER
-              value: "https://auth.beef.local/realms/master"
+              value: "https://beef-auth.trungkienit.cloud/realms/master"
             - name: KEYCLOAK_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:

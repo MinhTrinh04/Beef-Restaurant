@@ -25,9 +25,9 @@ spec:
               value: http://discovery-service:8761/eureka/
             
             - name: FRONTEND_URL
-              value: "https://app.beef.local"
+              value: "https://beef.trungkienit.cloud"
             - name: FRONTEND_URL_ADMIN
-              value: "https://admin.beef.local"
+              value: "https://beef-admin.trungkienit.cloud"
             # Assuming Gateway uses Eureka (lb://) for routing as per docker-compose
             # Full Route Configuration (ID, URI, Predicates)
             # 0: User Service

@@ -7,7 +7,7 @@ metadata:
     kubernetes.io/ingress.class: "traefik"
 spec:
   rules:
-    - host: app.beef.local
+    - host: beef.trungkienit.cloud
       http:
         paths:
           - path: /
@@ -17,7 +17,7 @@ spec:
                 name: frontend
                 port:
                   number: 3000
-    - host: admin.beef.local
+    - host: beef-admin.trungkienit.cloud
       http:
         paths:
           - path: /
@@ -27,7 +27,7 @@ spec:
                 name: fe-admin
                 port:
                   number: 80
-    - host: api.beef.local
+    - host: beef-api.trungkienit.cloud
       http:
         paths:
           - path: /
@@ -37,7 +37,7 @@ spec:
                 name: gateway-service
                 port:
                   number: 9000
-    - host: auth.beef.local
+    - host: beef-auth.trungkienit.cloud
       http:
         paths:
           - path: /
