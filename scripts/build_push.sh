@@ -21,25 +21,25 @@ echo "[1/3] Building Backend Services..."
 
 # Build Menu Service (Multi-stage handles BuildingBlocks)
 echo "--- Building Menu Service ---"
-docker build -t $REPO_PREFIX/menu-service:$TAG -f Backend/MenuService/Dockerfile Backend
+docker build --network=host -t $REPO_PREFIX/menu-service:$TAG -f Backend/MenuService/Dockerfile Backend
 
 echo "--- Building Basket Service ---"
-docker build -t $REPO_PREFIX/basket-service:$TAG -f Backend/BasketService/Dockerfile Backend
+docker build --network=host -t $REPO_PREFIX/basket-service:$TAG -f Backend/BasketService/Dockerfile Backend
 
 echo "--- Building Ordering Service ---"
-docker build -t $REPO_PREFIX/ordering-service:$TAG -f Backend/OrderingService/Dockerfile Backend
+docker build --network=host -t $REPO_PREFIX/ordering-service:$TAG -f Backend/OrderingService/Dockerfile Backend
 
 echo "--- Building Payment Service ---"
-docker build -t $REPO_PREFIX/payment-service:$TAG -f Backend/PaymentService/Dockerfile Backend
+docker build --network=host -t $REPO_PREFIX/payment-service:$TAG -f Backend/PaymentService/Dockerfile Backend
 
 echo "--- Building User Service ---"
-docker build -t $REPO_PREFIX/user-service:$TAG -f Backend/UserService/Dockerfile Backend
+docker build --network=host -t $REPO_PREFIX/user-service:$TAG -f Backend/UserService/Dockerfile Backend
 
 echo "--- Building Gateway Service ---"
-docker build -t $REPO_PREFIX/gateway-service:$TAG -f Backend/GatewayService/Dockerfile Backend
+docker build --network=host -t $REPO_PREFIX/gateway-service:$TAG -f Backend/GatewayService/Dockerfile Backend
 
 echo "--- Building Discovery Service ---"
-docker build -t $REPO_PREFIX/discovery-service:$TAG -f Backend/DiscoveryService/Dockerfile Backend
+docker build --network=host -t $REPO_PREFIX/discovery-service:$TAG -f Backend/DiscoveryService/Dockerfile Backend
 
 
 echo "[2/3] Building Frontend Applications..."
@@ -52,14 +52,14 @@ APP_URL="https://app.beef.local"
 # Frontend (Next.js)
 echo "--- Building Frontend (NextJS) ---"
 # Note: NextJS uses NEXT_PUBLIC_ during build.
-docker build \
+docker build --network=host \
   --build-arg NEXT_PUBLIC_API_BASE=$API_BASE_URL \
   -t $REPO_PREFIX/frontend:$TAG Frontend
 
 # Admin (Vite)
 echo "--- Building Admin FE (Vite) ---"
 # Note: Vite replaces VITE_ vars during build.
-docker build \
+docker build --network=host \
   --build-arg VITE_API_BASE_URL=$API_BASE_URL \
   --build-arg VITE_KEYCLOAK_URL=$AUTH_URL \
   --build-arg VITE_KEYCLOAK_REALM=master \
