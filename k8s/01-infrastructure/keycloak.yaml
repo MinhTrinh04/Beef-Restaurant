@@ -37,6 +37,8 @@ spec:
               value: admin
             - name: KC_PROXY
               value: edge
+            - name: KC_HOSTNAME
+              value: "beef-auth.trungkienit.cloud"
           volumeMounts:
             - name: realm-config
               mountPath: /opt/keycloak/data/import
