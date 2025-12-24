@@ -21,6 +21,8 @@ spec:
           env:
             - name: SPRING_APPLICATION_NAME
               value: user-service
+            - name: SERVER_PORT_USER
+              value: "8084"
             - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
               value: http://discovery-service:8761/eureka/
             
