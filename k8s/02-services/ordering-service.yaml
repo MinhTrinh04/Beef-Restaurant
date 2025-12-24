@@ -40,6 +40,8 @@ spec:
               value: update
 
             # RabbitMQ (Using new placeholders)
+            - name: SPRING_RABBITMQ_PORT
+              value: "5672"
             - name: RABBITMQ_HOST
               value: rabbitmq
             - name: RABBITMQ_USERNAME
