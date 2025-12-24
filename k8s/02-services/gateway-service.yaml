@@ -29,16 +29,46 @@ spec:
             - name: FRONTEND_URL_ADMIN
               value: "https://admin.beef.local"
             # Assuming Gateway uses Eureka (lb://) for routing as per docker-compose
+            # Full Route Configuration (ID, URI, Predicates)
+            # 0: User Service
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_0_ID
+              value: user-service
             - name: SPRING_CLOUD_GATEWAY_ROUTES_0_URI
               value: lb://USER-SERVICE
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_0_PREDICATES_0
+              value: Path=/api/v1/users/**, /api/v1/user/**
+
+            # 1: Menu Service
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_1_ID
+              value: menu-service
             - name: SPRING_CLOUD_GATEWAY_ROUTES_1_URI
               value: lb://MENU-SERVICE
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_1_PREDICATES_0
+              value: Path=/api/v1/menu/**, /api/v1/menus/**
+
+            # 2: Ordering Service
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_2_ID
+              value: ordering-service
             - name: SPRING_CLOUD_GATEWAY_ROUTES_2_URI
               value: lb://ORDERING-SERVICE
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_2_PREDICATES_0
+              value: Path=/api/v1/orders/**
+
+            # 3: Basket Service
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_3_ID
+              value: basket-service
             - name: SPRING_CLOUD_GATEWAY_ROUTES_3_URI
               value: lb://BASKET-SERVICE
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_3_PREDICATES_0
+              value: Path=/api/v1/basket/**
+
+            # 4: Payment Service
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_4_ID
+              value: payment-service
             - name: SPRING_CLOUD_GATEWAY_ROUTES_4_URI
               value: lb://PAYMENT-SERVICE
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_4_PREDICATES_0
+              value: Path=/api/v1/payment/**
       initContainers:
         - name: check-discovery
           image: busybox
