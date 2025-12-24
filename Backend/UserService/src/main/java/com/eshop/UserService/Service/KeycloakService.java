@@ -64,8 +64,11 @@ public class KeycloakService {
             userJson.addProperty("email", email);
             userJson.addProperty("firstName", firstName);
             userJson.addProperty("lastName", lastName != null ? lastName : "");
-            userJson.addProperty("emailVerified", false); // ❌ Set false - user must verify email
+            userJson.addProperty("emailVerified", true); // ✅ Set true to bypass email verification requirement
             userJson.addProperty("enabled", true); // ✅ Ensure user is enabled
+
+            // Log payload for debugging
+            log.info("Sending Create User Request to Keycloak: {}", userJson.toString());
 
             // Set password
             JsonArray credentials = new JsonArray();
@@ -93,8 +96,8 @@ public class KeycloakService {
                 log.info("User registered successfully on Keycloak: {}", email);
 
                 // Trigger email verification
-                sendVerificationEmail(keycloakUserId);
-                log.info("Verification email sent to: {}", email);
+                // sendVerificationEmail(keycloakUserId);
+                // log.info("Verification email sent to: {}", email);
 
                 return keycloakUserId;
             } else if (response.statusCode() == 409) {
@@ -264,7 +267,8 @@ public class KeycloakService {
         }
 
         try {
-            String tokenUrl = keycloakServerUrl + "/realms/" + realm + "/protocol/openid-connect/token";
+            // Admin user is always in 'master' realm
+            String tokenUrl = keycloakServerUrl + "/realms/master/protocol/openid-connect/token";
 
             String body = "grant_type=password" +
                     "&client_id=admin-cli" +
