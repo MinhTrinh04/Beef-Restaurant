@@ -71,8 +71,8 @@ spec:
               value: Path=/api/v1/payment/**
       initContainers:
         - name: check-discovery
-          image: busybox
-          command: ['sh', '-c', 'until nc -z discovery-service 8761; do echo waiting for discovery; sleep 2; done;']
+          image: alpine
+          command: ['sh', '-c', 'apk add --no-cache netcat-openbsd && until nc -z discovery-service 8761; do echo waiting for discovery; sleep 2; done;']
 ---
 apiVersion: v1
 kind: Service
