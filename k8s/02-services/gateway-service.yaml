@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-service
+  namespace: beef-restaurant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway-service
+  template:
+    metadata:
+      labels:
+        app: gateway-service
+    spec:
+      containers:
+        - name: gateway-service
+          image: minh28012004/gateway-service:latest
+          ports:
+            - containerPort: 9000
+          env:
+            - name: SPRING_APPLICATION_NAME
+              value: gateway-service
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: http://discovery-service:8761/eureka/
+            
+            - name: FRONTEND_URL
+              value: "https://app.beef.local"
+            - name: FRONTEND_URL_ADMIN
+              value: "https://admin.beef.local"
+            # Assuming Gateway uses Eureka (lb://) for routing as per docker-compose
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_0_URI
+              value: lb://USER-SERVICE
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_1_URI
+              value: lb://MENU-SERVICE
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_2_URI
+              value: lb://ORDERING-SERVICE
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_3_URI
+              value: lb://BASKET-SERVICE
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_4_URI
+              value: lb://PAYMENT-SERVICE
+      initContainers:
+        - name: check-discovery
+          image: busybox
+          command: ['sh', '-c', 'until nc -z discovery-service 8761; do echo waiting for discovery; sleep 2; done;']
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-service
+  namespace: beef-restaurant
+spec:
+  ports:
+    - port: 9000
+      targetPort: 9000
+  selector:
+    app: gateway-service

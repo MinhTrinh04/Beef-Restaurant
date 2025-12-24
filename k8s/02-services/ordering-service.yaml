@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ordering-service
+  namespace: beef-restaurant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ordering-service
+  template:
+    metadata:
+      labels:
+        app: ordering-service
+    spec:
+      containers:
+        - name: ordering-service
+          image: minh28012004/ordering-service:latest
+          ports:
+            - containerPort: 8082
+          env:
+            - name: SPRING_APPLICATION_NAME
+              value: ordering-service
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: http://discovery-service:8761/eureka/
+
+            # Database Override (Postgres)
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres:5432/orderingdb
+            - name: SPRING_DATASOURCE_USERNAME
+              value: keycloak
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: beef-secrets
+                  key: postgres-password
+            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+              value: update
+
+            # RabbitMQ (Using new placeholders)
+            - name: RABBITMQ_HOST
+              value: rabbitmq
+            - name: RABBITMQ_USERNAME
+              value: guest
+            - name: RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: beef-secrets
+                  key: rabbitmq-password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ordering-service
+  namespace: beef-restaurant
+spec:
+  ports:
+    - port: 8082
+      targetPort: 8082
+  selector:
+    app: ordering-service

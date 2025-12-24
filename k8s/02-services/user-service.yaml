@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  namespace: beef-restaurant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+        - name: user-service
+          image: minh28012004/user-service:latest
+          ports:
+            - containerPort: 8084
+          env:
+            - name: SPRING_APPLICATION_NAME
+              value: user-service
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: http://discovery-service:8761/eureka/
+            
+            # Database Override (Postgres)
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres:5432/userdb
+            - name: SPRING_DATASOURCE_USERNAME
+              value: keycloak
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: beef-secrets
+                  key: postgres-password
+            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+              value: update
+            
+            # Keycloak & RabbitMQ (Using edited placeholders in application.yaml)
+            - name: KEYCLOAK_SERVER_URL
+              value: http://keycloak:8080
+            - name: KEYCLOAK_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: beef-secrets
+                  key: keycloak-client-secret-backend
+            
+            - name: RABBITMQ_HOST
+              value: rabbitmq
+            - name: RABBITMQ_USERNAME
+              value: guest
+            - name: RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: beef-secrets
+                  key: rabbitmq-password
+                  
+            # Mail
+            - name: MAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: beef-secrets
+                  key: mail-password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+  namespace: beef-restaurant
+spec:
+  ports:
+    - port: 8084
+      targetPort: 8084
+  selector:
+    app: user-service

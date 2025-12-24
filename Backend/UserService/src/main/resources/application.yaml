@@ -64,10 +64,10 @@ keycloak:
   admin-password: ${KEYCLOAK_ADMIN_PASSWORD:admin}
 
   rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
     virtual-host: /
     connection-timeout: 10000
 

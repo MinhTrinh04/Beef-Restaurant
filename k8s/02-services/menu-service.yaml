@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: menu-service
+  namespace: beef-restaurant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: menu-service
+  template:
+    metadata:
+      labels:
+        app: menu-service
+    spec:
+      containers:
+        - name: menu-service
+          image: minh28012004/menu-service:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_APPLICATION_NAME
+              value: menu-service
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: http://discovery-service:8761/eureka/
+              
+            # Database Override (Postgres)
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres:5432/menudb
+            - name: SPRING_DATASOURCE_USERNAME
+              value: keycloak
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: beef-secrets
+                  key: postgres-password
+            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+              value: update
+              
+            - name: SPRING_RABBITMQ_HOST
+              value: rabbitmq
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: menu-service
+  namespace: beef-restaurant
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    app: menu-service

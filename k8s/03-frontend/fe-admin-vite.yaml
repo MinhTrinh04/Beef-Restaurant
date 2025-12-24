@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fe-admin
+  namespace: beef-restaurant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fe-admin
+  template:
+    metadata:
+      labels:
+        app: fe-admin
+    spec:
+      containers:
+        - name: fe-admin
+          image: minh28012004/fe-admin:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: VITE_API_BASE_URL
+              value: "https://api.beef.local"
+            - name: VITE_KEYCLOAK_URL
+              value: "https://auth.beef.local"
+            - name: VITE_KEYCLOAK_REALM
+              value: "master"
+            - name: VITE_KEYCLOAK_CLIENT_ID
+              value: "test-user"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fe-admin
+  namespace: beef-restaurant
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: fe-admin

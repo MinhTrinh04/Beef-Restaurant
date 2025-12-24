@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: beef-restaurant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: minh28012004/frontend:latest
+          ports:
+            - containerPort: 3000
+          env:
+            # Runtime variables (Next.js server-side)
+            - name: NEXT_PUBLIC_API_BASE
+              value: "https://api.beef.local"
+            - name: NEXTAUTH_URL
+              value: "https://app.beef.local"
+            - name: KEYCLOAK_ISSUER
+              value: "https://auth.beef.local/realms/master"
+            - name: KEYCLOAK_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: beef-secrets
+                  key: keycloak-client-secret-frontend
+            - name: NEXTAUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: beef-secrets
+                  key: nextauth-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: beef-restaurant
+spec:
+  ports:
+    - port: 3000
+      targetPort: 3000
+  selector:
+    app: frontend

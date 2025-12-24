@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-service
+  namespace: beef-restaurant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment-service
+  template:
+    metadata:
+      labels:
+        app: payment-service
+    spec:
+      containers:
+        - name: payment-service
+          image: minh28012004/payment-service:latest
+          ports:
+            - containerPort: 8083
+          env:
+            - name: SPRING_APPLICATION_NAME
+              value: payment-service
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: http://discovery-service:8761/eureka/
+              
+            # PayOS Secrets
+            - name: PAYOS_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: beef-secrets
+                  key: payos-client-id
+            - name: PAYOS_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: beef-secrets
+                  key: payos-api-key
+            - name: PAYOS_CHECKSUM_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: beef-secrets
+                  key: payos-checksum-key
+            
+            # Domain Overrides
+            - name: FRONTEND_URL
+              value: "https://app.beef.local"
+            - name: GATEWAY_URL
+              value: "https://api.beef.local"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-service
+  namespace: beef-restaurant
+spec:
+  ports:
+    - port: 8083
+      targetPort: 8083
+  selector:
+    app: payment-service
