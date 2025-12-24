@@ -18,6 +18,8 @@ spec:
           hostnames:
             - "beef-api.trungkienit.cloud"
             - "beef-auth.trungkienit.cloud"
+            - "api.beef.local"
+            - "auth.beef.local"
       containers:
         - name: frontend
           image: minh28012004/frontend:latest
