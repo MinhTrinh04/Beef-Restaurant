@@ -48,6 +48,17 @@ spec:
                   name: beef-secrets
                   key: keycloak-client-secret-backend
             
+            - name: SPRING_RABBITMQ_HOST
+              value: rabbitmq
+            - name: SPRING_RABBITMQ_USERNAME
+              value: guest
+            - name: SPRING_RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: beef-secrets
+                  key: rabbitmq-password
+            
+            # Custom properties for application logic (if any)
             - name: RABBITMQ_HOST
               value: rabbitmq
             - name: RABBITMQ_USERNAME
