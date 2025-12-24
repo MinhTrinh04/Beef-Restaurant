@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: basket-service
+  namespace: beef-restaurant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: basket-service
+  template:
+    metadata:
+      labels:
+        app: basket-service
+    spec:
+      containers:
+        - name: basket-service
+          image: minh28012004/basket-service:latest
+          ports:
+            - containerPort: 8081
+          env:
+            - name: SPRING_APPLICATION_NAME
+              value: basket-service
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: http://discovery-service:8761/eureka/
+            
+            # Redis Override
+            - name: SPRING_DATA_REDIS_HOST
+              value: redis
+            - name: SPRING_DATA_REDIS_PORT
+              value: "6379"
+            
+            # RabbitMQ
+            - name: SPRING_RABBITMQ_HOST
+              value: rabbitmq
+            - name: SPRING_RABBITMQ_USERNAME
+              value: guest
+            - name: SPRING_RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: beef-secrets
+                  key: rabbitmq-password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: basket-service
+  namespace: beef-restaurant
+spec:
+  ports:
+    - port: 8081
+      targetPort: 8081
+  selector:
+    app: basket-service

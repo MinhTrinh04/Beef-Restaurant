@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discovery-service
+  namespace: beef-restaurant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: discovery-service
+  template:
+    metadata:
+      labels:
+        app: discovery-service
+    spec:
+      containers:
+        - name: discovery-service
+          image: minh28012004/discovery-service:latest
+          ports:
+            - containerPort: 8761
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: default
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: discovery-service
+  namespace: beef-restaurant
+spec:
+  clusterIP: None
+  ports:
+    - port: 8761
+      targetPort: 8761
+  selector:
+    app: discovery-service
