@@ -48,6 +48,14 @@ spec:
                   name: beef-secrets
                   key: keycloak-client-secret-backend
             
+            # Explicit Admin Credentials (match your working curl)
+            - name: KEYCLOAK_ADMIN_USER
+              value: "admin"
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              value: "admin"
+            - name: KEYCLOAK_CLIENT_ID
+              value: "test-user"
+            
             - name: SPRING_RABBITMQ_HOST
               value: rabbitmq
             - name: SPRING_RABBITMQ_USERNAME

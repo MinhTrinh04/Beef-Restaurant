@@ -25,7 +25,7 @@ public class KeycloakService {
     @Value("${keycloak.server-url:http://localhost:8180}")
     private String keycloakServerUrl;
 
-    @Value("${keycloak.realm:master}")
+    @Value("${keycloak.realm:beef}")
     private String realm;
 
     @Value("${keycloak.client-id}")
