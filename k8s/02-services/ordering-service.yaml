@@ -16,6 +16,7 @@ spec:
       containers:
         - name: ordering-service
           image: minh28012004/ordering-service:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8082
           env:
