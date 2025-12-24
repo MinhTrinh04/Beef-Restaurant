@@ -35,7 +35,7 @@ const BasketToast = ({ toast, onDismiss, duration = 3800 }: BasketToastProps) =>
 		return null;
 	}
 
-	const Icon = icons[toast.variant];
+	const Icon = icons[toast.variant] as any;
 
 	return (
 		<div className={cn("basket-toast", `basket-toast--${toast.variant}`)}>

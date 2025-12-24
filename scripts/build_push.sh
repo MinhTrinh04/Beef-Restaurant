@@ -17,32 +17,7 @@ if ! docker system info > /dev/null 2>&1; then
   exit 1
 fi
 
-echo "[1/3] Building Backend Services..."
-
-# Build Menu Service (Multi-stage handles BuildingBlocks)
-echo "--- Building Menu Service ---"
-docker build --network=host -t $REPO_PREFIX/menu-service:$TAG -f Backend/MenuService/Dockerfile Backend
-
-echo "--- Building Basket Service ---"
-docker build --network=host -t $REPO_PREFIX/basket-service:$TAG -f Backend/BasketService/Dockerfile Backend
-
-echo "--- Building Ordering Service ---"
-docker build --network=host -t $REPO_PREFIX/ordering-service:$TAG -f Backend/OrderingService/Dockerfile Backend
-
-echo "--- Building Payment Service ---"
-docker build --network=host -t $REPO_PREFIX/payment-service:$TAG -f Backend/PaymentService/Dockerfile Backend
-
-echo "--- Building User Service ---"
-docker build --network=host -t $REPO_PREFIX/user-service:$TAG -f Backend/UserService/Dockerfile Backend
-
-echo "--- Building Gateway Service ---"
-docker build --network=host -t $REPO_PREFIX/gateway-service:$TAG -f Backend/GatewayService/Dockerfile Backend
-
-echo "--- Building Discovery Service ---"
-docker build --network=host -t $REPO_PREFIX/discovery-service:$TAG -f Backend/DiscoveryService/Dockerfile Backend
-
-
-echo "[2/3] Building Frontend Applications..."
+echo "[1/3] Building Frontend Applications (First Priority)..."
 
 # Define Build Args for K8s environment
 API_BASE_URL="https://api.beef.local"
@@ -67,9 +42,36 @@ docker build --network=host \
   -t $REPO_PREFIX/fe-admin:$TAG fe-admin
 
 
+echo "[2/3] Building Backend Services..."
+
+# Build Menu Service (Multi-stage handles BuildingBlocks)
+echo "--- Building Menu Service ---"
+docker build --network=host -t $REPO_PREFIX/menu-service:$TAG -f Backend/MenuService/Dockerfile Backend
+
+echo "--- Building Basket Service ---"
+docker build --network=host -t $REPO_PREFIX/basket-service:$TAG -f Backend/BasketService/Dockerfile Backend
+
+echo "--- Building Ordering Service ---"
+docker build --network=host -t $REPO_PREFIX/ordering-service:$TAG -f Backend/OrderingService/Dockerfile Backend
+
+echo "--- Building Payment Service ---"
+docker build --network=host -t $REPO_PREFIX/payment-service:$TAG -f Backend/PaymentService/Dockerfile Backend
+
+echo "--- Building User Service ---"
+docker build --network=host -t $REPO_PREFIX/user-service:$TAG -f Backend/UserService/Dockerfile Backend
+
+echo "--- Building Gateway Service ---"
+docker build --network=host -t $REPO_PREFIX/gateway-service:$TAG -f Backend/GatewayService/Dockerfile Backend
+
+echo "--- Building Discovery Service ---"
+docker build --network=host -t $REPO_PREFIX/discovery-service:$TAG -f Backend/DiscoveryService/Dockerfile Backend
+
+
 echo "[3/3] Pushing Images to Docker Hub..."
 echo "Make sure you have run 'docker login' before script!"
 
+docker push $REPO_PREFIX/frontend:$TAG
+docker push $REPO_PREFIX/fe-admin:$TAG
 docker push $REPO_PREFIX/menu-service:$TAG
 docker push $REPO_PREFIX/basket-service:$TAG
 docker push $REPO_PREFIX/ordering-service:$TAG
@@ -77,8 +79,6 @@ docker push $REPO_PREFIX/payment-service:$TAG
 docker push $REPO_PREFIX/user-service:$TAG
 docker push $REPO_PREFIX/gateway-service:$TAG
 docker push $REPO_PREFIX/discovery-service:$TAG
-docker push $REPO_PREFIX/frontend:$TAG
-docker push $REPO_PREFIX/fe-admin:$TAG
 
 echo "============================================"
 echo "    BUILD & PUSH COMPLETED SUCCESSFULLY     "
