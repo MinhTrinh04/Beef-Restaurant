@@ -16,7 +16,6 @@ spec:
       hostAliases:
         - ip: "192.168.1.33"
           hostnames:
-          hostnames:
             - "beef-api.trungkienit.cloud"
             - "beef-auth.trungkienit.cloud"
       containers:
