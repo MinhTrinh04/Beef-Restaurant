@@ -27,6 +27,8 @@ spec:
             # Database Override (Postgres)
             - name: SPRING_DATASOURCE_URL
               value: jdbc:postgresql://postgres:5432/menudb
+            - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+              value: org.postgresql.Driver
             - name: SPRING_DATASOURCE_USERNAME
               value: keycloak
             - name: SPRING_DATASOURCE_PASSWORD
