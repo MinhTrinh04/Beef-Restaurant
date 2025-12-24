@@ -30,13 +30,13 @@ spec:
               value: "https://beef-admin.trungkienit.cloud"
             # Assuming Gateway uses Eureka (lb://) for routing as per docker-compose
             # Full Route Configuration (ID, URI, Predicates)
-            # 0: User Service
+            # 0: User Service (Users + Admin)
             - name: SPRING_CLOUD_GATEWAY_ROUTES_0_ID
               value: user-service
             - name: SPRING_CLOUD_GATEWAY_ROUTES_0_URI
               value: lb://USER-SERVICE
             - name: SPRING_CLOUD_GATEWAY_ROUTES_0_PREDICATES_0
-              value: Path=/api/v1/users/**, /api/v1/user/**
+              value: Path=/api/v1/users/**, /api/v1/user/**, /api/v1/admin/login, /api/v1/admin/refresh, /api/v1/admin/logout, /api/v1/admin/me
 
             # 1: Menu Service
             - name: SPRING_CLOUD_GATEWAY_ROUTES_1_ID
@@ -44,7 +44,7 @@ spec:
             - name: SPRING_CLOUD_GATEWAY_ROUTES_1_URI
               value: lb://MENU-SERVICE
             - name: SPRING_CLOUD_GATEWAY_ROUTES_1_PREDICATES_0
-              value: Path=/api/v1/menu/**, /api/v1/menus/**
+              value: Path=/api/v1/menu/**, /api/v1/menus/**, /api/v1/admin/menu/**
 
             # 2: Ordering Service
             - name: SPRING_CLOUD_GATEWAY_ROUTES_2_ID
@@ -52,7 +52,7 @@ spec:
             - name: SPRING_CLOUD_GATEWAY_ROUTES_2_URI
               value: lb://ORDERING-SERVICE
             - name: SPRING_CLOUD_GATEWAY_ROUTES_2_PREDICATES_0
-              value: Path=/api/v1/orders/**
+              value: Path=/api/v1/orders/**, /api/v1/admin/orders/**
 
             # 3: Basket Service
             - name: SPRING_CLOUD_GATEWAY_ROUTES_3_ID
