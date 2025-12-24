@@ -37,8 +37,8 @@ spec:
               value: admin
             - name: KC_PROXY_HEADERS
               value: "xforwarded"
-            - name: KC_HOSTNAME
-              value: "beef-auth.trungkienit.cloud"
+            - name: KC_PROXY_HEADERS
+              value: "xforwarded"
             - name: KC_HOSTNAME_URL
               value: "https://beef-auth.trungkienit.cloud"
             - name: KC_HOSTNAME_ADMIN_URL
