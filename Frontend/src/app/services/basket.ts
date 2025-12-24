@@ -1,4 +1,5 @@
 import http from "@/lib/http";
+import { API_ENDPOINTS } from "@/lib/api-config";
 
 /**
  * BasketItem matching backend structure
@@ -52,8 +53,8 @@ export interface BasketCheckout {
 export async function getBasket(token?: string): Promise<Basket> {
     try {
         const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
-        // Use gateway route: /api/basket/** (gateway rewrites to /api/v1/basket/**)
-        const { data } = await http.get<Basket>("/api/basket", config);
+        // Use centralized config: /api/v1/basket
+        const { data } = await http.get<Basket>(API_ENDPOINTS.basket.base, config);
         return data ?? { items: [] };
     } catch (error: any) {
         const status = error.response?.status;
@@ -83,8 +84,8 @@ export async function getBasket(token?: string): Promise<Basket> {
  */
 export async function updateBasket(basket: Basket): Promise<ResponseDto> {
     try {
-        // Use gateway route: /api/basket/** (gateway rewrites to /api/v1/basket/**)
-        const { data } = await http.post<ResponseDto>("/api/basket", basket);
+        // Use centralized config: /api/v1/basket
+        const { data } = await http.post<ResponseDto>(API_ENDPOINTS.basket.base, basket);
         return data;
     } catch (error: any) {
         console.error("Error updating basket:", error.response?.data || error.message);
@@ -96,7 +97,7 @@ export async function updateBasket(basket: Basket): Promise<ResponseDto> {
  * Delete basket from backend
  */
 export async function deleteBasket(): Promise<ResponseDto> {
-    const { data } = await http.delete<ResponseDto>("/api/basket");
+    const { data } = await http.delete<ResponseDto>(API_ENDPOINTS.basket.base);
     return data;
 }
 
@@ -184,7 +185,7 @@ export async function checkoutBasket(checkout: BasketCheckout, requestId?: strin
         headers["X-Request-Id"] = requestId;
     }
 
-    const { data } = await http.post<PaymentUrlResponse>("/api/basket/checkout", checkout, { headers });
+    const { data } = await http.post<PaymentUrlResponse>(API_ENDPOINTS.basket.checkout, checkout, { headers });
     return data;
 }
 
