@@ -48,6 +48,7 @@ spec:
             - name: RABBITMQ_PORT
               value: "5672"
             - name: SPRING_RABBITMQ_USERNAME
+              value: "guest"
 ---
 apiVersion: v1
 kind: Service

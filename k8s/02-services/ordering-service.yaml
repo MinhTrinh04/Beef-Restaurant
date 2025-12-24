@@ -48,7 +48,8 @@ spec:
               value: "5672"
             - name: RABBITMQ_HOST
               value: rabbitmq
-            - name: RABBITMQ_USERNAME
+            - name: SPRING_RABBITMQ_USERNAME
+              value: "guest"
               value: guest
             - name: RABBITMQ_PASSWORD
               valueFrom:
