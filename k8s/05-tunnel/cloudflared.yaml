@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudflared
+  namespace: beef-restaurant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloudflared
+  template:
+    metadata:
+      labels:
+        app: cloudflared
+    spec:
+      containers:
+        - name: cloudflared
+          image: cloudflare/cloudflared:latest
+          args:
+            - tunnel
+            - --no-autoupdate
+            - run
+            - --token
+            - $(TUNNEL_TOKEN)
+          env:
+            - name: TUNNEL_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: cloudflare-token
+                  key: token
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cloudflare-token
+  namespace: beef-restaurant
+type: Opaque
+stringData:
+  token: "eyJhIjoiNGI2ZjUzYjkzNTFmOWVjZTc0ZjQyOGNiODhmN2UxOTAiLCJ0IjoiMmFkZmExNWYtMTgxMC00YjhiLWJkMjMtMGYzZjBkMGNjMGVjIiwicyI6Ik5tWTVOakUyTWprdFlqRmtNQzAwWW1FekxUaGlaamt0WlRBeU4yRm1PV0V6TVRWbCJ9"
