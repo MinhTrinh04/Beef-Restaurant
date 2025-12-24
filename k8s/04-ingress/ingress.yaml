@@ -17,7 +17,27 @@ spec:
                 name: frontend
                 port:
                   number: 3000
+    - host: app.beef.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 3000
     - host: beef-admin.trungkienit.cloud
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: fe-admin
+                port:
+                  number: 80
+    - host: admin.beef.local
       http:
         paths:
           - path: /
@@ -37,7 +57,27 @@ spec:
                 name: gateway-service
                 port:
                   number: 9000
+    - host: api.beef.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gateway-service
+                port:
+                  number: 9000
     - host: beef-auth.trungkienit.cloud
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: keycloak
+                port:
+                  number: 8080
+    - host: auth.beef.local
       http:
         paths:
           - path: /

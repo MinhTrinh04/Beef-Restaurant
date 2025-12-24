@@ -18,6 +18,10 @@ spec:
           hostnames:
             - "beef-api.trungkienit.cloud"
             - "beef-auth.trungkienit.cloud"
+            - "api.beef.local"
+            - "auth.beef.local"
+            - "app.beef.local"
+            - "admin.beef.local"
       containers:
         - name: frontend
           image: minh28012004/frontend:latest
@@ -43,6 +47,8 @@ spec:
                   key: nextauth-secret
             - name: NODE_TLS_REJECT_UNAUTHORIZED
               value: "0"
+            - name: INTERNAL_API_BASE_URL
+              value: "http://gateway-service:9000"
 ---
 apiVersion: v1
 kind: Service

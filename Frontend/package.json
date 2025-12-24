@@ -3,10 +3,9 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "preinstall": "npx only-allow pnpm",
-        "dev": "pnpm next dev",
-        "build": "pnpm next build",
-        "start": "pnpm next start"
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start"
     },
     "dependencies": {
         "@radix-ui/react-dialog": "^1.1.1",

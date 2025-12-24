@@ -17,13 +17,14 @@ export const metadata: Metadata = {
     icons: {
         icon: "/favicon.webp",
     },
+};
+
+export const viewport = {
     themeColor: "#000000",
-    viewport: {
-        width: "device-width",
-        initialScale: 1,
-        maximumScale: 1,
-        userScalable: false,
-    },
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
 };
 
 export default function RootLayout({

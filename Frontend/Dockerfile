@@ -1,34 +1,32 @@
-FROM node:18-alpine AS base
+FROM node:18-alpine
 
-FROM base AS deps
 WORKDIR /app
-COPY package.json package-lock.json* pnpm-lock.yaml* ./
-RUN corepack enable && corepack prepare pnpm@latest --activate
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Copy dependency definitions
+COPY package.json pnpm-lock.yaml* ./
+
+# Install dependencies (fast and determinstic via lockfile)
 RUN pnpm install --frozen-lockfile
 
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+# Copy all source files
 COPY . .
-ENV NEXT_TELEMETRY_DISABLED=1
+
+# Build args
 ARG NEXT_PUBLIC_API_BASE
 ENV NEXT_PUBLIC_API_BASE=$NEXT_PUBLIC_API_BASE
-RUN corepack enable && corepack prepare pnpm@latest --activate
-RUN pnpm run build
-
-FROM base AS runner
-WORKDIR /app
-ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-COPY --from=builder /app/public ./public
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-USER nextjs
+
+# Build the application
+RUN pnpm build
+RUN cp -r public .next/standalone/public
+RUN cp -r .next/static .next/standalone/.next/static
+
+# Run the application
 EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
-CMD ["node", "server.js"]
+
+CMD ["node", ".next/standalone/server.js"]
