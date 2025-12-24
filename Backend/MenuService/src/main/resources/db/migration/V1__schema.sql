@@ -10,7 +10,7 @@ CREATE TABLE menu_categories
 -- Tạo bảng cho các món ăn
 CREATE TABLE menu_items
 (
-    id               INT AUTO_INCREMENT PRIMARY KEY,
+    id               SERIAL PRIMARY KEY,
     name             VARCHAR(100)     NOT NULL,
     description      TEXT,
     price            DOUBLE PRECISION NOT NULL,
