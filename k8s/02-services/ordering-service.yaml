@@ -39,6 +39,8 @@ spec:
                   key: postgres-password
             - name: SPRING_JPA_HIBERNATE_DDL_AUTO
               value: update
+            - name: EUREKA_INSTANCE_PREFER_IP_ADDRESS
+              value: "true"
 
             # RabbitMQ (Using new placeholders)
             - name: SPRING_RABBITMQ_PORT
@@ -50,7 +52,6 @@ spec:
               value: rabbitmq
             - name: SPRING_RABBITMQ_USERNAME
               value: "guest"
-              value: guest
             - name: RABBITMQ_PASSWORD
               valueFrom:
                 secretKeyRef:
