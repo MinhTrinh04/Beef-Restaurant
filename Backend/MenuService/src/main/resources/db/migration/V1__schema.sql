@@ -1,7 +1,7 @@
 -- Tạo bảng cho các danh mục món ăn
 CREATE TABLE menu_categories
 (
-    id          INT AUTO_INCREMENT PRIMARY KEY,
+    id               SERIAL PRIMARY KEY,
     name        VARCHAR(100) NOT NULL,
     slug        VARCHAR(150) UNIQUE,
     description VARCHAR(255)
