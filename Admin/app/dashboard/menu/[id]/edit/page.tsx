@@ -117,10 +117,8 @@ export default function EditMenuItemPage() {
                                 slug: menuItem.slug,
                                 description: menuItem.description,
                                 price: menuItem.price,
-                                categoryId: menuItem.categoryId,
-                                imageUrl: menuItem.imageUrl,
-                                available: menuItem.available,
-                                stockQuantity: menuItem.stockQuantity,
+                                menuCategory: menuItem.categoryId,  // Map categoryId to menuCategory
+                                availableStock: menuItem.stockQuantity,  // Map stockQuantity to availableStock
                             }}
                             onSubmit={handleSubmit}
                             submitLabel="Update Menu Item"

@@ -64,10 +64,9 @@ export interface MenuItemDto {
   slug: string;
   description: string;
   price: number;
-  categoryId: number;
-  imageUrl?: string;
-  available?: boolean;
-  stockQuantity: number;
+  menuCategory: number;  // Backend expects 'menuCategory' not 'categoryId'
+  image?: string;  // Backend expects 'image' not 'imageUrl'
+  availableStock: number;  // Backend expects 'availableStock' not 'stockQuantity'
 }
 
 // Pagination

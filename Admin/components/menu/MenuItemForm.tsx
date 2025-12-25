@@ -33,9 +33,8 @@ export function MenuItemForm({
             slug: '',
             description: '',
             price: 0,
-            categoryId: 1,
-            available: true,
-            stockQuantity: 0,
+            menuCategory: 1,
+            availableStock: 0,
         },
     });
 
@@ -96,11 +95,11 @@ export function MenuItemForm({
                     <Input
                         label="Stock Quantity *"
                         type="number"
-                        {...register('stockQuantity', {
+                        {...register('availableStock', {
                             required: 'Stock quantity is required',
                             min: { value: 0, message: 'Stock must be non-negative' },
                         })}
-                        error={errors.stockQuantity?.message}
+                        error={errors.availableStock?.message}
                         placeholder="e.g., 50"
                     />
                 </div>
@@ -111,7 +110,7 @@ export function MenuItemForm({
                         Category *
                     </label>
                     <select
-                        {...register('categoryId', { required: 'Category is required' })}
+                        {...register('menuCategory', { required: 'Category is required' })}
                         className="w-full px-4 py-2 bg-surface border border-border rounded-md text-text-base focus:outline-none focus:ring-2 focus:ring-primary"
                     >
                         <option value={1}>Appetizers</option>
@@ -119,23 +118,12 @@ export function MenuItemForm({
                         <option value={3}>Desserts</option>
                         <option value={4}>Beverages</option>
                     </select>
-                    {errors.categoryId && (
-                        <p className="mt-1 text-sm text-red-500">{errors.categoryId.message}</p>
+                    {errors.menuCategory && (
+                        <p className="mt-1 text-sm text-red-500">{errors.menuCategory.message}</p>
                     )}
                 </div>
 
-                {/* Available */}
-                <div className="flex items-center gap-3 pt-8">
-                    <input
-                        type="checkbox"
-                        id="available"
-                        {...register('available')}
-                        className="w-5 h-5 text-primary bg-surface border-border rounded focus:ring-primary focus:ring-2"
-                    />
-                    <label htmlFor="available" className="text-sm font-medium text-text-base">
-                        Available for order
-                    </label>
-                </div>
+                {/* Available - REMOVED since backend doesn't have this field */}
             </div>
 
             {/* Description */}
