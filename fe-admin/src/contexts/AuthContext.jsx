@@ -9,20 +9,38 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Try to refresh on mount (nếu có admin_refresh_token cookie)
-        // Nếu không có cookie, backend sẽ trả 401 và chúng ta im lặng fail
-        authService.refresh()
-            .then(response => {
+        const initAuth = async () => {
+            try {
+                // 1. Check existing token in localStorage first
+                const token = localStorage.getItem('admin_access_token');
+                if (token) {
+                    setAccessToken(token); // Ensure api.js has it set
+                    try {
+                        const response = await authService.getCurrentUser();
+                        setUser(response.data);
+                        setLoading(false);
+                        return; // ✅ Success with existing token
+                    } catch (e) {
+                        console.warn('❌ Existing token invalid, trying refresh...', e);
+                    }
+                }
+
+                // 2. If no token or invalid, try to refresh via Cookie
+                const response = await authService.refresh();
                 setAccessToken(response.data.accessToken);
-                return authService.getCurrentUser();
-            })
-            .then(response => setUser(response.data))
-            .catch((error) => {
-                // Silent fail - không có refresh token là bình thường khi chưa login
-                console.log('No active session, redirecting to login');
+                const userRes = await authService.getCurrentUser();
+                setUser(userRes.data);
+
+            } catch (error) {
+                console.log('ℹ️ No active session found');
+                clearAccessToken();
                 setUser(null);
-            })
-            .finally(() => setLoading(false));
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        initAuth();
     }, []);
 
     const login = async (email, password) => {
