@@ -60,6 +60,14 @@ spec:
                   name: beef-secrets
                   key: payos-checksum-key
             
+            # PayOS URLs (Public Domain)
+            - name: PAYOS_RETURN_URL
+              value: "https://beef.trungkienit.cloud/payment-success"
+            - name: PAYOS_CANCEL_URL
+              value: "https://beef-api.trungkienit.cloud/api/payment/cancel"
+            - name: PAYOS_FE_CANCEL_URL
+              value: "https://beef.trungkienit.cloud/payment-cancel"
+            
             # Domain Overrides
             - name: FRONTEND_URL
               value: "https://beef.trungkienit.cloud"
