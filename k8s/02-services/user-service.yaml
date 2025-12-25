@@ -80,6 +80,8 @@ spec:
                   key: rabbitmq-password
                   
             # Mail
+            - name: MAIL_USERNAME
+              value: "minhhicado@gmail.com"
             - name: MAIL_PASSWORD
               valueFrom:
                 secretKeyRef:
