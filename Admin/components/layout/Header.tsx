@@ -1,47 +1,52 @@
 "use client";
 
 import React from 'react';
-import { User, LogOut } from 'lucide-react';
+import { useSession, signOut } from 'next-auth/react';
+import { LogOut, User } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 
 export function Header() {
-    // Mock user data (will be replaced with real auth in next commit)
-    const adminUser = {
-        email: 'admin@beef.com',
-        firstName: 'Admin',
-        lastName: 'User',
-    };
+    const { data: session } = useSession();
 
-    const handleLogout = () => {
-        // TODO: Implement logout in next commit
-        console.log('Logout clicked');
+    const handleLogout = async () => {
+        await signOut({ callbackUrl: '/login' });
     };
 
     return (
-        <header className="h-16 bg-surface border-b border-border flex items-center justify-between px-6">
-            <div className="flex-1" />
-
-            <div className="flex items-center gap-4">
-                {/* User info */}
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                        <User size={20} className="text-primary" />
-                    </div>
-                    <div className="hidden md:block">
-                        <p className="text-sm font-medium text-text-base">
-                            {adminUser.firstName} {adminUser.lastName}
-                        </p>
-                        <p className="text-xs text-text-muted">{adminUser.email}</p>
-                    </div>
+        <header className="bg-surface border-b border-border px-6 py-4">
+            <div className="flex items-center justify-between">
+                <div>
+                    <h2 className="text-xl font-semibold text-text-base font-barlow-condensed">
+                        Admin Dashboard
+                    </h2>
                 </div>
 
-                {/* Logout button */}
-                <button
-                    onClick={handleLogout}
-                    className="p-2 text-text-muted hover:text-primary transition-colors"
-                    title="Logout"
-                >
-                    <LogOut size={20} />
-                </button>
+                <div className="flex items-center gap-4">
+                    {/* User Info */}
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                            <User size={20} className="text-primary" />
+                        </div>
+                        <div className="text-right">
+                            <p className="text-sm font-medium text-text-base">
+                                {session?.user?.name || 'Admin User'}
+                            </p>
+                            <p className="text-xs text-text-muted">
+                                {session?.user?.email || 'admin@example.com'}
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Logout Button */}
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleLogout}
+                        className="!p-2"
+                    >
+                        <LogOut size={20} />
+                    </Button>
+                </div>
             </div>
         </header>
     );

@@ -13,12 +13,18 @@ const apiClient: AxiosInstance = axios.create({
 
 // Request interceptor - Add auth token
 apiClient.interceptors.request.use(
-  (config) => {
-    // For now, we'll skip auth token (will add in next commit)
-    // const token = getAccessToken();
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
+  async (config) => {
+    // Get session token from NextAuth
+    // Note: This will be called from client-side components
+    if (typeof window !== 'undefined') {
+      // Try to get session from NextAuth
+      const { getSession } = await import('next-auth/react');
+      const session = await getSession();
+      
+      if (session?.accessToken) {
+        config.headers.Authorization = `Bearer ${session.accessToken}`;
+      }
+    }
     return config;
   },
   (error) => {

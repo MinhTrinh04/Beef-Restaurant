@@ -1,19 +1,24 @@
-import type { Metadata } from "next";
-import "./globals.css";
+"use client";
 
-export const metadata: Metadata = {
-    title: "Beef Restaurant - Admin Dashboard",
-    description: "Admin dashboard for managing Beef Restaurant",
-};
+import { SessionProvider } from "next-auth/react";
+import "./globals.css";
 
 export default function RootLayout({
     children,
-}: Readonly<{
+}: {
     children: React.ReactNode;
-}>) {
+}) {
     return (
         <html lang="en">
-            <body>{children}</body>
+            <head>
+                <title>Beef Restaurant - Admin Dashboard</title>
+                <meta name="description" content="Admin dashboard for managing Beef Restaurant" />
+            </head>
+            <body>
+                <SessionProvider>
+                    {children}
+                </SessionProvider>
+            </body>
         </html>
     );
 }
