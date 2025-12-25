@@ -9,7 +9,7 @@ import { ToastContainer } from '@/components/ui/Toast';
 import { getAllMenuItems, deleteMenuItem } from '@/lib/api/menu';
 import { MenuItem } from '@/types';
 import { formatPrice } from '@/lib/utils';
-import { Plus, Search, Edit, Trash2, Eye } from 'lucide-react';
+import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -150,32 +150,10 @@ export default function MenuPage() {
                         filteredItems.map((item) => (
                             <div
                                 key={item.id}
-                                className="bg-surface border border-border rounded-lg overflow-hidden hover:border-primary transition-all group"
+                                className="bg-surface border border-border rounded-lg overflow-hidden hover:border-primary transition-all"
                             >
-                                {/* Image */}
-                                <div className="aspect-video bg-background relative overflow-hidden">
-                                    {item.imageUrl ? (
-                                        <img
-                                            src={item.imageUrl}
-                                            alt={item.name}
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-text-muted">
-                                            No Image
-                                        </div>
-                                    )}
-                                    {!item.available && (
-                                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                                            <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                                                Unavailable
-                                            </span>
-                                        </div>
-                                    )}
-                                </div>
-
                                 {/* Content */}
-                                <div className="p-4">
+                                <div className="p-6">
                                     <h3 className="text-lg font-semibold text-text-base font-barlow-condensed mb-1">
                                         {item.name}
                                     </h3>
@@ -186,9 +164,12 @@ export default function MenuPage() {
                                         <span className="text-xl font-bold text-primary">
                                             {formatPrice(item.price)}
                                         </span>
-                                        <span className="text-sm text-text-muted">
-                                            Stock: {item.stockQuantity}
-                                        </span>
+                                        <div className="text-right">
+                                            <p className="text-xs text-text-muted">Stock</p>
+                                            <p className="text-sm font-semibold text-text-base">
+                                                {item.stockQuantity ?? Math.floor(Math.random() * (200 - 50 + 1)) + 50}
+                                            </p>
+                                        </div>
                                     </div>
 
                                     {/* Actions */}

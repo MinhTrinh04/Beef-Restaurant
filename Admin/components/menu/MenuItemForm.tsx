@@ -34,7 +34,6 @@ export function MenuItemForm({
             description: '',
             price: 0,
             categoryId: 1,
-            imageUrl: '',
             available: true,
             stockQuantity: 0,
         },
@@ -150,18 +149,6 @@ export function MenuItemForm({
                 />
             </div>
 
-            {/* Image URL */}
-            <div>
-                <Input
-                    label="Image URL"
-                    {...register('imageUrl')}
-                    error={errors.imageUrl?.message}
-                    placeholder="https://example.com/image.jpg"
-                />
-                <p className="mt-1 text-xs text-text-muted">
-                    Optional: Enter a URL to an image for this menu item
-                </p>
-            </div>
 
             {/* Submit Button */}
             <div className="flex items-center gap-3 pt-4">
