@@ -52,7 +52,7 @@ spec:
             - name: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_DATA_REDIS
               value: DEBUG
             - name: KEYCLOAK_ISSUER_URI
-              value: "http://keycloak:8080/realms/beef"
+              value: "https://beef-auth.trungkienit.cloud/realms/beef"
             - name: EUREKA_INSTANCE_PREFER_IP_ADDRESS
               value: "true"
 ---
