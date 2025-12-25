@@ -23,6 +23,8 @@ spec:
               value: payment-service
             - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
               value: http://discovery-service:8761/eureka/
+            - name: KEYCLOAK_ISSUER_URI
+              value: "https://beef-auth.trungkienit.cloud/realms/beef"
             - name: EUREKA_INSTANCE_PREFER_IP_ADDRESS
               value: "true"
               
