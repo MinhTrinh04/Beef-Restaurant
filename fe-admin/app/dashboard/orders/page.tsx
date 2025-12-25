@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { Loading } from '@/components/ui/Loading';
 import { getAllOrders } from '@/lib/api/orders';
@@ -10,18 +11,30 @@ import { Eye, Search } from 'lucide-react';
 import Link from 'next/link';
 
 export default function OrdersPage() {
+    const { data: session, status } = useSession();
     const [orders, setOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
-        loadOrders();
-    }, []);
+        // Only load orders when session is authenticated
+        if (status === 'authenticated') {
+            loadOrders();
+        } else if (status === 'unauthenticated') {
+            setError('Please login to view orders');
+            setLoading(false);
+        }
+    }, [status]);
 
     const loadOrders = async () => {
         try {
             setLoading(true);
+            console.log('🔍 Loading orders with session:', {
+                hasSession: !!session,
+                hasToken: !!session?.accessToken,
+                status
+            });
             const data = await getAllOrders();
             console.log('📦 Orders loaded:', data);
             setOrders(data || []);
@@ -35,20 +48,22 @@ export default function OrdersPage() {
     };
 
     const filteredOrders = orders.filter((order) => {
+        if (!searchTerm) return true;
         const searchLower = searchTerm.toLowerCase();
         return (
-            order.orderId.toString().includes(searchLower) ||
+            order.orderId?.toString().includes(searchLower) ||
             order.userId?.toLowerCase().includes(searchLower) ||
             order.userEmail?.toLowerCase().includes(searchLower) ||
             order.status?.toLowerCase().includes(searchLower)
         );
     });
 
-    if (loading) {
+    // Show loading while checking authentication
+    if (status === 'loading' || loading) {
         return (
             <AdminLayout>
                 <div className="flex items-center justify-center h-96">
-                    <Loading size="lg" text="Loading orders..." />
+                    <Loading size="lg" text={status === 'loading' ? 'Checking authentication...' : 'Loading orders...'} />
                 </div>
             </AdminLayout>
         );
@@ -137,35 +152,37 @@ export default function OrdersPage() {
                                     </tr>
                                 ) : (
                                     filteredOrders.map((order) => (
-                                        <tr key={order.orderId} className="hover:bg-background transition-colors">
+                                        <tr key={order.orderId || Math.random()} className="hover:bg-background transition-colors">
                                             <td className="px-6 py-4 text-sm text-text-base font-medium">
-                                                #{order.orderId}
+                                                #{order.orderId || 'N/A'}
                                             </td>
                                             <td className="px-6 py-4 text-sm text-text-base">
-                                                {order.userEmail || order.userId}
+                                                {order.userEmail || order.userId || 'N/A'}
                                             </td>
                                             <td className="px-6 py-4 text-sm text-text-muted">
                                                 {order.items?.length || 0} item{(order.items?.length || 0) !== 1 ? 's' : ''}
                                             </td>
                                             <td className="px-6 py-4 text-sm text-text-base font-medium">
-                                                {formatPrice(order.totalAmount)}
+                                                {formatPrice(order.totalAmount || 0)}
                                             </td>
                                             <td className="px-6 py-4">
-                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getOrderStatusBadgeColor(order.status)}`}>
-                                                    {order.status}
+                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getOrderStatusBadgeColor(order.status || 'UNKNOWN')}`}>
+                                                    {order.status || 'UNKNOWN'}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 text-sm text-text-muted">
                                                 {formatDate(order.createdAt)}
                                             </td>
                                             <td className="px-6 py-4">
-                                                <Link
-                                                    href={`/dashboard/orders/${order.orderId}`}
-                                                    className="inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors"
-                                                >
-                                                    <Eye size={16} />
-                                                    <span className="text-sm">View</span>
-                                                </Link>
+                                                {order.orderId && (
+                                                    <Link
+                                                        href={`/dashboard/orders/${order.orderId}`}
+                                                        className="inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors"
+                                                    >
+                                                        <Eye size={16} />
+                                                        <span className="text-sm">View</span>
+                                                    </Link>
+                                                )}
                                             </td>
                                         </tr>
                                     ))
@@ -181,7 +198,7 @@ export default function OrdersPage() {
                         <p>Showing {filteredOrders.length} order{filteredOrders.length !== 1 ? 's' : ''}</p>
                         <p>
                             Total Revenue: <span className="text-primary font-medium">
-                                {formatPrice(filteredOrders.reduce((sum, order) => sum + order.totalAmount, 0))}
+                                {formatPrice(filteredOrders.reduce((sum, order) => sum + (order.totalAmount || 0), 0))}
                             </span>
                         </p>
                     </div>
