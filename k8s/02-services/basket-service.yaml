@@ -53,6 +53,8 @@ spec:
               value: DEBUG
             - name: KEYCLOAK_ISSUER_URI
               value: "http://keycloak:8080/realms/beef"
+            - name: EUREKA_INSTANCE_PREFER_IP_ADDRESS
+              value: "true"
 ---
 apiVersion: v1
 kind: Service
