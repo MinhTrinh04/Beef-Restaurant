@@ -64,7 +64,7 @@ spec:
             - name: PAYOS_RETURN_URL
               value: "https://beef.trungkienit.cloud/payment-success"
             - name: PAYOS_CANCEL_URL
-              value: "https://beef-api.trungkienit.cloud/api/payment/cancel"
+              value: "https://beef-api.trungkienit.cloud/api/v1/payment/cancel"
             - name: PAYOS_FE_CANCEL_URL
               value: "https://beef.trungkienit.cloud/payment-cancel"
             

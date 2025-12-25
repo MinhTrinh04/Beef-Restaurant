@@ -68,9 +68,7 @@ spec:
             - name: SPRING_CLOUD_GATEWAY_ROUTES_4_URI
               value: lb://PAYMENT-SERVICE
             - name: SPRING_CLOUD_GATEWAY_ROUTES_4_PREDICATES_0
-              value: Path=/api/payment/**
-            - name: SPRING_CLOUD_GATEWAY_ROUTES_4_FILTERS_0
-              value: RewritePath=/api/payment/(?<segment>.*), /api/v1/payment/${segment}
+              value: Path=/api/v1/payment/**
       initContainers:
         - name: check-discovery
           image: alpine
