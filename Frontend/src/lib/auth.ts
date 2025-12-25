@@ -77,7 +77,7 @@ export const authOptions: AuthOptions = {
             name: `${userProfile.firstName} ${userProfile.lastName}`,
             email: userProfile.email,
             accessToken: accessToken,
-            refreshToken: refreshToken,
+            // refreshToken: refreshToken, // Removed to reduce cookie size
           };
 
           console.log("✅ Login successful for:", user.email);
@@ -101,7 +101,7 @@ export const authOptions: AuthOptions = {
       // 2. First login via Credentials
       else if (user && account?.provider === "credentials") {
         token.accessToken = user.accessToken;
-        token.refreshToken = user.refreshToken;
+        // token.refreshToken = user.refreshToken; // Removed to reduce cookie size
       }
       return token;
     },
@@ -122,5 +122,17 @@ export const authOptions: AuthOptions = {
   },
   pages: {
     signIn: '/login', // Custom login page
-  }
+  },
+  debug: true, // Enable debug logs
+  cookies: {
+    sessionToken: {
+      name: `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+      },
+    },
+  },
 };
