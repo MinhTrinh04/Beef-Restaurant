@@ -27,6 +27,21 @@ spec:
               value: "https://beef-auth.trungkienit.cloud/realms/beef"
             - name: EUREKA_INSTANCE_PREFER_IP_ADDRESS
               value: "true"
+
+            # RabbitMQ Configuration
+            - name: SPRING_RABBITMQ_HOST
+              value: rabbitmq
+            - name: SPRING_RABBITMQ_PORT
+              value: "5672"
+            - name: RABBITMQ_PORT
+              value: "5672"
+            - name: SPRING_RABBITMQ_USERNAME
+              value: "guest"
+            - name: RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: beef-secrets
+                  key: rabbitmq-password
               
             # PayOS Secrets
             - name: PAYOS_CLIENT_ID
