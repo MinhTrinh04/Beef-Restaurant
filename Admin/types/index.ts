@@ -49,11 +49,9 @@ export interface MenuItem {
   slug: string;
   description: string;
   price: number;
-  categoryId: number;
-  categoryName?: string;
-  imageUrl?: string;
-  available: boolean;
-  stockQuantity: number;
+  menuCategory: number;  // Backend field name
+  image?: string;  // Backend field name
+  availableStock: number;  // Backend field name (not stockQuantity)
   createdAt?: string;
   updatedAt?: string;
 }

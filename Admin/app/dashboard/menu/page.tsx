@@ -167,7 +167,7 @@ export default function MenuPage() {
                                         <div className="text-right">
                                             <p className="text-xs text-text-muted">Stock</p>
                                             <p className="text-sm font-semibold text-text-base">
-                                                {item.stockQuantity ?? Math.floor(Math.random() * (200 - 50 + 1)) + 50}
+                                                {item.availableStock ?? 0}
                                             </p>
                                         </div>
                                     </div>
