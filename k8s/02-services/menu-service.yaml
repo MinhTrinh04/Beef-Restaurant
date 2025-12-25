@@ -43,6 +43,8 @@ spec:
               value: "true"
             - name: SPRING_FLYWAY_BASELINE_ON_MIGRATE
               value: "true"
+            - name: KEYCLOAK_ISSUER_URI
+              value: "https://beef-auth.trungkienit.cloud/realms/beef"
             - name: EUREKA_INSTANCE_PREFER_IP_ADDRESS
               value: "true"
               
