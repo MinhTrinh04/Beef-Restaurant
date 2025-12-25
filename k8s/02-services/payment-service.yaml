@@ -47,7 +47,7 @@ spec:
             
             # Domain Overrides
             - name: FRONTEND_URL
-              value: "https://app.beef.local"
+              value: "https://beef.trungkienit.cloud"
             - name: GATEWAY_URL
               value: "https://beef-api.trungkienit.cloud"
 ---
