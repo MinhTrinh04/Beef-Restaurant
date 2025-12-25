@@ -36,7 +36,7 @@ spec:
               service:
                 name: fe-admin
                 port:
-                  number: 80
+                  number: 3001
     - host: admin.beef.local
       http:
         paths:
@@ -46,7 +46,7 @@ spec:
               service:
                 name: fe-admin
                 port:
-                  number: 80
+                  number: 3001
     - host: beef-api.trungkienit.cloud
       http:
         paths:
