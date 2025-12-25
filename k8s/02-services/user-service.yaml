@@ -16,6 +16,7 @@ spec:
       containers:
         - name: user-service
           image: minh28012004/user-service:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8084
           env:
