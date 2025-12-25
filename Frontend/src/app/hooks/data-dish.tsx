@@ -451,6 +451,96 @@ export const categoryDishesData = {
 		},
 		{
 			id: 5,
+			tag: "Savory",
+			title: "Savory",
+			align: "left",
+			phrase: "The first restaurant proprietor is believed to have been one A. Boulanger, a soup vendor, who opened his business in 1765.",
+			image: "/menu/menu-5.webp",
+			altText: "Savory",
+			icon: "/icons/coffe.svg",
+			link: "/",
+			anchor: "savory",
+			dishesList: [
+				{
+					id: 1,
+					title: "pan seared scallops",
+					price: "$29.00",
+					description:
+						"Saffron, celeriac puree, black pudding, olive oil",
+				},
+				{
+					id: 2,
+					title: "Sea Bass Ceviche",
+					price: "$28.50",
+					description: "Avocado, butternut, lime",
+				},
+				{
+					id: 3,
+					title: "Pan Seared Sea Bass",
+					price: "$18.50",
+					description: "Saffron and mussel’s broth, new potatoes",
+				},
+				{
+					id: 4,
+					title: "King prawns and Lobster",
+					price: "$41.50",
+					description: "Creamy saffron, sauce Vierge",
+				},
+				{
+					id: 5,
+					title: "Nduja Pork chicken Terrin",
+					price: "$27.50",
+					description:
+						"Smoked duck breast, pistachio, smoked pancetta",
+				},
+				{
+					id: 6,
+					title: "King prawns and Lobster",
+					price: "$41.50",
+					description: "Creamy saffron, sauce Vierge",
+				},
+				{
+					id: 7,
+					title: "pan seared scallops",
+					price: "$29.00",
+					description:
+						"Saffron, celeriac puree, black pudding, olive oil",
+				},
+				{
+					id: 8,
+					title: "Sea Bass Ceviche",
+					price: "$28.50",
+					description: "Avocado, butternut, lime",
+				},
+				{
+					id: 9,
+					title: "Pan Seared Sea Bass",
+					price: "$18.50",
+					description: "Saffron and mussel’s broth, new potatoes",
+				},
+				{
+					id: 10,
+					title: "King prawns and Lobster",
+					price: "$41.50",
+					description: "Creamy saffron, sauce Vierge",
+				},
+				{
+					id: 11,
+					title: "Nduja Pork chicken Terrin",
+					price: "$27.50",
+					description:
+						"Smoked duck breast, pistachio, smoked pancetta",
+				},
+				{
+					id: 12,
+					title: "King prawns and Lobster",
+					price: "$41.50",
+					description: "Creamy saffron, sauce Vierge",
+				},
+			],
+		},
+		{
+			id: 6,
 			tag: "Coffe",
 			title: "Coffe",
 			align: "left",
