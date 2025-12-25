@@ -35,7 +35,7 @@ spec:
             - name: NEXTAUTH_URL
               value: "https://beef.trungkienit.cloud"
             - name: KEYCLOAK_ISSUER
-              value: "https://beef-auth.trungkienit.cloud/realms/master"
+              value: "https://beef-auth.trungkienit.cloud/realms/beef"
             - name: KEYCLOAK_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
