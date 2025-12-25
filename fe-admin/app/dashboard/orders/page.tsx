@@ -23,7 +23,8 @@ export default function OrdersPage() {
         try {
             setLoading(true);
             const data = await getAllOrders();
-            setOrders(data);
+            console.log('📦 Orders loaded:', data);
+            setOrders(data || []);
             setError(null);
         } catch (err: any) {
             setError(err.message || 'Failed to load orders');
@@ -37,9 +38,9 @@ export default function OrdersPage() {
         const searchLower = searchTerm.toLowerCase();
         return (
             order.orderId.toString().includes(searchLower) ||
-            order.userId.toLowerCase().includes(searchLower) ||
+            order.userId?.toLowerCase().includes(searchLower) ||
             order.userEmail?.toLowerCase().includes(searchLower) ||
-            order.status.toLowerCase().includes(searchLower)
+            order.status?.toLowerCase().includes(searchLower)
         );
     });
 
@@ -144,7 +145,7 @@ export default function OrdersPage() {
                                                 {order.userEmail || order.userId}
                                             </td>
                                             <td className="px-6 py-4 text-sm text-text-muted">
-                                                {order.items.length} item{order.items.length !== 1 ? 's' : ''}
+                                                {order.items?.length || 0} item{(order.items?.length || 0) !== 1 ? 's' : ''}
                                             </td>
                                             <td className="px-6 py-4 text-sm text-text-base font-medium">
                                                 {formatPrice(order.totalAmount)}

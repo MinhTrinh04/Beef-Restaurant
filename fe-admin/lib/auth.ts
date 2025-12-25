@@ -85,19 +85,43 @@ export const authOptions: AuthOptions = {
   ],
   callbacks: {
     async jwt({ token, account, user }) {
+      console.log('🔐 JWT Callback:', {
+        hasUser: !!user,
+        hasAccount: !!account,
+        provider: account?.provider,
+        userAccessToken: user?.accessToken ? 'present' : 'missing',
+        tokenAccessToken: token.accessToken ? 'present' : 'missing'
+      });
+
       // First login via Credentials
       if (user && account?.provider === "credentials") {
         token.accessToken = user.accessToken;
+        console.log('✅ JWT Callback - Saved accessToken to token');
       }
       return token;
     },
     async session({ session, token }) {
+      console.log('🔐 Session Callback:', {
+        tokenAccessToken: token.accessToken ? 'present' : 'missing',
+        sessionEmail: session.user?.email
+      });
+
       session.accessToken = token.accessToken as string;
+      
+      console.log('✅ Session Callback - Session object:', {
+        hasAccessToken: !!session.accessToken,
+        email: session.user?.email
+      });
+
       return session;
     },
   },
   pages: {
     signIn: '/login', // Custom login page
+  },
+  session: {
+    strategy: "jwt",
+    maxAge: 24 * 60 * 60, // 24 hours
   },
   debug: true, // Enable debug logs
   cookies: {
@@ -107,8 +131,9 @@ export const authOptions: AuthOptions = {
         httpOnly: true,
         sameSite: "lax",
         path: "/",
-        secure: process.env.NODE_ENV === "production",
+        secure: true, // Always secure for HTTPS
       },
     },
   },
+  secret: process.env.NEXTAUTH_SECRET,
 };

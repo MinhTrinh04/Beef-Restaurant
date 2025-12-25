@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { Loading } from '@/components/ui/Loading';
 import { Button } from '@/components/ui/Button';
@@ -12,6 +13,7 @@ import { formatDate } from '@/lib/utils';
 import { Search, Trash2, Mail, Calendar } from 'lucide-react';
 
 export default function UsersPage() {
+    const { data: session, status } = useSession();
     const [users, setUsers] = useState<UserProfile[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -22,14 +24,26 @@ export default function UsersPage() {
     const [toasts, setToasts] = useState<Array<{ id: string; message: string; type: 'success' | 'error' | 'info' | 'warning' }>>([]);
 
     useEffect(() => {
-        loadUsers();
-    }, []);
+        // Only load users when session is authenticated
+        if (status === 'authenticated') {
+            loadUsers();
+        } else if (status === 'unauthenticated') {
+            setError('Please login to view users');
+            setLoading(false);
+        }
+    }, [status]);
 
     const loadUsers = async () => {
         try {
             setLoading(true);
+            console.log('🔍 Loading users with session:', {
+                hasSession: !!session,
+                hasToken: !!session?.accessToken,
+                status
+            });
             const data = await getAllUsers();
-            setUsers(data);
+            console.log('📦 Users loaded:', data);
+            setUsers(data || []);
             setError(null);
         } catch (err: any) {
             setError(err.message || 'Failed to load users');
@@ -71,19 +85,21 @@ export default function UsersPage() {
     };
 
     const filteredUsers = users.filter((user) => {
+        if (!searchTerm) return true;
         const searchLower = searchTerm.toLowerCase();
         return (
-            user.email.toLowerCase().includes(searchLower) ||
+            user.email?.toLowerCase().includes(searchLower) ||
             user.firstName?.toLowerCase().includes(searchLower) ||
             user.lastName?.toLowerCase().includes(searchLower)
         );
     });
 
-    if (loading) {
+    // Show loading while checking authentication
+    if (status === 'loading' || loading) {
         return (
             <AdminLayout>
                 <div className="flex items-center justify-center h-96">
-                    <Loading size="lg" text="Loading users..." />
+                    <Loading size="lg" text={status === 'loading' ? 'Checking authentication...' : 'Loading users...'} />
                 </div>
             </AdminLayout>
         );
@@ -169,12 +185,12 @@ export default function UsersPage() {
                                     </tr>
                                 ) : (
                                     filteredUsers.map((user) => (
-                                        <tr key={user.email} className="hover:bg-background transition-colors">
+                                        <tr key={user.email || user.keycloakUserId} className="hover:bg-background transition-colors">
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
                                                         <span className="text-primary font-semibold">
-                                                            {user.firstName?.charAt(0) || user.email.charAt(0).toUpperCase()}
+                                                            {user.firstName?.charAt(0) || user.email?.charAt(0)?.toUpperCase() || '?'}
                                                         </span>
                                                     </div>
                                                     <div>
@@ -184,7 +200,7 @@ export default function UsersPage() {
                                                                 : 'N/A'}
                                                         </p>
                                                         <p className="text-xs text-text-muted">
-                                                            ID: {user.keycloakUserId?.substring(0, 8)}...
+                                                            ID: {user.keycloakUserId?.substring(0, 8) || 'N/A'}...
                                                         </p>
                                                     </div>
                                                 </div>
@@ -192,7 +208,7 @@ export default function UsersPage() {
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-2 text-sm text-text-base">
                                                     <Mail size={16} className="text-text-muted" />
-                                                    {user.email}
+                                                    {user.email || 'N/A'}
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4 text-sm text-text-muted">

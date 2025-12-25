@@ -1,6 +1,7 @@
 "use client";
 
 import { SessionProvider } from "next-auth/react";
+import { SessionSync } from "@/components/SessionSync";
 import "./globals.css";
 
 export default function RootLayout({
@@ -16,6 +17,7 @@ export default function RootLayout({
             </head>
             <body>
                 <SessionProvider>
+                    <SessionSync />
                     {children}
                 </SessionProvider>
             </body>
