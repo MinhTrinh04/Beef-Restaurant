@@ -21,7 +21,7 @@ export const authOptions: AuthOptions = {
           console.log("🔐 Admin login attempt for:", credentials.email);
 
           // Call Admin Login API
-          const res = await fetch(`${API_URL}/api/admin/login`, {
+          const res = await fetch(`${API_URL}/api/v1/admin/login`, {
             method: "POST",
             body: JSON.stringify({
               email: credentials.email,

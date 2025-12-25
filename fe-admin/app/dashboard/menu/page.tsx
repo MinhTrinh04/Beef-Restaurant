@@ -77,8 +77,7 @@ export default function MenuPage() {
         const searchLower = searchTerm.toLowerCase();
         return (
             item.name.toLowerCase().includes(searchLower) ||
-            item.description.toLowerCase().includes(searchLower) ||
-            item.categoryName?.toLowerCase().includes(searchLower)
+            item.description.toLowerCase().includes(searchLower)
         );
     });
 
