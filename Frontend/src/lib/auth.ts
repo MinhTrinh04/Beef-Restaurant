@@ -1,15 +1,10 @@
 import { AuthOptions } from "next-auth";
-import KeycloakProvider from "next-auth/providers/keycloak";
+// import KeycloakProvider from "next-auth/providers/keycloak";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { API_ENDPOINTS } from "@/lib/api-config";
 
 export const authOptions: AuthOptions = {
   providers: [
-    KeycloakProvider({
-      clientId: process.env.KEYCLOAK_CLIENT_ID || "",
-      clientSecret: process.env.KEYCLOAK_CLIENT_SECRET || "",
-      issuer: process.env.KEYCLOAK_ISSUER,
-    }),
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -93,13 +88,8 @@ export const authOptions: AuthOptions = {
   ],
   callbacks: {
     async jwt({ token, account, user }) {
-      // 1. First login via Keycloak
-      if (account && account.provider === "keycloak") {
-        token.accessToken = account.access_token;
-        token.idToken = account.id_token;
-      }
-      // 2. First login via Credentials
-      else if (user && account?.provider === "credentials") {
+      // First login via Credentials
+      if (user && account?.provider === "credentials") {
         token.accessToken = user.accessToken;
         // token.refreshToken = user.refreshToken; // Removed to reduce cookie size
       }
