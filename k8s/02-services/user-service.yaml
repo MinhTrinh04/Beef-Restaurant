@@ -82,6 +82,15 @@ spec:
             # Mail
             - name: MAIL_USERNAME
               value: "minhhicado@gmail.com"
+            # Force StartTLS and Host/Port
+            - name: SPRING_MAIL_HOST
+              value: "smtp.gmail.com"
+            - name: SPRING_MAIL_PORT
+              value: "587"
+            - name: SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE
+              value: "true"
+            - name: SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH
+              value: "true"
             - name: MAIL_PASSWORD
               valueFrom:
                 secretKeyRef:
