@@ -5,7 +5,7 @@ import { UserProfile, ApiResponse } from '@/types';
  * Get all users
  */
 export async function getAllUsers(): Promise<UserProfile[]> {
-  const response = await apiClient.get<ApiResponse<UserProfile[]>>('/api/v1/users/admin/all');
+  const response = await apiClient.get<ApiResponse<UserProfile[]>>('/api/users/admin/all');
   return response.data.data;
 }
 
@@ -14,7 +14,7 @@ export async function getAllUsers(): Promise<UserProfile[]> {
  */
 export async function getUserByEmail(email: string): Promise<UserProfile> {
   const response = await apiClient.get<ApiResponse<UserProfile>>(
-    `/api/v1/users/admin/by-email?email=${encodeURIComponent(email)}`
+    `/api/users/admin/by-email?email=${encodeURIComponent(email)}`
   );
   return response.data.data;
 }
@@ -23,5 +23,5 @@ export async function getUserByEmail(email: string): Promise<UserProfile> {
  * Delete user
  */
 export async function deleteUser(email: string): Promise<void> {
-  await apiClient.delete<ApiResponse<void>>(`/api/v1/users/admin/${email}`);
+  await apiClient.delete<ApiResponse<void>>(`/api/users/admin/${email}`);
 }

@@ -12,7 +12,7 @@ spring:
           '[/**]':
             allowedOrigins:
               - "${FRONTEND_URL:http://localhost:3000}"
-              - "${FRONTEND_URL_ADMIN:http://localhost:5173}"
+              - "${FRONTEND_URL_ADMIN:http://localhost:3001}"
             allowedMethods:
               - GET
               - POST
