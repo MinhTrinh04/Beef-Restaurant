@@ -64,7 +64,7 @@ public class KeycloakService {
             userJson.addProperty("email", email);
             userJson.addProperty("firstName", firstName);
             userJson.addProperty("lastName", lastName != null ? lastName : "");
-            userJson.addProperty("emailVerified", true); // ✅ Set true to bypass email verification requirement
+            userJson.addProperty("emailVerified", false); // ❌ Set false - user must verify email
             userJson.addProperty("enabled", true); // ✅ Ensure user is enabled
 
             // Log payload for debugging
@@ -96,8 +96,9 @@ public class KeycloakService {
                 log.info("User registered successfully on Keycloak: {}", email);
 
                 // Trigger email verification
-                // sendVerificationEmail(keycloakUserId);
-                // log.info("Verification email sent to: {}", email);
+                // Trigger email verification
+                sendVerificationEmail(keycloakUserId);
+                log.info("Verification email sent to: {}", email);
 
                 return keycloakUserId;
             } else if (response.statusCode() == 409) {
