@@ -41,6 +41,10 @@ spec:
                 secretKeyRef:
                   name: beef-secrets
                   key: keycloak-client-secret-frontend
+            - name: KEYCLOAK_CLIENT_ID
+              value: "frontend"
+            - name: NODE_ENV
+              value: "production"
             - name: NEXTAUTH_SECRET
               valueFrom:
                 secretKeyRef:
