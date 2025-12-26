@@ -90,6 +90,22 @@ public class KeycloakService {
 
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
+            // Handle 401 - token expired, retry once with fresh token
+            if (response.statusCode() == 401) {
+                log.warn("Admin token expired (401), invalidating cache and retrying...");
+                cachedAdminToken = null; // Invalidate cache
+                adminToken = getAdminToken(); // Get fresh token
+
+                // Retry request with new token
+                request = HttpRequest.newBuilder()
+                        .uri(URI.create(url))
+                        .header("Authorization", "Bearer " + adminToken)
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(userJson.toString()))
+                        .build();
+                response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            }
+
             if (response.statusCode() == 201) {
                 String location = response.headers().firstValue("Location").orElse("");
                 String keycloakUserId = location.substring(location.lastIndexOf("/") + 1);
@@ -104,7 +120,8 @@ public class KeycloakService {
             } else if (response.statusCode() == 409) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Email đã được đăng ký");
             } else {
-                log.error("Failed to register user on Keycloak: {}", response.body());
+                log.error("Failed to register user on Keycloak - Status: {}, Body: {}",
+                        response.statusCode(), response.body());
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                         "Đăng ký thất bại: " + response.body());
             }
