@@ -16,6 +16,8 @@ export default function OrdersPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const ordersPerPage = 10;
 
     useEffect(() => {
         // Only load orders when session is authenticated
@@ -47,16 +49,35 @@ export default function OrdersPage() {
         }
     };
 
-    const filteredOrders = orders.filter((order) => {
-        if (!searchTerm) return true;
-        const searchLower = searchTerm.toLowerCase();
-        return (
-            order.orderId?.toString().includes(searchLower) ||
-            order.userId?.toLowerCase().includes(searchLower) ||
-            order.userEmail?.toLowerCase().includes(searchLower) ||
-            order.status?.toLowerCase().includes(searchLower)
-        );
-    });
+    // Filter and sort orders
+    const filteredOrders = orders
+        .filter((order) => {
+            if (!searchTerm) return true;
+            const searchLower = searchTerm.toLowerCase();
+            return (
+                order.orderId?.toString().includes(searchLower) ||
+                order.userId?.toLowerCase().includes(searchLower) ||
+                order.userEmail?.toLowerCase().includes(searchLower) ||
+                order.status?.toLowerCase().includes(searchLower)
+            );
+        })
+        .sort((a, b) => {
+            // Sort by createdAt descending (newest first)
+            const dateA = new Date(a.createdAt).getTime();
+            const dateB = new Date(b.createdAt).getTime();
+            return dateB - dateA;
+        });
+
+    // Pagination
+    const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
+    const startIndex = (currentPage - 1) * ordersPerPage;
+    const endIndex = startIndex + ordersPerPage;
+    const paginatedOrders = filteredOrders.slice(startIndex, endIndex);
+
+    // Reset to page 1 when search changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm]);
 
     // Show loading while checking authentication
     if (status === 'loading' || loading) {
@@ -151,7 +172,7 @@ export default function OrdersPage() {
                                         </td>
                                     </tr>
                                 ) : (
-                                    filteredOrders.map((order) => (
+                                    paginatedOrders.map((order) => (
                                         <tr key={order.orderId || Math.random()} className="hover:bg-background transition-colors">
                                             <td className="px-6 py-4 text-sm text-text-base font-medium">
                                                 #{order.orderId || 'N/A'}
@@ -192,10 +213,49 @@ export default function OrdersPage() {
                     </div>
                 </div>
 
+                {/* Pagination */}
+                {totalPages > 1 && (
+                    <div className="flex items-center justify-between border-t border-border pt-4">
+                        <div className="text-sm text-text-muted">
+                            Showing {startIndex + 1}-{Math.min(endIndex, filteredOrders.length)} of {filteredOrders.length} orders
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                disabled={currentPage === 1}
+                                className="px-3 py-1 rounded-md border border-border text-sm text-text-base hover:bg-background disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            >
+                                Previous
+                            </button>
+                            <div className="flex items-center gap-1">
+                                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                    <button
+                                        key={page}
+                                        onClick={() => setCurrentPage(page)}
+                                        className={`px-3 py-1 rounded-md text-sm transition-colors ${currentPage === page
+                                                ? 'bg-primary text-white'
+                                                : 'border border-border text-text-base hover:bg-background'
+                                            }`}
+                                    >
+                                        {page}
+                                    </button>
+                                ))}
+                            </div>
+                            <button
+                                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                                disabled={currentPage === totalPages}
+                                className="px-3 py-1 rounded-md border border-border text-sm text-text-base hover:bg-background disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            >
+                                Next
+                            </button>
+                        </div>
+                    </div>
+                )}
+
                 {/* Summary */}
                 {filteredOrders.length > 0 && (
-                    <div className="flex items-center justify-between text-sm text-text-muted">
-                        <p>Showing {filteredOrders.length} order{filteredOrders.length !== 1 ? 's' : ''}</p>
+                    <div className="flex items-center justify-between text-sm text-text-muted border-t border-border pt-4">
+                        <p>Total {filteredOrders.length} order{filteredOrders.length !== 1 ? 's' : ''}</p>
                         <p>
                             Total Revenue: <span className="text-primary font-medium">
                                 {formatPrice(filteredOrders.reduce((sum, order) => sum + (order.totalAmount || 0), 0))}
