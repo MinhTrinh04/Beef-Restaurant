@@ -9,12 +9,12 @@ const BasketIndicator = () => {
 	const isPending = isLoading || isMutating;
 	const formattedTotal =
 		totalCost > 0
-			? new Intl.NumberFormat("en-US", {
-					style: "currency",
-					currency: "USD",
-					maximumFractionDigits: 0,
-			  }).format(totalCost)
-			: "$0";
+			? new Intl.NumberFormat("vi-VN", {
+				style: "currency",
+				currency: "VND",
+				maximumFractionDigits: 0,
+			}).format(totalCost)
+			: "0₫";
 
 	return (
 		<Link className="basket-indicator" href="/basket">
