@@ -6,6 +6,18 @@ const config: Config = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  safelist: [
+    // Status badge colors - ensure these are always included
+    'bg-yellow-500/20', 'text-yellow-500',
+    'bg-blue-500/20', 'text-blue-500',
+    'bg-purple-500/20', 'text-purple-500',
+    'bg-green-500/20', 'text-green-500',
+    'bg-green-600/20', 'text-green-600',
+    'bg-green-700/20', 'text-green-700',
+    'bg-red-500/20', 'text-red-500',
+    'bg-yellow-600/20', 'text-yellow-600',
+    'bg-gray-500/20', 'text-gray-500',
+  ],
   theme: {
     extend: {
       colors: {
