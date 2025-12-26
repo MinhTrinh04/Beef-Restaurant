@@ -81,6 +81,8 @@ export function getOrderStatusColor(status: string): string {
     ready: 'text-green-500',
     delivered: 'text-green-700',
     cancelled: 'text-red-500',
+    paid: 'text-green-600',
+    validated: 'text-yellow-600',
   };
   return statusColors[status?.toLowerCase() || 'unknown'] || 'text-gray-500';
 }
@@ -96,6 +98,8 @@ export function getOrderStatusBadgeColor(status: string): string {
     ready: 'bg-green-500/20 text-green-500',
     delivered: 'bg-green-700/20 text-green-700',
     cancelled: 'bg-red-500/20 text-red-500',
+    paid: 'bg-green-600/20 text-green-600',
+    validated: 'bg-yellow-600/20 text-yellow-600',
   };
   return statusColors[status?.toLowerCase() || 'unknown'] || 'bg-gray-500/20 text-gray-500';
 }

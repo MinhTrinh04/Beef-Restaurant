@@ -53,7 +53,10 @@ export function Sidebar() {
                 {/* Navigation */}
                 <nav className="p-4 space-y-2">
                     {navigation.map((item) => {
-                        const isActive = pathname === item.href || pathname?.startsWith(item.href + '/');
+                        // Fix: Only highlight if exact match or is a sub-route of non-dashboard items
+                        const isActive = item.href === '/dashboard'
+                            ? pathname === '/dashboard'
+                            : pathname === item.href || pathname?.startsWith(item.href + '/');
                         const Icon = item.icon;
 
                         return (
